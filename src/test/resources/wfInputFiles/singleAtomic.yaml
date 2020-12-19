@@ -1,0 +1,25 @@
+---
+name: "single Atomic"
+dataIns:
+  - name: "input_name"
+    type: "number"
+    source: "inputSource"
+workflowBody:
+  - function:
+      name: "atomicFunction"
+      type: "functionType"
+      dataIns:
+        - name: "myInput"
+          type: "number"
+          source: "single Atomic/input_name"
+      dataOuts: 
+        - name: "myOutput"
+          type: "string"
+      properties:
+        - name: "resource"
+          value: "my_res_link" 
+dataOuts:
+  - name: "output_name"
+    type: "string"
+    source: "atomicFunction/myOutput"
+
