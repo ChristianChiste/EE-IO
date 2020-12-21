@@ -8,6 +8,7 @@ package at.uibk.dps.ee.io.testconstants;
  */
 public class ConstantsTestCoreEEiO {
 
+	// constants for the afcl test input
 	public static final String cfclFileSingleAtomic = "src/test/resources/wfInputFiles/singleAtomic.yaml";
 	
 	public static final String wfNameAtomic = "single Atomic";
@@ -20,5 +21,6 @@ public class ConstantsTestCoreEEiO {
 	public static final String wfFunctionResourceNameAtomic = "my_res_link";
 	
 	
-	
+	// constants for the read/write test
+	public static final String xmlFileTestAtomic = "src/test/resources/xmlFiles/testAtomic.xml";
 }

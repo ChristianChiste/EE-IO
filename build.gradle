@@ -37,7 +37,7 @@ dependencies {
 	// dependencies to projects within Apollo Main
 	implementation 'com.github.stefanpedratscher:AFCLCore:-SNAPSHOT'
 	
-	// as an example: dependency to Opt4J
+	// dependency to Opt4J
 	implementation 'com.github.FedorSmirnov89:opt4j:-SNAPSHOT'
 	// dependency to opendse
 	implementation 'com.github.FedorSmirnov89:opendse:-SNAPSHOT'
