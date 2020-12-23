@@ -2,6 +2,8 @@ package at.uibk.dps.ee.io.afcl;
 
 import java.io.IOException;
 
+import org.opt4j.core.start.Constant;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -29,7 +31,7 @@ public class AfclReader implements EnactmentGraphProvider {
 	 * @param filePath the path to the .afcl/.cfcl file
 	 */
 	@Inject
-	public AfclReader(final String filePath) {
+	public AfclReader(@Constant(value = "filePath", namespace = AfclReader.class) final String filePath) {
 		try {
 			final byte[] wfData = UtilsSocket.readFileToBytes(filePath);
 			this.enactmentGraph = generateEnactmentGraph(wfData);

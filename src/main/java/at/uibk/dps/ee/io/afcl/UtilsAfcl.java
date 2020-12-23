@@ -54,25 +54,25 @@ public final class UtilsAfcl {
 	 *         afcl file
 	 */
 	public static DataType getDataTypeForString(String afclString) {
-		return switch (afclString) {
+		switch (afclString) {
 		case ConstantsAfcl.typeStringBoolean: {
-			yield DataType.Boolean;
+			return DataType.Boolean;
 		}
 		case ConstantsAfcl.typeStringNumber: {
-			yield DataType.Number;
+			return DataType.Number;
 		}
 		case ConstantsAfcl.typeStringObject: {
-			yield DataType.Object;
+			return DataType.Object;
 		}
 		case ConstantsAfcl.typeStringCollection: {
-			yield DataType.Collection;
+			return DataType.Collection;
 		}
 		case ConstantsAfcl.typeStringString: {
-			yield DataType.String;
+			return DataType.String;
 		}
 		default:
 			throw new IllegalArgumentException("Data type string: " + afclString);
-		};
+		}
 	}
 
 	/**
@@ -83,16 +83,16 @@ public final class UtilsAfcl {
 	 * @return the type of the enactable associated with the provided string
 	 */
 	public static FunctionType getFunctionTypeForString(String afclString) {
-		return switch (afclString) {
+		switch (afclString) {
 		case ConstantsAfcl.functionTypeStringLocal: {
-			yield FunctionType.Local;
+			return FunctionType.Local;
 		}
 		case ConstantsAfcl.functionTypeStringServerless: {
-			yield FunctionType.Serverless;
+			return FunctionType.Serverless;
 		}
 		default:
 			throw new IllegalArgumentException("Unexpected function type value: " + afclString);
-		};
+		}
 	}
 
 	/**
