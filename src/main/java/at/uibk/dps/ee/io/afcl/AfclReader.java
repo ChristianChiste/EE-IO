@@ -31,10 +31,10 @@ public class AfclReader implements EnactmentGraphProvider {
 	@Inject
 	public AfclReader(final String filePath) {
 		try {
-			byte[] wfData = UtilsSocket.readFileToBytes(filePath);
+			final byte[] wfData = UtilsSocket.readFileToBytes(filePath);
 			this.enactmentGraph = generateEnactmentGraph(wfData);
 		} catch (IOException ioExc) {
-			throw new IllegalStateException("IOException when reading the WF from the path: " + filePath);
+			throw new IllegalStateException("IOException when reading the WF from the path: " + filePath, ioExc);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class AfclReader implements EnactmentGraphProvider {
 	 * @param wfData the wfdata
 	 * @return The enactment graph modeling the enactment process.
 	 */
-	protected EnactmentGraph generateEnactmentGraph(byte[] wfData) {
+	protected final EnactmentGraph generateEnactmentGraph(final byte[] wfData) {
 		return GraphGenerationAfcl.generateEnactmentGraph(bytes2Workflow(wfData));
 	}
 
@@ -75,7 +75,7 @@ public class AfclReader implements EnactmentGraphProvider {
 			return Utils.readYAMLNoValidation(workflowAsBytes);
 		} catch (IOException ioExc) {
 			throw new IllegalArgumentException(
-					"IOException when converting the wf input into the AFCL workflow object.");
+					"IOException when converting the wf input into the AFCL workflow object.", ioExc);
 		}
 	}
 }

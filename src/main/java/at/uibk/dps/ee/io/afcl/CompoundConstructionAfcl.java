@@ -77,15 +77,15 @@ public final class CompoundConstructionAfcl {
 	 * @param function the node modeling the atomic function with given data out
 	 * @param dataOut  the given data out
 	 */
-	protected static void addDataOut(EnactmentGraph graph, Task function, DataOutsAtomic dataOut) {
-		String functionName = function.getId();
-		String jsonKey = AfclApiWrapper.getName(dataOut);
-		String dataNodeId = UtilsAfcl.getDataNodeId(functionName, jsonKey);
-		DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
+	protected static void addDataOut(final EnactmentGraph graph, final Task function, final DataOutsAtomic dataOut) {
+		final String functionName = function.getId();
+		final String jsonKey = AfclApiWrapper.getName(dataOut);
+		final String dataNodeId = UtilsAfcl.getDataNodeId(functionName, jsonKey);
+		final DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
 		// retrieve or create the data node
-		Task dataNodeOut = assureDataNodePresence(dataNodeId, dataType, graph);
+		final Task dataNodeOut = assureDataNodePresence(dataNodeId, dataType, graph);
 		// create, annotate, and add the dependency to the graph
-		Dependency dependency = PropertyServiceDependency.createDependency(function, dataNodeOut);
+		final Dependency dependency = PropertyServiceDependency.createDependency(function, dataNodeOut);
 		PropertyServiceDependency.setType(dependency, TypeDependency.Data);
 		PropertyServiceDependency.setJsonKey(dependency, jsonKey);
 		graph.addEdge(dependency, function, dataNodeOut, EdgeType.DIRECTED);
