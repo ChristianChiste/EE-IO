@@ -24,8 +24,11 @@ public final class ConstantsAfcl {
 	public static final String typeStringCollection = "collection";
 	public static final String typeStringObject = "object";
 	public static final String typeStringBoolean = "bool";
+	
+	// String defining different function types
+	public static final String functionTypeStringServerless = "serverless";
+	public static final String functionTypeStringLocal = "local";
 
 	// Strings describing certain properties
 	public static final String propertyConstraintResourceLink = "resource";
-
 }

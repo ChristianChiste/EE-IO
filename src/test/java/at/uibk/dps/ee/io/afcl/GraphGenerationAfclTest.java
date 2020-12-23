@@ -12,8 +12,10 @@ import at.uibk.dps.ee.io.testconstants.ConstantsTestCoreEEiO;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionServerless;
 import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
 import net.sf.opendse.model.properties.TaskPropertyService;
@@ -75,7 +77,9 @@ public class GraphGenerationAfclTest {
 		// check the function
 		Task func = processes.iterator().next();
 		assertEquals(ConstantsTestCoreEEiO.wfFunctionNameAtomic, func.getId());
-		assertEquals(ConstantsTestCoreEEiO.wfFunctionResourceNameAtomic, PropertyServiceFunction.getResource(func));
+		assertEquals(FunctionType.Serverless, PropertyServiceFunction.getType(func));
+		assertEquals(ConstantsTestCoreEEiO.wfFunctionResourceNameAtomic,
+				PropertyServiceFunctionServerless.getResource(func));
 
 		// Check the edges
 		Set<Dependency> inEdges = new HashSet<Dependency>(result.getInEdges(func));

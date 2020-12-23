@@ -8,8 +8,10 @@ import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency.TypeDependency;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionServerless;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import net.sf.opendse.model.Communication;
 import net.sf.opendse.model.Dependency;
@@ -143,8 +145,12 @@ public final class CompoundConstructionAfcl {
 	protected static Task createTaskFromAtomicFunction(AtomicFunction atomFunc) {
 		String funcId = atomFunc.getName();
 		Task result = new Task(funcId);
-		if (UtilsAfcl.isResourceSetAtomFunc(atomFunc)) {
-			PropertyServiceFunction.setResource(result, UtilsAfcl.getResLinkAtomicFunction(atomFunc));
+		String functionTypeString = atomFunc.getType();
+		if (UtilsAfcl.getFunctionTypeForString(functionTypeString).equals(FunctionType.Serverless)) {
+			PropertyServiceFunction.setType(FunctionType.Serverless, result);
+			if (UtilsAfcl.isResourceSetAtomFunc(atomFunc)) {
+				PropertyServiceFunctionServerless.setResource(result, UtilsAfcl.getResLinkAtomicFunction(atomFunc));
+			}
 		}
 		return result;
 	}

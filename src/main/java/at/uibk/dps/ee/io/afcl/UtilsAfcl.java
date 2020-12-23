@@ -4,6 +4,7 @@ import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 
 /**
  * Convenience methods for working with the AFCL classes and syntax.
@@ -71,6 +72,26 @@ public final class UtilsAfcl {
 		}
 		default:
 			throw new IllegalArgumentException("Data type string: " + afclString);
+		};
+	}
+
+	/**
+	 * Returns the type of the enactable associated with the provided string.
+	 * 
+	 * @param afclString the string used as the type of the function in the afcl
+	 *                   file
+	 * @return the type of the enactable associated with the provided string
+	 */
+	public static FunctionType getFunctionTypeForString(String afclString) {
+		return switch (afclString) {
+		case ConstantsAfcl.functionTypeStringLocal: {
+			yield FunctionType.Local;
+		}
+		case ConstantsAfcl.functionTypeStringServerless: {
+			yield FunctionType.Serverless;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected function type value: " + afclString);
 		};
 	}
 

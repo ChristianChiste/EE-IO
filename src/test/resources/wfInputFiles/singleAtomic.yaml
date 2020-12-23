@@ -7,7 +7,7 @@ dataIns:
 workflowBody:
   - function:
       name: "atomicFunction"
-      type: "functionType"
+      type: "serverless"
       dataIns:
         - name: "myInput"
           type: "number"

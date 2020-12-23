@@ -32,6 +32,7 @@ dependencies {
 	implementation 'com.github.Apollo-Core:EE-Core:master-SNAPSHOT'
 	implementation 'com.github.Apollo-Core:EE-Guice:main-SNAPSHOT'
 	implementation 'com.github.Apollo-Core:EE-Model:main-SNAPSHOT'
+	
 	implementation 'com.github.ApolloCEC:socketUtils:-SNAPSHOT'
 	
 	// dependencies to projects within Apollo Main

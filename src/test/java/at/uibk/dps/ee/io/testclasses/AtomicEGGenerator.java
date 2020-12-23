@@ -4,9 +4,11 @@ import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency.TypeDependency;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionServerless;
 import net.sf.opendse.model.Communication;
 import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
@@ -36,7 +38,8 @@ public class AtomicEGGenerator {
 		
 		// function node
 		Task atomic = new Task("atomic");
-		PropertyServiceFunction.setResource(atomic, "myResource");
+		PropertyServiceFunction.setType(FunctionType.Serverless, atomic);
+		PropertyServiceFunctionServerless.setResource(atomic, "myResource");
 		
 		// output node
 		Task output = new Communication("output");
