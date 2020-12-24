@@ -38,6 +38,9 @@ dependencies {
 	// dependencies to projects within Apollo Main
 	implementation 'com.github.stefanpedratscher:AFCLCore:-SNAPSHOT'
 	
+	// gson to define the format of the exchanged messages
+	implementation 'com.google.code.gson:gson:2.8.6'
+	
 	// dependency to Opt4J
 	implementation 'com.github.FedorSmirnov89:opt4j:-SNAPSHOT'
 	// dependency to opendse
