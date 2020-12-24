@@ -146,11 +146,16 @@ public final class CompoundConstructionAfcl {
 		String funcId = atomFunc.getName();
 		Task result = new Task(funcId);
 		String functionTypeString = atomFunc.getType();
-		if (UtilsAfcl.getFunctionTypeForString(functionTypeString).equals(FunctionType.Serverless)) {
-			PropertyServiceFunction.setType(FunctionType.Serverless, result);
+		FunctionType funcType = UtilsAfcl.getFunctionTypeForString(functionTypeString);
+		PropertyServiceFunction.setType(funcType, result);
+		if (funcType.equals(FunctionType.Serverless)) {
 			if (UtilsAfcl.isResourceSetAtomFunc(atomFunc)) {
 				PropertyServiceFunctionServerless.setResource(result, UtilsAfcl.getResLinkAtomicFunction(atomFunc));
 			}
+		} else if (funcType.equals(FunctionType.Local)) {
+			// Nothing special to do here
+		} else {
+			throw new IllegalArgumentException("Function type " + funcType.name() + " not yet covered.");
 		}
 		return result;
 	}

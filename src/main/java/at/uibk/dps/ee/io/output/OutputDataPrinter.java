@@ -17,6 +17,6 @@ public class OutputDataPrinter implements OutputDataHandler{
 	@Override
 	public void handleOutputData(JsonObject outputData) {
 		System.out.println("Enactment finished");
-		System.out.println("Enactment result: " + outputData.getAsString());
+		System.out.println("Enactment result: " + outputData.toString());
 	}
 }
