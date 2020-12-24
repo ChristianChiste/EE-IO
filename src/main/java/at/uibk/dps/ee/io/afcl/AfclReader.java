@@ -9,8 +9,8 @@ import com.google.inject.Singleton;
 
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.utils.Utils;
-import at.uibk.dps.ee.io.EnactmentGraphProvider;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
+import at.uibk.dps.ee.model.graph.EnactmentGraphProvider;
 import at.uibk.dps.socketutils.UtilsSocket;
 
 /**

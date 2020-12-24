@@ -6,8 +6,8 @@ import org.opt4j.core.config.annotations.Order;
 import org.opt4j.core.start.Constant;
 
 import at.uibk.dps.ee.guice.modules.InputModule;
-import at.uibk.dps.ee.io.EnactmentGraphProvider;
 import at.uibk.dps.ee.io.afcl.AfclReader;
+import at.uibk.dps.ee.model.graph.EnactmentGraphProvider;
 
 /**
  * The {@link AfclReaderFileModule} is used to read in the WF from a file in
