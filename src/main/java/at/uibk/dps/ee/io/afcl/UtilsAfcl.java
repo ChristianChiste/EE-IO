@@ -105,7 +105,7 @@ public final class UtilsAfcl {
 		if (atomFunc.getProperties() == null) {
 			return false;
 		}
-		for (PropertyConstraint propConstraint : atomFunc.getProperties()) {
+		for (final PropertyConstraint propConstraint : atomFunc.getProperties()) {
 			if (propConstraint.getName().equals(ConstantsAfcl.propertyConstraintResourceLink)) {
 				return true;
 			}

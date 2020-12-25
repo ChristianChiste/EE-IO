@@ -35,8 +35,8 @@ public final class GraphGenerationAfcl {
 	 *                     file
 	 * @return the {@link EnactmentGraph} modeling the enactment of the workflow
 	 */
-	public static EnactmentGraph generateEnactmentGraph(Workflow afclWorkflow) {
-		EnactmentGraph result = new EnactmentGraph();
+	public static EnactmentGraph generateEnactmentGraph(final Workflow afclWorkflow) {
+		final EnactmentGraph result = new EnactmentGraph();
 		addWfInputNodes(result, AfclApiWrapper.getDataIns(afclWorkflow), AfclApiWrapper.getName(afclWorkflow));
 		addWfFunctions(result, afclWorkflow);
 		annotateWfOutputs(result, AfclApiWrapper.getDataOuts(afclWorkflow));

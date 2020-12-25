@@ -1,7 +1,8 @@
 package at.uibk.dps.ee.io.input;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.opt4j.core.start.Constant;
 
@@ -13,25 +14,26 @@ import com.google.inject.Singleton;
 
 import at.uibk.dps.ee.core.InputDataProvider;
 
+/**
+ * The {@link InputDataProviderFile} is used to read the input data from a file
+ * in the storage.
+ * 
+ * @author Fedor Smirnov
+ */
 @Singleton
 public class InputDataProviderFile implements InputDataProvider {
 
 	protected final JsonObject inputData;
 
+	/**
+	 * Injection constructor
+	 * 
+	 * @param filePath the path to the .json file containing the input data
+	 */
 	@Inject
 	public InputDataProviderFile(
 			@Constant(value = "filePath", namespace = InputDataProviderFile.class) String filePath) {
-		this.inputData = readInputData(filePath);
-	}
-
-	/**
-	 * Reads the input data. Assumes that the data is annotated with type
-	 * information.
-	 * 
-	 * @return the {@link Data} object containing the input data.
-	 */
-	protected JsonObject readInputData(String filePath) {
-		return file2JsonObject(filePath);
+		this.inputData = file2JsonObject(filePath);
 	}
 
 	/**
@@ -40,18 +42,17 @@ public class InputDataProviderFile implements InputDataProvider {
 	 * @param filePath the path to the file
 	 * @return the jsonobject found in the file
 	 */
-	protected JsonObject file2JsonObject(String filePath) {
-		JsonElement result = null;
+	protected final JsonObject file2JsonObject(final String filePath) {
 		try {
-			result = JsonParser.parseReader(new FileReader(filePath));
-		} catch (FileNotFoundException fnfE) {
-			throw new IllegalArgumentException("File " + filePath + " not found");
+			JsonElement result = JsonParser.parseReader(Files.newBufferedReader(Paths.get(filePath)));
+			if (!result.isJsonObject()) {
+				throw new IllegalArgumentException(
+						"The file found under " + filePath + " does not contain a JSON object.");
+			}
+			return (JsonObject) result;
+		} catch (IOException ioExc) {
+			throw new IllegalArgumentException("IO Exception when trying to read file " + filePath, ioExc);
 		}
-
-		if (!result.isJsonObject()) {
-			throw new IllegalArgumentException("The file found under " + filePath + " does not contain a JSON object.");
-		}
-		return (JsonObject) result;
 	}
 
 	@Override

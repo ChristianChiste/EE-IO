@@ -59,13 +59,13 @@ public final class EnactmentGraphIO {
 	protected static EnactmentGraph application2EnactmentGraph(final Application<Task, Dependency> application) {
 		final EnactmentGraph result = new EnactmentGraph();
 		// add the nodes
-		for (Task task : application) {
+		for (final Task task : application) {
 			result.addVertex(task);
 		}
 		// add the edges
-		for (Dependency dep : application.getEdges()) {
-			Task src = application.getEndpoints(dep).getFirst();
-			Task dst = application.getEndpoints(dep).getSecond();
+		for (final Dependency dep : application.getEdges()) {
+			final Task src = application.getEndpoints(dep).getFirst();
+			final Task dst = application.getEndpoints(dep).getSecond();
 			result.addEdge(dep, src, dst, EdgeType.DIRECTED);
 		}
 		return result;

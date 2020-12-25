@@ -28,7 +28,7 @@ public class AfclReaderFileModule extends InputModule {
 		return filePath;
 	}
 
-	public void setFilePath(String filePath) {
+	public void setFilePath(final String filePath) {
 		this.filePath = filePath;
 	}
 

@@ -38,7 +38,7 @@ public final class CompoundConstructionAfcl {
 	 * @param graph    the graph to annotate
 	 * @param function the function to model
 	 */
-	public static void addFunctionCompound(EnactmentGraph graph, Function function) {
+	public static void addFunctionCompound(final EnactmentGraph graph, final Function function) {
 		switch (UtilsAfcl.getCompoundType(function)) {
 		case Atomic: {
 			addAtomicFunctionWfLevel(graph, (AtomicFunction) function);
@@ -57,14 +57,14 @@ public final class CompoundConstructionAfcl {
 	 * @param graph      the graph
 	 * @param atomicFunc the provided atomic function
 	 */
-	protected static void addAtomicFunctionWfLevel(EnactmentGraph graph, AtomicFunction atomicFunc) {
-		Task atomicTask = createTaskFromAtomicFunction(atomicFunc);
+	protected static void addAtomicFunctionWfLevel(final EnactmentGraph graph, final AtomicFunction atomicFunc) {
+		final Task atomicTask = createTaskFromAtomicFunction(atomicFunc);
 		// process the inputs
-		for (DataIns dataIn : AfclApiWrapper.getDataIns(atomicFunc)) {
+		for (final DataIns dataIn : AfclApiWrapper.getDataIns(atomicFunc)) {
 			addDataIn(graph, atomicTask, dataIn);
 		}
 		// process the outputs
-		for (DataOutsAtomic dataOut : AfclApiWrapper.getDataOuts(atomicFunc)) {
+		for (final DataOutsAtomic dataOut : AfclApiWrapper.getDataOuts(atomicFunc)) {
 			addDataOut(graph, atomicTask, dataOut);
 		}
 	}
@@ -99,14 +99,14 @@ public final class CompoundConstructionAfcl {
 	 * @param function the node modeling the function with the given data in
 	 * @param dataIn   the given data in
 	 */
-	protected static void addDataIn(EnactmentGraph graph, Task function, DataIns dataIn) {
-		String dataNodeId = AfclApiWrapper.getSource(dataIn);
-		String jsonKey = AfclApiWrapper.getName(dataIn);
-		DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+	protected static void addDataIn(final EnactmentGraph graph, final Task function, final DataIns dataIn) {
+		final String dataNodeId = AfclApiWrapper.getSource(dataIn);
+		final String jsonKey = AfclApiWrapper.getName(dataIn);
+		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 		// retrieve or create the data node
-		Task dataNodeIn = assureDataNodePresence(dataNodeId, dataType, graph);
+		final Task dataNodeIn = assureDataNodePresence(dataNodeId, dataType, graph);
 		// create annotate, and insert the edge
-		Dependency dependency = PropertyServiceDependency.createDependency(dataNodeIn, function);
+		final Dependency dependency = PropertyServiceDependency.createDependency(dataNodeIn, function);
 		PropertyServiceDependency.setType(dependency, TypeDependency.Data);
 		PropertyServiceDependency.setJsonKey(dependency, jsonKey);
 		graph.addEdge(dependency, dataNodeIn, function, EdgeType.DIRECTED);
@@ -122,7 +122,8 @@ public final class CompoundConstructionAfcl {
 	 * @param graph      the enactment graph
 	 * @return the created/retrieved node
 	 */
-	protected static Task assureDataNodePresence(String dataNodeId, DataType dataType, EnactmentGraph graph) {
+	protected static Task assureDataNodePresence(final String dataNodeId, final DataType dataType,
+			final EnactmentGraph graph) {
 		Task result = graph.getVertex(dataNodeId);
 		if (result == null) {
 			result = new Communication(dataNodeId);
@@ -142,19 +143,17 @@ public final class CompoundConstructionAfcl {
 	 * @param atomFunc the given atomic function
 	 * @return the task node modeling the given atomic function.
 	 */
-	protected static Task createTaskFromAtomicFunction(AtomicFunction atomFunc) {
-		String funcId = atomFunc.getName();
-		Task result = new Task(funcId);
-		String functionTypeString = atomFunc.getType();
-		FunctionType funcType = UtilsAfcl.getFunctionTypeForString(functionTypeString);
+	protected static Task createTaskFromAtomicFunction(final AtomicFunction atomFunc) {
+		final String funcId = atomFunc.getName();
+		final Task result = new Task(funcId);
+		final String functionTypeString = atomFunc.getType();
+		final FunctionType funcType = UtilsAfcl.getFunctionTypeForString(functionTypeString);
 		PropertyServiceFunction.setType(funcType, result);
 		if (funcType.equals(FunctionType.Serverless)) {
 			if (UtilsAfcl.isResourceSetAtomFunc(atomFunc)) {
 				PropertyServiceFunctionServerless.setResource(result, UtilsAfcl.getResLinkAtomicFunction(atomFunc));
 			}
-		} else if (funcType.equals(FunctionType.Local)) {
-			// Nothing special to do here
-		} else {
+		} else if (!funcType.equals(FunctionType.Local)) {
 			throw new IllegalArgumentException("Function type " + funcType.name() + " not yet covered.");
 		}
 		return result;
