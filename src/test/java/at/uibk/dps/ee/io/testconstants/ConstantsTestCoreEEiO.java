@@ -23,4 +23,5 @@ public class ConstantsTestCoreEEiO {
 	
 	// constants for the read/write test
 	public static final String xmlFileTestAtomic = "src/test/resources/xmlFiles/testAtomic.xml";
+	public static final String jsonInputFile = "src/test/resources/testInput/testInput.json";
 }

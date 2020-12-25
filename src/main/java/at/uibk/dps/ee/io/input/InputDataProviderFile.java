@@ -32,7 +32,7 @@ public class InputDataProviderFile implements InputDataProvider {
 	 */
 	@Inject
 	public InputDataProviderFile(
-			@Constant(value = "filePath", namespace = InputDataProviderFile.class) String filePath) {
+			@Constant(value = "filePath", namespace = InputDataProviderFile.class) final String filePath) {
 		this.inputData = file2JsonObject(filePath);
 	}
 
@@ -44,7 +44,7 @@ public class InputDataProviderFile implements InputDataProvider {
 	 */
 	protected final JsonObject file2JsonObject(final String filePath) {
 		try {
-			JsonElement result = JsonParser.parseReader(Files.newBufferedReader(Paths.get(filePath)));
+			final JsonElement result = JsonParser.parseReader(Files.newBufferedReader(Paths.get(filePath)));
 			if (!result.isJsonObject()) {
 				throw new IllegalArgumentException(
 						"The file found under " + filePath + " does not contain a JSON object.");
