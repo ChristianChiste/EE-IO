@@ -8,12 +8,6 @@ package at.uibk.dps.ee.io.afcl;
  */
 public final class ConstantsAfcl {
 
-	/**
-	 * No constructor.
-	 */
-	private ConstantsAfcl() {
-	}
-
 	// The string used to create the source name out of the function/compound name
 	// and the data in/out name
 	public static final String SourceAffix = "/";
@@ -31,4 +25,10 @@ public final class ConstantsAfcl {
 
 	// Strings describing certain properties
 	public static final String propertyConstraintResourceLink = "resource";
+	
+	/**
+	 * No constructor.
+	 */
+	private ConstantsAfcl() {
+	}
 }

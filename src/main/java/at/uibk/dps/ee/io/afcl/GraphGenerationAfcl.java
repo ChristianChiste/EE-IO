@@ -50,8 +50,8 @@ public final class GraphGenerationAfcl {
 	 * @param graph        the enactment graph
 	 * @param afclWorkflow the given workflow
 	 */
-	protected static void addWfFunctions(EnactmentGraph graph, Workflow afclWorkflow) {
-		for (Function function : afclWorkflow.getWorkflowBody()) {
+	protected static void addWfFunctions(final EnactmentGraph graph, final Workflow afclWorkflow) {
+		for (final Function function : afclWorkflow.getWorkflowBody()) {
 			CompoundConstructionAfcl.addFunctionCompound(graph, function);
 		}
 	}
@@ -63,8 +63,8 @@ public final class GraphGenerationAfcl {
 	 * @param graph    the enactment graph
 	 * @param dataOuts the list of afcl data outs
 	 */
-	protected static void annotateWfOutputs(EnactmentGraph graph, List<DataOuts> dataOuts) {
-		for (DataOuts dataOut : dataOuts) {
+	protected static void annotateWfOutputs(final EnactmentGraph graph, final List<DataOuts> dataOuts) {
+		for (final DataOuts dataOut : dataOuts) {
 			annotateWfOutput(graph, dataOut);
 		}
 	}
@@ -75,16 +75,16 @@ public final class GraphGenerationAfcl {
 	 * @param graph   the enactment graph
 	 * @param dataOut the data out
 	 */
-	protected static void annotateWfOutput(EnactmentGraph graph, DataOuts dataOut) {
-		String source = dataOut.getSource();
+	protected static void annotateWfOutput(final EnactmentGraph graph, final DataOuts dataOut) {
+		final String source = dataOut.getSource();
 		if (graph.getVertex(source) == null) {
 			throw new IllegalStateException(
 					"The source of the dataOut " + AfclApiWrapper.getName(dataOut) + " is not in the graph.");
 		}
-		Task leafNode = graph.getVertex(source);
+		final Task leafNode = graph.getVertex(source);
 		PropertyServiceData.makeLeaf(leafNode);
-		String jsonKey = dataOut.getName();
-		DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
+		final String jsonKey = dataOut.getName();
+		final DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
 		PropertyServiceData.setDataType(leafNode, dataType);
 		PropertyServiceData.setJsonKey(leafNode, jsonKey);
 	}
@@ -97,8 +97,8 @@ public final class GraphGenerationAfcl {
 	 * @param dataIns the list of data ins of the workflow
 	 * @param wfName  the name of the workflow
 	 */
-	protected static void addWfInputNodes(EnactmentGraph graph, List<DataIns> dataIns, String wfName) {
-		for (DataIns dataIn : dataIns) {
+	protected static void addWfInputNodes(final EnactmentGraph graph, final List<DataIns> dataIns, final String wfName) {
+		for (final DataIns dataIn : dataIns) {
 			graph.addVertex(generateWfInputDataNode(dataIn, wfName));
 		}
 	}
@@ -110,12 +110,12 @@ public final class GraphGenerationAfcl {
 	 * @param wfName the name of the wf
 	 * @return the data node modeling the provided input of the WF
 	 */
-	protected static Task generateWfInputDataNode(DataIns dataIn, String wfName) {
-		String dataId = dataIn.getName();
-		String nodeId = UtilsAfcl.getDataNodeId(wfName, dataId);
-		String jsonKey = AfclApiWrapper.getSource(dataIn);
-		DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
-		Task result = new Communication(nodeId);
+	protected static Task generateWfInputDataNode(final DataIns dataIn, final String wfName) {
+		final String dataId = dataIn.getName();
+		final String nodeId = UtilsAfcl.getDataNodeId(wfName, dataId);
+		final String jsonKey = AfclApiWrapper.getSource(dataIn);
+		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+		final Task result = new Communication(nodeId);
 		PropertyServiceData.setDataType(result, dataType);
 		PropertyServiceData.makeRoot(result);
 		PropertyServiceData.setJsonKey(result, jsonKey);

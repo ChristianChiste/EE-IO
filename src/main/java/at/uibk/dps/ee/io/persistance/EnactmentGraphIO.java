@@ -32,9 +32,9 @@ public final class EnactmentGraphIO {
 	 * @param graph    the enactment graph to store
 	 * @param filePath the filepath indicating the storage location.
 	 */
-	public static void writeEnactmentGraph(EnactmentGraph graph, String filePath) {
-		Specification spec = new Specification(graph, new Architecture<>(), new Mappings<>());
-		SpecificationWriter writer = new SpecificationWriter();
+	public static void writeEnactmentGraph(final EnactmentGraph graph, final String filePath) {
+		final Specification spec = new Specification(graph, new Architecture<>(), new Mappings<>());
+		final SpecificationWriter writer = new SpecificationWriter();
 		writer.write(spec, filePath);
 	}
 
@@ -44,9 +44,9 @@ public final class EnactmentGraphIO {
 	 * @param filePath the filepath where the graph is stored
 	 * @return the enactment graph stored at the indicated position
 	 */
-	public static EnactmentGraph readEnactmentGraph(String filePath) {
-		SpecificationReader reader = new SpecificationReader();
-		Specification spec = reader.read(filePath);
+	public static EnactmentGraph readEnactmentGraph(final String filePath) {
+		final SpecificationReader reader = new SpecificationReader();
+		final Specification spec = reader.read(filePath);
 		return application2EnactmentGraph(spec.getApplication());
 	}
 
@@ -56,8 +56,8 @@ public final class EnactmentGraphIO {
 	 * @param application the given application
 	 * @return an enactment graph corresponding to the given application
 	 */
-	protected static EnactmentGraph application2EnactmentGraph(Application<Task, Dependency> application) {
-		EnactmentGraph result = new EnactmentGraph();
+	protected static EnactmentGraph application2EnactmentGraph(final Application<Task, Dependency> application) {
+		final EnactmentGraph result = new EnactmentGraph();
 		// add the nodes
 		for (Task task : application) {
 			result.addVertex(task);

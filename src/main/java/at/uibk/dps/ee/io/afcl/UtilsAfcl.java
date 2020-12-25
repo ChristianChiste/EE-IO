@@ -36,7 +36,7 @@ public final class UtilsAfcl {
 	 * @param function the provided function
 	 * @return the compound type of the provided function
 	 */
-	public static CompoundType getCompoundType(Function function) {
+	public static CompoundType getCompoundType(final Function function) {
 		if (function instanceof AtomicFunction) {
 			return CompoundType.Atomic;
 		} else {
@@ -53,7 +53,7 @@ public final class UtilsAfcl {
 	 * @return the enum used by the property service based on the string used in the
 	 *         afcl file
 	 */
-	public static DataType getDataTypeForString(String afclString) {
+	public static DataType getDataTypeForString(final String afclString) {
 		switch (afclString) {
 		case ConstantsAfcl.typeStringBoolean: {
 			return DataType.Boolean;
@@ -82,7 +82,7 @@ public final class UtilsAfcl {
 	 *                   file
 	 * @return the type of the enactable associated with the provided string
 	 */
-	public static FunctionType getFunctionTypeForString(String afclString) {
+	public static FunctionType getFunctionTypeForString(final String afclString) {
 		switch (afclString) {
 		case ConstantsAfcl.functionTypeStringLocal: {
 			return FunctionType.Local;
@@ -101,7 +101,7 @@ public final class UtilsAfcl {
 	 * @param atomFunc the given function.
 	 * @return true if a resource is set for the given function
 	 */
-	public static boolean isResourceSetAtomFunc(AtomicFunction atomFunc) {
+	public static boolean isResourceSetAtomFunc(final AtomicFunction atomFunc) {
 		if (atomFunc.getProperties() == null) {
 			return false;
 		}
@@ -119,11 +119,11 @@ public final class UtilsAfcl {
 	 * @param atomFunc the afcl atomic function
 	 * @return the resource link string from the given function
 	 */
-	public static String getResLinkAtomicFunction(AtomicFunction atomFunc) {
+	public static String getResLinkAtomicFunction(final AtomicFunction atomFunc) {
 		if (!isResourceSetAtomFunc(atomFunc)) {
 			throw new IllegalArgumentException("No resource annotated for atomic function " + atomFunc.getName());
 		}
-		for (PropertyConstraint propConstraint : atomFunc.getProperties()) {
+		for (final PropertyConstraint propConstraint : atomFunc.getProperties()) {
 			if (propConstraint.getName().equals(ConstantsAfcl.propertyConstraintResourceLink)) {
 				return propConstraint.getValue();
 			}
@@ -140,7 +140,7 @@ public final class UtilsAfcl {
 	 * @return the ID of a data object which is created by the producer with the
 	 *         producer ID and is named with the dataID
 	 */
-	public static String getDataNodeId(String producerId, String dataId) {
+	public static String getDataNodeId(final String producerId, final String dataId) {
 		return producerId + ConstantsAfcl.SourceAffix + dataId;
 	}
 
@@ -150,7 +150,7 @@ public final class UtilsAfcl {
 	 * @param srcString the given srcString
 	 * @return the producer ID from the given srcString
 	 */
-	public static String getProducerId(String srcString) {
+	public static String getProducerId(final String srcString) {
 		return getSrcSubString(srcString, true);
 	}
 
@@ -160,7 +160,7 @@ public final class UtilsAfcl {
 	 * @param srcString the given srcString
 	 * @return the data ID from the given srcString
 	 */
-	public static String getDataId(String srcString) {
+	public static String getDataId(final String srcString) {
 		return getSrcSubString(srcString, false);
 	}
 
@@ -173,7 +173,7 @@ public final class UtilsAfcl {
 	 * @return a substring of the given src string correspopnding to the producer id
 	 *         (true) or the data id (false)
 	 */
-	protected static String getSrcSubString(String srcString, boolean producer) {
+	protected static String getSrcSubString(final String srcString, final boolean producer) {
 		return producer ? srcString.split(ConstantsAfcl.SourceAffix)[0] : srcString.split(ConstantsAfcl.SourceAffix)[1];
 	}
 }

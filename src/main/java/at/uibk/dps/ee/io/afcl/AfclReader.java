@@ -72,7 +72,7 @@ public class AfclReader implements EnactmentGraphProvider {
 	 * @param workflowAsBytes byte array with the workflow information
 	 * @return the {@link Workflow} corresponding to the input data.
 	 */
-	protected static Workflow bytes2Workflow(byte[] workflowAsBytes) {
+	protected static Workflow bytes2Workflow(final byte[] workflowAsBytes) {
 		try {
 			return Utils.readYAMLNoValidation(workflowAsBytes);
 		} catch (IOException ioExc) {
