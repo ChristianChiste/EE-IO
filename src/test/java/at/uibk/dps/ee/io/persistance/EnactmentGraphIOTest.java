@@ -16,7 +16,7 @@ public class EnactmentGraphIOTest {
 
 	@Test
 	public void test() {
-		String filePath = ConstantsTestCoreEEiO.xmlFileTestAtomic;
+		String filePath = ConstantsTestCoreEEiO.xmlFileTestReadWrite;
 		EnactmentGraph original = AtomicEGGenerator.generateGraph();
 
 		EnactmentGraphIO.writeEnactmentGraph(original, filePath);

@@ -31,32 +31,32 @@ public class AtomicEGGenerator {
 		EnactmentGraph result = new EnactmentGraph();
 		
 		// input node
-		Task input = new Communication("input");
+		Task input = new Communication("single Atomic/input_name");
 		PropertyServiceData.setDataType(input, DataType.Number);
 		PropertyServiceData.makeRoot(input);
-		PropertyServiceData.setJsonKey(input, "wfInputKey");
+		PropertyServiceData.setJsonKey(input, "inputSource");
 		
 		// function node
-		Task atomic = new Task("atomic");
+		Task atomic = new Task("atomicFunction");
 		PropertyServiceFunction.setType(FunctionType.Serverless, atomic);
-		PropertyServiceFunctionServerless.setResource(atomic, "myResource");
+		PropertyServiceFunctionServerless.setResource(atomic, "my_res_link");
 		
 		// output node
-		Task output = new Communication("output");
+		Task output = new Communication("atomicFunction/myOutput");
 		PropertyServiceData.setDataType(output, DataType.String);
 		PropertyServiceData.makeLeaf(output);
-		PropertyServiceData.setJsonKey(output, "wfOutputKey");
+		PropertyServiceData.setJsonKey(output, "output_name");
 		
 		// connection input atomic
 		Dependency dep0 = PropertyServiceDependency.createDependency(input, atomic);
 		PropertyServiceDependency.setType(dep0, TypeDependency.Data);
-		PropertyServiceDependency.setJsonKey(dep0, "atomicInputKey");
+		PropertyServiceDependency.setJsonKey(dep0, "myInput");
 		result.addEdge(dep0, input, atomic, EdgeType.DIRECTED);
 		
 		// connection atomic output
 		Dependency dep1 = PropertyServiceDependency.createDependency(atomic, output);
 		PropertyServiceDependency.setType(dep1, TypeDependency.Data);
-		PropertyServiceDependency.setJsonKey(dep1, "atomicOutputKey");
+		PropertyServiceDependency.setJsonKey(dep1, "myOutput");
 		result.addEdge(dep1, atomic, output, EdgeType.DIRECTED);
 		
 		return result;

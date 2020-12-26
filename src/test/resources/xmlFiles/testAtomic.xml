@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<specification xsi:schemaLocation="http://opendse.sourceforge.net http://opendse.sourceforge.net/schema.xsd" xmlns="http://opendse.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <architecture/>
+  <application>
+    <task id="atomicFunction">
+      <attributes>
+        <attribute name="FunctionType" type="STRING">Serverless</attribute>
+        <attribute name="Resource" type="STRING">my_res_link</attribute>
+      </attributes>
+    </task>
+    <communication id="single Atomic/input_name">
+      <attributes>
+        <attribute name="DataType" type="STRING">Number</attribute>
+        <attribute name="JsonKey" type="STRING">inputSource</attribute>
+        <attribute name="Root" type="BOOL">true</attribute>
+      </attributes>
+    </communication>
+    <communication id="atomicFunction/myOutput">
+      <attributes>
+        <attribute name="DataType" type="STRING">String</attribute>
+        <attribute name="JsonKey" type="STRING">output_name</attribute>
+        <attribute name="Leaf" type="BOOL">true</attribute>
+      </attributes>
+    </communication>
+    <dependency id="atomicFunction|--|atomicFunction/myOutput" source="atomicFunction" destination="atomicFunction/myOutput" orientation="DIRECTED">
+      <attributes>
+        <attribute name="JsonKey" type="STRING">myOutput</attribute>
+        <attribute name="Type" type="STRING">Data</attribute>
+      </attributes>
+    </dependency>
+    <dependency id="single Atomic/input_name|--|atomicFunction" source="single Atomic/input_name" destination="atomicFunction" orientation="DIRECTED">
+      <attributes>
+        <attribute name="JsonKey" type="STRING">myInput</attribute>
+        <attribute name="Type" type="STRING">Data</attribute>
+      </attributes>
+    </dependency>
+    <functions>
+      <function anchor="single Atomic/input_name">
+        <attributes>
+          <attribute name="ID" type="STRING">func0</attribute>
+        </attributes>
+      </function>
+    </functions>
+  </application>
+  <mappings/>
+  <routings>
+    <routing source="single Atomic/input_name"/>
+    <routing source="atomicFunction/myOutput"/>
+  </routings>
+</specification>

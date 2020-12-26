@@ -4,10 +4,15 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import at.uibk.dps.afcl.Workflow;
+import at.uibk.dps.ee.io.persistance.EnactmentGraphIO;
+import at.uibk.dps.ee.io.testconstants.ConstantsTestCoreEEiO;
+import at.uibk.dps.ee.model.graph.EnactmentGraph;
+import net.sf.opendse.model.Dependency;
+import net.sf.opendse.model.Element;
+import net.sf.opendse.model.Task;
 
 public class AfclReaderTest {
 
-	
 	@Test
 	public void testBytesToWf() {
 		Workflow wf = Graphs.getSingleAtomicWf();
@@ -16,6 +21,25 @@ public class AfclReaderTest {
 		assertEquals("single Atomic", wf.getName());
 		assertEquals(1, wf.getWorkflowBody().size());
 	}
-	
 
+	@Test
+	public void testRead() {
+		AfclReader tested = new AfclReader(ConstantsTestCoreEEiO.cfclFileSingleAtomic);
+		EnactmentGraph result = tested.getEnactmentGraph();
+		EnactmentGraph expected = EnactmentGraphIO.readEnactmentGraph(ConstantsTestCoreEEiO.xmlFileTestAtomic);
+		for (Task task : expected) {
+			compareElements(result.getVertex(task.getId()), task);
+		}
+		for (Dependency dep : expected.getEdges()) {
+			compareElements(result.getEdge(dep.getId()), dep);
+		}
+	}
+
+	protected static void compareElements(Element resultElement, Element expectedElement) {
+		assertEquals(expectedElement.getId(), resultElement.getId());
+		for (String attrName : expectedElement.getAttributeNames()) {
+			assertEquals((Object) expectedElement.getAttribute(attrName),
+					(Object) resultElement.getAttribute(attrName));
+		}
+	}
 }

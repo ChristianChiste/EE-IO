@@ -45,10 +45,6 @@ public class InputDataProviderFile implements InputDataProvider {
 	protected final JsonObject file2JsonObject(final String filePath) {
 		try {
 			final JsonElement result = JsonParser.parseReader(Files.newBufferedReader(Paths.get(filePath)));
-			if (!result.isJsonObject()) {
-				throw new IllegalArgumentException(
-						"The file found under " + filePath + " does not contain a JSON object.");
-			}
 			return (JsonObject) result;
 		} catch (IOException ioExc) {
 			throw new IllegalArgumentException("IO Exception when trying to read file " + filePath, ioExc);

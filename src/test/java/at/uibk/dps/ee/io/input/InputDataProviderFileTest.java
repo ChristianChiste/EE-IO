@@ -5,10 +5,21 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import at.uibk.dps.ee.io.testconstants.ConstantsTestCoreEEiO;
 
 public class InputDataProviderFileTest {
+
+	@Test(expected = JsonSyntaxException.class)
+	public void testWrongFileContent() {
+		new InputDataProviderFile(ConstantsTestCoreEEiO.jsonInputFileWrong);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testWrongPath() {
+		new InputDataProviderFile("wrong path");
+	}
 
 	@Test
 	public void test() {
