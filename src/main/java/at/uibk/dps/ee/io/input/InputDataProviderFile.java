@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 
 import org.opt4j.core.start.Constant;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
@@ -44,8 +43,7 @@ public class InputDataProviderFile implements InputDataProvider {
 	 */
 	protected final JsonObject file2JsonObject(final String filePath) {
 		try {
-			final JsonElement result = JsonParser.parseReader(Files.newBufferedReader(Paths.get(filePath)));
-			return (JsonObject) result;
+			return (JsonObject) JsonParser.parseReader(Files.newBufferedReader(Paths.get(filePath)));
 		} catch (IOException ioExc) {
 			throw new IllegalArgumentException("IO Exception when trying to read file " + filePath, ioExc);
 		}
