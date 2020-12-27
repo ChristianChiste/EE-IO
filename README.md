@@ -1,4 +1,7 @@
 ![Apollo-Core CI Java Repository](https://github.com/Apollo-Core/EE-IO/workflows/Apollo-Core%20CI%20Java%20Repository/badge.svg)
 
 # EE-IO
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f67b612a45ef4b228092b8b2ef5932b6)](https://app.codacy.com/gh/Apollo-Core/EE-IO?utm_source=github.com&utm_medium=referral&utm_content=Apollo-Core/EE-IO&utm_campaign=Badge_Grade_Settings)
+
 Project defining the components for the IO, i.e., the processing of workflow and data input and the output of the processing results, of the Apollo-Core Enactment Engine.
