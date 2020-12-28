@@ -10,7 +10,9 @@ public class ConstantsTestCoreEEiO {
 
 	// constants for the afcl test input
 	public static final String cfclFileSingleAtomic = "src/test/resources/wfInputFiles/singleAtomic.yaml";
-
+	public static final String cfclFileSeqPar = "src/test/resources/wfInputFiles/seqPar.yaml"; 
+	
+	// single atomic names
 	public static final String wfNameAtomic = "single Atomic";
 	public static final String inputNameAtomic = "input_name";
 	public static final String outputNameAtomic = "output_name";

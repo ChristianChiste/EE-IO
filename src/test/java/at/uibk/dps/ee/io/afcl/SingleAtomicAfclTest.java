@@ -20,7 +20,7 @@ import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
 import net.sf.opendse.model.properties.TaskPropertyService;
 
-public class GraphGenerationAfclTest {
+public class SingleAtomicAfclTest {
 
 	@Test
 	public void testGenerateSingleAtomicGraph() {
