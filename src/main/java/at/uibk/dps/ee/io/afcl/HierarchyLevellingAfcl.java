@@ -28,16 +28,16 @@ public final class HierarchyLevellingAfcl {
 	 * @param workflow   the workflow built based on the afcl file
 	 * @return the data id in the flattened graph
 	 */
-	public static String getSrcDataId(String afclSource, Workflow workflow) {
+	public static String getSrcDataId(final String afclSource, final Workflow workflow) {
 
-		String funcName = UtilsAfcl.getProducerId(afclSource);
-		String dataName = UtilsAfcl.getDataId(afclSource);
+		final String funcName = UtilsAfcl.getProducerId(afclSource);
 		if (funcName.equals(workflow.getName())) {
 			// pointing to a root node
 			return afclSource;
 		}
 
-		Function function = AfclApiWrapper.getFunction(workflow, funcName);
+		final String dataName = UtilsAfcl.getDataId(afclSource);
+		final Function function = AfclApiWrapper.getFunction(workflow, funcName);
 		if (function instanceof AtomicFunction) {
 			// pointing to the output of an atomic function
 			checkAtomicFunctionOut((AtomicFunction) function, dataName);
@@ -63,8 +63,8 @@ public final class HierarchyLevellingAfcl {
 	 * @param atomic      the given atomic function
 	 * @param dataOutName the name of the data out
 	 */
-	protected static void checkAtomicFunctionOut(AtomicFunction atomic, String dataOutName) {
-		for (DataOutsAtomic dataOut : AfclApiWrapper.getDataOuts(atomic)) {
+	protected static void checkAtomicFunctionOut(final AtomicFunction atomic, final String dataOutName) {
+		for (final DataOutsAtomic dataOut : AfclApiWrapper.getDataOuts(atomic)) {
 			if (dataOutName.equals(dataOut.getName())) {
 				return;
 			}

@@ -43,7 +43,7 @@ public final class CompoundConstructionAfcl {
 	 * @param function the function to model
 	 * @param workflow the afcl workflow object
 	 */
-	public static void addFunctionCompound(final EnactmentGraph graph, final Function function, Workflow workflow) {
+	public static void addFunctionCompound(final EnactmentGraph graph, final Function function, final Workflow workflow) {
 		switch (UtilsAfcl.getCompoundType(function)) {
 		case Atomic: {
 			addAtomicFunctionWfLevel(graph, (AtomicFunction) function);
@@ -71,8 +71,8 @@ public final class CompoundConstructionAfcl {
 	 * @param workflow the afcl workflow object
 	 */
 	protected static void addParallel(final EnactmentGraph graph, final Parallel parallel, final Workflow workflow) {
-		for (Section section : parallel.getParallelBody()) {
-			for (Function function : section.getSection()) {
+		for (final Section section : parallel.getParallelBody()) {
+			for (final Function function : section.getSection()) {
 				if (function instanceof AtomicFunction) {
 					addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);
 				}else {
@@ -90,8 +90,8 @@ public final class CompoundConstructionAfcl {
 	 * @param sequence the provided sequence compound
 	 * @param workflow the afcl workflow object
 	 */
-	protected static void addSequence(final EnactmentGraph graph, final Sequence sequence, Workflow workflow) {
-		for (Function function : sequence.getSequenceBody()) {
+	protected static void addSequence(final EnactmentGraph graph, final Sequence sequence, final Workflow workflow) {
+		for (final Function function : sequence.getSequenceBody()) {
 			if (function instanceof AtomicFunction) {
 				addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);
 			} else {
@@ -107,10 +107,10 @@ public final class CompoundConstructionAfcl {
 	 * @param function the atomic function
 	 * @param workflow the afcl workflow object
 	 */
-	protected static void correctAtomicDataIns(AtomicFunction function, Workflow workflow) {
-		for (DataIns dataIn : AfclApiWrapper.getDataIns(function)) {
-			String srcString = dataIn.getSource();
-			String actualSrc = HierarchyLevellingAfcl.getSrcDataId(srcString, workflow);
+	protected static void correctAtomicDataIns(final AtomicFunction function, final Workflow workflow) {
+		for (final DataIns dataIn : AfclApiWrapper.getDataIns(function)) {
+			final String srcString = dataIn.getSource();
+			final String actualSrc = HierarchyLevellingAfcl.getSrcDataId(srcString, workflow);
 			dataIn.setSource(actualSrc);
 		}
 	}
