@@ -25,6 +25,40 @@ public final class AfclApiWrapper {
 	private AfclApiWrapper() {
 	}
 
+	/**
+	 * Returns true if the given src string points to an input of the given
+	 * non-atomic function. Returns false if it points to an output. Throws an
+	 * exception in all other cases.
+	 * 
+	 * @param sourceString
+	 * @param func
+	 * @return
+	 */
+	public static boolean pointsToInput(String sourceString, Function func) {
+		String funcName = UtilsAfcl.getProducerId(sourceString);
+		String dataId = UtilsAfcl.getDataId(sourceString);
+
+		if (func instanceof AtomicFunction) {
+			throw new IllegalArgumentException("Intended to be used on non-atomics");
+		}
+		if (!funcName.equals(func.getName())) {
+			throw new IllegalArgumentException("Given function is not the src");
+		}
+
+		for (DataIns dIn : getDataIns(func)) {
+			if (dataId.equals(dIn.getName())) {
+				return true;
+			}
+		}
+		for (DataOuts dOut : getDataOuts(func)) {
+			if (dataId.equals(dOut.getName())) {
+				return false;
+			}
+		}
+		throw new IllegalStateException(
+				"Source " + sourceString + " neither data out nor data in of function " + func.getName());
+	}
+
 	public static Function getFunction(Workflow wf, String name) {
 		for (Function func : wf.getWorkflowBody()) {
 			Function inside = searchInsideFunction(func, name);
@@ -35,13 +69,33 @@ public final class AfclApiWrapper {
 		throw new IllegalStateException("Function " + name + " not found in WF " + wf.getName());
 	}
 
+	public static String getDataInSrc(Function func, String dInName) {
+		for (DataIns dIn : getDataIns(func)) {
+			if (dIn.getName().equals(dInName)) {
+				return dIn.getSource();
+			}
+		}
+		throw new IllegalArgumentException(
+				"Function " + func.getName() + " does not have a data in with name " + dInName);
+	}
+	
+	public static String getDataOutSrc(Function func, String dOutName) {
+		for (DataOuts dOut : getDataOuts(func)) {
+			if (dOut.getName().equals(dOutName)) {
+				return dOut.getSource();
+			}
+		}
+		throw new IllegalArgumentException(
+				"Function " + func.getName() + " does not have a data in with name " + dOutName);
+	}
+
 	protected static Function searchInsideFunction(Function function, String name) {
 		if (function.getName().equals(name)) {
 			return function;
 		}
 		if (function instanceof AtomicFunction) {
 			return null;
-		}else if (function instanceof Sequence) {
+		} else if (function instanceof Sequence) {
 			Sequence seq = (Sequence) function;
 			for (Function f : seq.getSequenceBody()) {
 				if (f.getName().equals(name)) {
@@ -53,7 +107,7 @@ public final class AfclApiWrapper {
 				}
 			}
 			return null;
-		}else if (function instanceof Parallel) {
+		} else if (function instanceof Parallel) {
 			Parallel par = (Parallel) function;
 			for (Section sec : par.getParallelBody()) {
 				for (Function f : sec.getSection()) {
@@ -64,7 +118,7 @@ public final class AfclApiWrapper {
 				}
 			}
 			return null;
-		}else {
+		} else {
 			throw new IllegalStateException("Unknown compound");
 		}
 	}
@@ -120,6 +174,28 @@ public final class AfclApiWrapper {
 		}
 	}
 
+	public static List<DataIns> getDataIns(Function func) {
+		if (func instanceof AtomicFunction) {
+			return getDataIns((AtomicFunction) func);
+		} else if (func instanceof Parallel) {
+			return getDataIns((Parallel) func);
+		} else if (func instanceof Sequence) {
+			return getDataIns((Sequence) func);
+		} else {
+			throw new IllegalStateException("Not yet implemented.");
+		}
+	}
+
+	public static List<DataOuts> getDataOuts(Function func) {
+		if (func instanceof Parallel) {
+			return getDataOuts((Parallel) func);
+		} else if (func instanceof Sequence) {
+			return getDataOuts((Sequence) func);
+		} else {
+			throw new IllegalStateException("Not yet implemented.");
+		}
+	}
+
 	public static List<DataIns> getDataIns(AtomicFunction atomFunc) {
 		if (atomFunc.getDataIns() == null) {
 			return new ArrayList<>();
@@ -128,11 +204,43 @@ public final class AfclApiWrapper {
 		}
 	}
 
+	public static List<DataIns> getDataIns(Parallel parallel) {
+		if (parallel.getDataIns() == null) {
+			return new ArrayList<>();
+		} else {
+			return parallel.getDataIns();
+		}
+	}
+
+	public static List<DataIns> getDataIns(Sequence seq) {
+		if (seq.getDataIns() == null) {
+			return new ArrayList<>();
+		} else {
+			return seq.getDataIns();
+		}
+	}
+
 	public static List<DataOutsAtomic> getDataOuts(AtomicFunction atomFunc) {
 		if (atomFunc.getDataOuts() == null) {
 			return new ArrayList<>();
 		} else {
 			return atomFunc.getDataOuts();
+		}
+	}
+
+	public static List<DataOuts> getDataOuts(Parallel par) {
+		if (par.getDataOuts() == null) {
+			return new ArrayList<>();
+		} else {
+			return par.getDataOuts();
+		}
+	}
+
+	public static List<DataOuts> getDataOuts(Sequence seq) {
+		if (seq.getDataOuts() == null) {
+			return new ArrayList<>();
+		} else {
+			return seq.getDataOuts();
 		}
 	}
 }

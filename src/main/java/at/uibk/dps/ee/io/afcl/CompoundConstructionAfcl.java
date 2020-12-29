@@ -1,9 +1,13 @@
 package at.uibk.dps.ee.io.afcl;
 
 import at.uibk.dps.afcl.Function;
+import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
+import at.uibk.dps.afcl.functions.Parallel;
+import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.afcl.functions.objects.DataOutsAtomic;
+import at.uibk.dps.afcl.functions.objects.Section;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
@@ -37,16 +41,93 @@ public final class CompoundConstructionAfcl {
 	 * 
 	 * @param graph    the graph to annotate
 	 * @param function the function to model
+	 * @param workflow the afcl workflow object
 	 */
-	public static void addFunctionCompound(final EnactmentGraph graph, final Function function) {
+	public static void addFunctionCompound(final EnactmentGraph graph, final Function function, Workflow workflow) {
 		switch (UtilsAfcl.getCompoundType(function)) {
 		case Atomic: {
 			addAtomicFunctionWfLevel(graph, (AtomicFunction) function);
 			return;
 		}
+		case Sequence: {
+			addSequence(graph, (Sequence) function, workflow);
+			return;
+		}
+		case Parallel: {
+			addParallel(graph, (Parallel) function, workflow);
+			return;
+		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + UtilsAfcl.getCompoundType(function));
 		}
+	}
+
+	/**
+	 * Adds the nodes modeling the content of the given parallel compound to the
+	 * provided enactment graph.
+	 * 
+	 * @param graph the enactment graph 
+	 * @param parallel the parallel compound
+	 * @param workflow the afcl workflow object
+	 */
+	protected static void addParallel(final EnactmentGraph graph, final Parallel parallel, final Workflow workflow) {
+		for (Section section : parallel.getParallelBody()) {
+			for (Function function : section.getSection()) {
+				if (function instanceof AtomicFunction) {
+					addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);
+				}else {
+					addFunctionCompound(graph, function, workflow);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds the nodes modeling the content of the given sequence compound to the
+	 * provided enactment graph.
+	 * 
+	 * @param graph    the enactment graph
+	 * @param sequence the provided sequence compound
+	 * @param workflow the afcl workflow object
+	 */
+	protected static void addSequence(final EnactmentGraph graph, final Sequence sequence, Workflow workflow) {
+		for (Function function : sequence.getSequenceBody()) {
+			if (function instanceof AtomicFunction) {
+				addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);
+			} else {
+				addFunctionCompound(graph, function, workflow);
+			}
+		}
+	}
+
+	/**
+	 * Corrects the data in of the given atomic function to point directly to the
+	 * data input.
+	 * 
+	 * @param function the atomic function
+	 * @param workflow the afcl workflow object
+	 */
+	protected static void correctAtomicDataIns(AtomicFunction function, Workflow workflow) {
+		for (DataIns dataIn : AfclApiWrapper.getDataIns(function)) {
+			String srcString = dataIn.getSource();
+			String actualSrc = HierarchyLevellingAfcl.getSrcDataId(srcString, workflow);
+			dataIn.setSource(actualSrc);
+		}
+	}
+
+	/**
+	 * Adds the node modeling the given atomic function (which is described on a
+	 * compound level, i.e., not the highest level of the workflow) to the enactment
+	 * graph.
+	 * 
+	 * @param graph    the enactment graph
+	 * @param atomic   the atomic function
+	 * @param workflow the afcl workflow object
+	 */
+	protected static void addAtomicFunctionSubWfLevel(final EnactmentGraph graph, final AtomicFunction atomic,
+			final Workflow workflow) {
+		correctAtomicDataIns(atomic, workflow);
+		addAtomicFunctionWfLevel(graph, atomic);
 	}
 
 	/**

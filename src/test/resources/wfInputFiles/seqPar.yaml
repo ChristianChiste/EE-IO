@@ -122,10 +122,10 @@ workflowBody:
                       dataIns:
                         - name: "in1"
                           type: "number"
-                          source: "parallel2/par1In1"
+                          source: "parallel2/par2In1"
                         - name: "in2"
                           type: "number"
-                          source: "parallel2/par1In2"
+                          source: "parallel2/par2In2"
                       dataOuts:
                         - name: "out"
                           type: "number"
@@ -136,17 +136,17 @@ workflowBody:
                       dataIns:
                         - name: "in1"
                           type: "number"
-                          source: "parallel2/par1In3"
+                          source: "parallel2/par2In3"
                         - name: "in2"
                           type: "number"
-                          source: "parallel2/par1In4"
+                          source: "parallel2/par2In4"
                       dataOuts:
                         - name: "out"
                           type: "number"
             dataOuts:
               - name: "res1"
                 type: "number"
-                source: "func5/output"
+                source: "func5/out"
               - name: "res2"
                 type: "number"
                 source: "func6/out"

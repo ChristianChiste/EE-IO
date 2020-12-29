@@ -25,7 +25,8 @@ public class SeqParAfclTest {
 				numTasks++;
 			}
 		}
+		
 		assertEquals(7, numTasks);
-		assertEquals(9, numComms);
+		assertEquals(10, numComms);
 	}
 }

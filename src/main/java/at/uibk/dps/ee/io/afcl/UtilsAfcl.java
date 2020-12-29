@@ -2,6 +2,8 @@ package at.uibk.dps.ee.io.afcl;
 
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.functions.AtomicFunction;
+import at.uibk.dps.afcl.functions.Parallel;
+import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
@@ -27,7 +29,7 @@ public final class UtilsAfcl {
 	 *
 	 */
 	public enum CompoundType {
-		Atomic
+		Atomic, Sequence, Parallel
 	}
 
 	/**
@@ -39,6 +41,10 @@ public final class UtilsAfcl {
 	public static CompoundType getCompoundType(final Function function) {
 		if (function instanceof AtomicFunction) {
 			return CompoundType.Atomic;
+		} else if (function instanceof Sequence) {
+			return CompoundType.Sequence;
+		} else if (function instanceof Parallel) {
+			return CompoundType.Parallel;
 		} else {
 			throw new IllegalArgumentException(
 					"The function " + function.getName() + " is a compound of an unknown type.");

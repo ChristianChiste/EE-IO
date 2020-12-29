@@ -39,7 +39,7 @@ public final class GraphGenerationAfcl {
 		final EnactmentGraph result = new EnactmentGraph();
 		addWfInputNodes(result, AfclApiWrapper.getDataIns(afclWorkflow), AfclApiWrapper.getName(afclWorkflow));
 		addWfFunctions(result, afclWorkflow);
-		annotateWfOutputs(result, AfclApiWrapper.getDataOuts(afclWorkflow));
+		annotateWfOutputs(result, AfclApiWrapper.getDataOuts(afclWorkflow), afclWorkflow);
 		return result;
 	}
 
@@ -52,7 +52,7 @@ public final class GraphGenerationAfcl {
 	 */
 	protected static void addWfFunctions(final EnactmentGraph graph, final Workflow afclWorkflow) {
 		for (final Function function : afclWorkflow.getWorkflowBody()) {
-			CompoundConstructionAfcl.addFunctionCompound(graph, function);
+			CompoundConstructionAfcl.addFunctionCompound(graph, function, afclWorkflow);
 		}
 	}
 
@@ -62,11 +62,26 @@ public final class GraphGenerationAfcl {
 	 * 
 	 * @param graph    the enactment graph
 	 * @param dataOuts the list of afcl data outs
+	 * @param workflow the afcl workflow object
 	 */
-	protected static void annotateWfOutputs(final EnactmentGraph graph, final List<DataOuts> dataOuts) {
+	protected static void annotateWfOutputs(final EnactmentGraph graph, final List<DataOuts> dataOuts,
+			Workflow workflow) {
 		for (final DataOuts dataOut : dataOuts) {
+			correctDataOut(dataOut, workflow);
 			annotateWfOutput(graph, dataOut);
 		}
+	}
+
+	/**
+	 * Corrects the src of the given data out to point to the actual data.
+	 * 
+	 * @param dataOut the given data out
+	 * @param workflow the afcl wokflow object
+	 */
+	protected static void correctDataOut(DataOuts dataOut, Workflow workflow) {
+		String srcString = dataOut.getSource();
+		String correctSrc = HierarchyLevellingAfcl.getSrcDataId(srcString, workflow);
+		dataOut.setSource(correctSrc);
 	}
 
 	/**
@@ -97,7 +112,8 @@ public final class GraphGenerationAfcl {
 	 * @param dataIns the list of data ins of the workflow
 	 * @param wfName  the name of the workflow
 	 */
-	protected static void addWfInputNodes(final EnactmentGraph graph, final List<DataIns> dataIns, final String wfName) {
+	protected static void addWfInputNodes(final EnactmentGraph graph, final List<DataIns> dataIns,
+			final String wfName) {
 		for (final DataIns dataIn : dataIns) {
 			graph.addVertex(generateWfInputDataNode(dataIn, wfName));
 		}
