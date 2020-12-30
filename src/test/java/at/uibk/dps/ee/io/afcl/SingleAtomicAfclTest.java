@@ -3,6 +3,7 @@ package at.uibk.dps.ee.io.afcl;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.junit.Test;
@@ -29,8 +30,8 @@ public class SingleAtomicAfclTest {
 		EnactmentGraph result = GraphGenerationAfcl.generateEnactmentGraph(singleAtomicWf);
 
 		// test the general edge and node numbers
-		assertEquals(3, result.getVertexCount());
-		assertEquals(2, result.getEdgeCount());
+		assertEquals(4, result.getVertexCount());
+		assertEquals(3, result.getEdgeCount());
 
 		// test that we have the data ins and the data outs, set as root and leaf, type
 		// as well
@@ -52,19 +53,32 @@ public class SingleAtomicAfclTest {
 			}
 		}
 
-		assertEquals(1, roots.size());
+		assertEquals(2, roots.size());
 		assertEquals(1, leaves.size());
 		assertEquals(1, processes.size());
 
 		// check the nodes
 
-		// check the root
-		Task root = roots.iterator().next();
-		assertTrue(PropertyServiceData.isRoot(root));
+		// check the root and the constant data node
+		Iterator<Task> taskIterator = roots.iterator();
+		Task root1 = taskIterator.next();
+		Task root2 = taskIterator.next();
+
+		Task actualRoot = PropertyServiceData.isRoot(root1) ? root1 : root2;
+		Task constantData = PropertyServiceData.isRoot(root1) ? root2 : root1;
+
+		assertTrue(PropertyServiceData.isRoot(actualRoot));
 		assertEquals(UtilsAfcl.getDataNodeId(ConstantsTestCoreEEiO.wfNameAtomic, ConstantsTestCoreEEiO.inputNameAtomic),
-				root.getId());
-		assertEquals(ConstantsTestCoreEEiO.wfInputJsonNameAtomic, PropertyServiceData.getJsonKey(root));
-		assertEquals(DataType.Number, PropertyServiceData.getDataType(root));
+				actualRoot.getId());
+		assertEquals(ConstantsTestCoreEEiO.wfInputJsonNameAtomic, PropertyServiceData.getJsonKey(actualRoot));
+		assertEquals(DataType.Number, PropertyServiceData.getDataType(actualRoot));
+
+		assertFalse(PropertyServiceData.isRoot(constantData));
+		assertEquals(UtilsAfcl.getDataNodeId(ConstantsTestCoreEEiO.wfFunctionNameAtomic,
+				ConstantsTestCoreEEiO.wfFunctionConstantInputNameAtomic), constantData.getId());
+		assertEquals(DataType.Number, PropertyServiceData.getDataType(constantData));
+		assertEquals(ConstantsTestCoreEEiO.wfSingleAtomicConstant,
+				PropertyServiceData.getContent(constantData).getAsInt());
 
 		// check the leaf
 		Task leaf = leaves.iterator().next();
@@ -85,16 +99,26 @@ public class SingleAtomicAfclTest {
 		Set<Dependency> inEdges = new HashSet<Dependency>(result.getInEdges(func));
 		Set<Dependency> outEdges = new HashSet<Dependency>(result.getOutEdges(func));
 
-		assertEquals(1, inEdges.size());
+		assertEquals(2, inEdges.size());
 		assertEquals(1, outEdges.size());
 
-		Dependency inputEdge = inEdges.iterator().next();
+		Iterator<Dependency> edgeIterator = inEdges.iterator();
+		Dependency inputEdge1 = edgeIterator.next();
+		Dependency inputEdge2 = edgeIterator.next();
+
+		Dependency edgeToRoot = result.getEndpoints(inputEdge1).getFirst().equals(actualRoot) ? inputEdge1 : inputEdge2;
+		Dependency edgeToConstant = result.getEndpoints(inputEdge1).getFirst().equals(actualRoot) ? inputEdge2
+				: inputEdge1;
+
 		Dependency outputEdge = outEdges.iterator().next();
 
-		assertEquals(root, result.getEndpoints(inputEdge).getFirst());
+		assertEquals(actualRoot, result.getEndpoints(edgeToRoot).getFirst());
+		assertEquals(constantData, result.getEndpoints(edgeToConstant).getFirst());
 		assertEquals(leaf, result.getEndpoints(outputEdge).getSecond());
 
-		assertEquals(ConstantsTestCoreEEiO.wfFunctionInputNameAtomic, PropertyServiceDependency.getJsonKey(inputEdge));
+		assertEquals(ConstantsTestCoreEEiO.wfFunctionInputNameAtomic, PropertyServiceDependency.getJsonKey(edgeToRoot));
+		assertEquals(ConstantsTestCoreEEiO.wfFunctionConstantInputNameAtomic,
+				PropertyServiceDependency.getJsonKey(edgeToConstant));
 		assertEquals(ConstantsTestCoreEEiO.wfFunctionOutputNameAtomic,
 				PropertyServiceDependency.getJsonKey(outputEdge));
 	}

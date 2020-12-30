@@ -81,6 +81,22 @@ public class UtilsAfclTest {
 		assertEquals(producerString, UtilsAfcl.getProducerId(srcString));
 		assertEquals(dataIdString, UtilsAfcl.getDataId(srcString));
 	}
+	
+	@Test
+	public void testSrcStringCheck() {
+		String producerString = "source";
+		String dataIdString = "data";
+		String constString = "5";
+		
+		String correct = producerString + ConstantsAfcl.SourceAffix + dataIdString;
+		String incorrect1 = ConstantsAfcl.SourceAffix + dataIdString;
+		String incorrect2 = producerString + ConstantsAfcl.SourceAffix;
+		
+		assertTrue(UtilsAfcl.isSrcString(correct));
+		assertFalse(UtilsAfcl.isSrcString(incorrect1));
+		assertFalse(UtilsAfcl.isSrcString(incorrect2));
+		assertFalse(UtilsAfcl.isSrcString(constString));
+	}
 
 	@Test
 	public void testIsSetResLinkAtomFunc() {

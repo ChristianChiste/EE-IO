@@ -151,6 +151,17 @@ public final class UtilsAfcl {
 	}
 
 	/**
+	 * Returns true iff the provided string describes data produced by a producer.
+	 * 
+	 * @param srcString the string to check
+	 * @return true iff the provided string describes data produced by a producer
+	 */
+	public static boolean isSrcString(final String srcString) {
+		final String affix = ConstantsAfcl.SourceAffix;
+		return (srcString.contains(affix)) && (!srcString.startsWith(affix)) && (!srcString.endsWith(affix));
+	}
+
+	/**
 	 * Reads the producer ID from the given srcString
 	 * 
 	 * @param srcString the given srcString

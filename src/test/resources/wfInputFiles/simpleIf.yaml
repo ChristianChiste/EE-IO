@@ -1,0 +1,75 @@
+---
+name: "simple_if"
+dataIns:
+  - name: "input1"
+    type: "number"
+    source: "a"
+  - name: "input2"
+    type: "number"
+    source: "b"
+  - name: "cond1"
+    type: "bool"
+    source: "c1"
+  - name: "cond2"
+    type: "string"      
+workflowBody:
+  - if:
+      name: "ifCompound"
+      dataIns:
+        - name: "num1"
+          type: "number"
+          source: "simple_if/input1"
+        - name: "num2"
+          type: "number"
+          source: "simple_if/input1"
+        - name: "c1"
+          type: "bool"
+          source: "simple_if/cond1"
+        - name: "c2"
+          type: "string"
+          source: "simple_if/cond2"                    
+      condition:
+        combinedWith: "and"
+        conditions:
+          - data1: "ifCompound/c1"
+            data2: "true"
+            operator: "=="
+          - data1: "simple_if/cond2"
+            data2: "abc"
+            operator: "startsWith"
+      then:
+        - function:
+            name: "func1"
+            type: "local"
+            dataIns:
+              - name: "firstIn"
+                type: "number"
+                source: "simple_if/input1"
+              - name: "secondIn"
+                type: "number"
+                source: "5"                
+            dataOuts:
+              - name: "output"
+                type: "number"
+      else:
+        - function:
+            name: "func2"
+            type: "local"
+            dataIns:
+              - name: "firstIn"
+                type: "number"
+                source: "ifCompound/num1"
+              - name: "secondIn"
+                type: "number"
+                source: "ifCompound/num2"                
+            dataOuts:
+              - name: "out"
+                type: "number"
+      dataOuts:
+        - name: "res"
+          type: "number"
+          source: "func1/output,func2/out"
+dataOuts:
+  - name: "wf_result"
+    type: "result"
+    source: "ifCompound/res"

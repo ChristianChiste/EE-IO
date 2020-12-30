@@ -19,8 +19,10 @@ public class ConstantsTestCoreEEiO {
 	public static final String wfInputJsonNameAtomic = "inputSource";
 	public static final String wfFunctionNameAtomic = "atomicFunction";
 	public static final String wfFunctionInputNameAtomic = "myInput";
+	public static final String wfFunctionConstantInputNameAtomic = "myInput2";
 	public static final String wfFunctionOutputNameAtomic = "myOutput";
 	public static final String wfFunctionResourceNameAtomic = "my_res_link";
+	public static final int wfSingleAtomicConstant = 5;
 
 	// constants for the read/write test
 	public static final String xmlFileTestReadWrite = "src/test/resources/xmlFiles/testAtomicWrite.xml";

@@ -1,5 +1,8 @@
 package at.uibk.dps.ee.io.afcl;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
@@ -43,7 +46,8 @@ public final class CompoundConstructionAfcl {
 	 * @param function the function to model
 	 * @param workflow the afcl workflow object
 	 */
-	public static void addFunctionCompound(final EnactmentGraph graph, final Function function, final Workflow workflow) {
+	public static void addFunctionCompound(final EnactmentGraph graph, final Function function,
+			final Workflow workflow) {
 		switch (UtilsAfcl.getCompoundType(function)) {
 		case Atomic: {
 			addAtomicFunctionWfLevel(graph, (AtomicFunction) function);
@@ -66,7 +70,7 @@ public final class CompoundConstructionAfcl {
 	 * Adds the nodes modeling the content of the given parallel compound to the
 	 * provided enactment graph.
 	 * 
-	 * @param graph the enactment graph 
+	 * @param graph    the enactment graph
 	 * @param parallel the parallel compound
 	 * @param workflow the afcl workflow object
 	 */
@@ -75,7 +79,7 @@ public final class CompoundConstructionAfcl {
 			for (final Function function : section.getSection()) {
 				if (function instanceof AtomicFunction) {
 					addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);
-				}else {
+				} else {
 					addFunctionCompound(graph, function, workflow);
 				}
 			}
@@ -142,7 +146,11 @@ public final class CompoundConstructionAfcl {
 		final Task atomicTask = createTaskFromAtomicFunction(atomicFunc);
 		// process the inputs
 		for (final DataIns dataIn : AfclApiWrapper.getDataIns(atomicFunc)) {
-			addDataIn(graph, atomicTask, dataIn);
+			if (UtilsAfcl.isSrcString(AfclApiWrapper.getSource(dataIn))) {
+				addDataInDefault(graph, atomicTask, dataIn);
+			} else {
+				addDataInConstant(graph, atomicTask, dataIn);
+			}
 		}
 		// process the outputs
 		for (final DataOutsAtomic dataOut : AfclApiWrapper.getDataOuts(atomicFunc)) {
@@ -173,6 +181,27 @@ public final class CompoundConstructionAfcl {
 	}
 
 	/**
+	 * Processes the given dataIn representing constant data: generates a constant
+	 * data node and connects it to the function node.
+	 * 
+	 * @param graph    the enactment graph
+	 * @param function the node modeling the function with the given data in
+	 * @param dataIn   the given data in (representing a constant input)
+	 */
+	protected static void addDataInConstant(final EnactmentGraph graph, final Task function, final DataIns dataIn) {
+		final String jsonKey = AfclApiWrapper.getName(dataIn);
+		final String dataNodeId = function.getId() + ConstantsAfcl.SourceAffix + jsonKey;
+		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+		final String jsonString = AfclApiWrapper.getSource(dataIn);
+		final JsonElement content = JsonParser.parseString(jsonString);
+
+		final Task constantDataNode = PropertyServiceData.createConstantNode(dataNodeId, dataType, content);
+		final Dependency dependency = PropertyServiceDependency.createDependency(constantDataNode, function);
+		PropertyServiceDependency.setJsonKey(dependency, jsonKey);
+		graph.addEdge(dependency, constantDataNode, function, EdgeType.DIRECTED);
+	}
+
+	/**
 	 * Processes the given data in by adding an edge (if data already in graph) or
 	 * an edge and a data node (if data not yet in graph) to the graph.
 	 * 
@@ -180,8 +209,12 @@ public final class CompoundConstructionAfcl {
 	 * @param function the node modeling the function with the given data in
 	 * @param dataIn   the given data in
 	 */
-	protected static void addDataIn(final EnactmentGraph graph, final Task function, final DataIns dataIn) {
+	protected static void addDataInDefault(final EnactmentGraph graph, final Task function, final DataIns dataIn) {
 		final String dataNodeId = AfclApiWrapper.getSource(dataIn);
+		final String srcFunc = UtilsAfcl.getProducerId(dataNodeId);
+		if (srcFunc.equals(function.getId())) {
+			throw new IllegalStateException("Function " + function.getId() + " depends on itself.");
+		}
 		final String jsonKey = AfclApiWrapper.getName(dataIn);
 		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 		// retrieve or create the data node

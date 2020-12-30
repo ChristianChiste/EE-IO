@@ -12,6 +12,9 @@ workflowBody:
         - name: "myInput"
           type: "number"
           source: "single Atomic/input_name"
+        - name: "myInput2"
+          type: "number"
+          source: "5"          
       dataOuts: 
         - name: "myOutput"
           type: "string"
