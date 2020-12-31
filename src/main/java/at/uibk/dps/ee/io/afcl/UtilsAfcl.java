@@ -158,7 +158,7 @@ public final class UtilsAfcl {
 	 */
 	public static boolean isSrcString(final String srcString) {
 		final String affix = ConstantsAfcl.SourceAffix;
-		return (srcString.contains(affix)) && (!srcString.startsWith(affix)) && (!srcString.endsWith(affix));
+		return srcString.contains(affix) && !srcString.startsWith(affix) && !srcString.endsWith(affix);
 	}
 
 	/**
