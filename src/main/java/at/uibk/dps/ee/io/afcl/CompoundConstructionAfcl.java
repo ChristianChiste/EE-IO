@@ -197,6 +197,7 @@ public final class CompoundConstructionAfcl {
 
 		final Task constantDataNode = PropertyServiceData.createConstantNode(dataNodeId, dataType, content);
 		final Dependency dependency = PropertyServiceDependency.createDependency(constantDataNode, function);
+		PropertyServiceDependency.setType(dependency, TypeDependency.Data);
 		PropertyServiceDependency.setJsonKey(dependency, jsonKey);
 		graph.addEdge(dependency, constantDataNode, function, EdgeType.DIRECTED);
 	}

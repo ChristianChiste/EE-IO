@@ -13,6 +13,7 @@ import at.uibk.dps.ee.io.testconstants.ConstantsTestCoreEEiO;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
+import at.uibk.dps.ee.model.properties.PropertyServiceDependency.TypeDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
@@ -111,6 +112,10 @@ public class SingleAtomicAfclTest {
 				: inputEdge1;
 
 		Dependency outputEdge = outEdges.iterator().next();
+		
+		assertEquals(TypeDependency.Data, PropertyServiceDependency.getType(outputEdge));
+		assertEquals(TypeDependency.Data, PropertyServiceDependency.getType(edgeToRoot));
+		assertEquals(TypeDependency.Data, PropertyServiceDependency.getType(edgeToConstant));
 
 		assertEquals(actualRoot, result.getEndpoints(edgeToRoot).getFirst());
 		assertEquals(constantData, result.getEndpoints(edgeToConstant).getFirst());
