@@ -6,6 +6,7 @@ import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.afcl.functions.objects.DataOuts;
+import at.uibk.dps.ee.io.validation.GraphValidation;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
@@ -40,6 +41,7 @@ public final class GraphGenerationAfcl {
 		addWfInputNodes(result, AfclApiWrapper.getDataIns(afclWorkflow), AfclApiWrapper.getName(afclWorkflow));
 		addWfFunctions(result, afclWorkflow);
 		annotateWfOutputs(result, AfclApiWrapper.getDataOuts(afclWorkflow), afclWorkflow);
+		GraphValidation.validateGraph(result);
 		return result;
 	}
 

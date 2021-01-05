@@ -6,8 +6,10 @@ import java.util.List;
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
+import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.Sequence;
+import at.uibk.dps.afcl.functions.objects.ACondition;
 import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.afcl.functions.objects.DataOuts;
 import at.uibk.dps.afcl.functions.objects.DataOutsAtomic;
@@ -78,7 +80,7 @@ public final class AfclApiWrapper {
 		throw new IllegalArgumentException(
 				"Function " + func.getName() + " does not have a data in with name " + dInName);
 	}
-	
+
 	public static String getDataOutSrc(Function func, String dOutName) {
 		for (DataOuts dOut : getDataOuts(func)) {
 			if (dOut.getName().equals(dOutName)) {
@@ -123,6 +125,13 @@ public final class AfclApiWrapper {
 		}
 	}
 
+	public static String getName(IfThenElse ifCompound) {
+		if (ifCompound.getName() == null) {
+			throw new IllegalArgumentException("Name not set for if compound");
+		}
+		return ifCompound.getName();
+	}
+
 	public static String getName(DataIns dataIn) {
 		if (dataIn.getName() == null) {
 			throw new IllegalArgumentException("Name not set for data in");
@@ -137,6 +146,13 @@ public final class AfclApiWrapper {
 		return dataIn.getSource();
 	}
 
+	public static String getSource(DataOuts dataOut) {
+		if (dataOut.getSource() == null) {
+			throw new IllegalArgumentException("Source not set for data in " + getName(dataOut));
+		}
+		return dataOut.getSource();
+	}
+	
 	public static String getName(DataOuts dataOut) {
 		if (dataOut.getName() == null) {
 			throw new IllegalArgumentException("Name not set for data out");
@@ -174,6 +190,20 @@ public final class AfclApiWrapper {
 		}
 	}
 
+	public static boolean getNegation(ACondition condition) {
+		if (condition.getNegation() == null) {
+			return false;
+		}
+		String negString = condition.getNegation();
+		if (negString.equals(ConstantsAfcl.afclTrue)) {
+			return true;
+		} else if (negString.equals(ConstantsAfcl.afclFalse)) {
+			return false;
+		} else {
+			throw new IllegalArgumentException("Unknown negation string " + negString);
+		}
+	}
+
 	public static List<DataIns> getDataIns(Function func) {
 		if (func instanceof AtomicFunction) {
 			return getDataIns((AtomicFunction) func);
@@ -181,6 +211,8 @@ public final class AfclApiWrapper {
 			return getDataIns((Parallel) func);
 		} else if (func instanceof Sequence) {
 			return getDataIns((Sequence) func);
+		} else if (func instanceof IfThenElse) {
+			return getDataIns((IfThenElse) func);
 		} else {
 			throw new IllegalStateException("Not yet implemented.");
 		}
@@ -191,9 +223,18 @@ public final class AfclApiWrapper {
 			return getDataOuts((Parallel) func);
 		} else if (func instanceof Sequence) {
 			return getDataOuts((Sequence) func);
+		} else if (func instanceof IfThenElse) {
+			return getDataOuts((IfThenElse) func);
 		} else {
 			throw new IllegalStateException("Not yet implemented.");
 		}
+	}
+
+	public static List<DataIns> getDataIns(IfThenElse ifCompound) {
+		if (ifCompound.getDataIns() == null) {
+			return new ArrayList<>();
+		}
+		return ifCompound.getDataIns();
 	}
 
 	public static List<DataIns> getDataIns(AtomicFunction atomFunc) {
@@ -241,6 +282,14 @@ public final class AfclApiWrapper {
 			return new ArrayList<>();
 		} else {
 			return seq.getDataOuts();
+		}
+	}
+
+	public static List<DataOuts> getDataOuts(IfThenElse ifCompound) {
+		if (ifCompound.getDataOuts() == null) {
+			return new ArrayList<>();
+		} else {
+			return ifCompound.getDataOuts();
 		}
 	}
 }

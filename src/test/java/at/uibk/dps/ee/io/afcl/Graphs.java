@@ -20,18 +20,20 @@ public class Graphs {
 	}
 
 	public static Workflow getSingleAtomicWf() {
-		try {
-			byte[] data = UtilsSocket.readFileToBytes(ConstantsTestCoreEEiO.cfclFileSingleAtomic);
-			return AfclReader.bytes2Workflow(data);
-		} catch (IOException ioExc) {
-			fail("IOException when getting the SingleAtomic workflow");
-			return null;
-		}
+		return getWf(ConstantsTestCoreEEiO.cfclFileSingleAtomic);
 	}
 
 	public static Workflow getSeqParWf() {
+		return getWf(ConstantsTestCoreEEiO.cfclFileSeqPar);
+	}
+	
+	public static Workflow getIfWf() {
+		return getWf(ConstantsTestCoreEEiO.cfclFileIf);
+	}
+	
+	protected static Workflow getWf(String fileName) {
 		try {
-			byte[] data = UtilsSocket.readFileToBytes(ConstantsTestCoreEEiO.cfclFileSeqPar);
+			byte[] data = UtilsSocket.readFileToBytes(fileName);
 			return AfclReader.bytes2Workflow(data);
 		} catch (IOException ioExc) {
 			fail("IOException when getting the SeqPar workflow");

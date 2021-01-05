@@ -2,11 +2,14 @@ package at.uibk.dps.ee.io.afcl;
 
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.functions.AtomicFunction;
+import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
+import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
 
 /**
  * Convenience methods for working with the AFCL classes and syntax.
@@ -29,7 +32,7 @@ public final class UtilsAfcl {
 	 *
 	 */
 	public enum CompoundType {
-		Atomic, Sequence, Parallel
+		Atomic, Sequence, Parallel, If
 	}
 
 	/**
@@ -45,9 +48,76 @@ public final class UtilsAfcl {
 			return CompoundType.Sequence;
 		} else if (function instanceof Parallel) {
 			return CompoundType.Parallel;
+		} else if (function instanceof IfThenElse) {
+			return CompoundType.If;
 		} else {
 			throw new IllegalArgumentException(
 					"The function " + function.getName() + " is a compound of an unknown type.");
+		}
+	}
+
+	/**
+	 * Returns the operator object for the given afcl string.
+	 * 
+	 * @param afclOperatorString the given afcl string
+	 * @return the {@link Operator} object
+	 */
+	public static Operator getOperatorForString(String afclOperatorString) {
+		switch (afclOperatorString) {
+		case ConstantsAfcl.operatorStringContains: {
+			return Operator.CONTAINS;
+		}
+		case ConstantsAfcl.operatorStringEndsWith: {
+			return Operator.ENDS_WITH;
+		}
+		case ConstantsAfcl.operatorStringStartsWith: {
+			return Operator.STARTS_WITH;
+		}
+		case ConstantsAfcl.operatorStringEqual: {
+			return Operator.EQUAL;
+		}
+		case ConstantsAfcl.operatorStringUnequal: {
+			return Operator.UNEQUAL;
+		}
+		case ConstantsAfcl.operatorStringLess: {
+			return Operator.LESS;
+		}
+		case ConstantsAfcl.operatorStringLessEqual: {
+			return Operator.LESS_EQUAL;
+		}
+		case ConstantsAfcl.operatorStringGreater: {
+			return Operator.GREATER;
+		}
+		case ConstantsAfcl.operatorStringGreaterEqual: {
+			return Operator.GREATER_EQUAL;
+		}
+		case ConstantsAfcl.operatorStringAnd: {
+			return Operator.AND;
+		}
+		case ConstantsAfcl.operatorStringOr: {
+			return Operator.OR;
+		}
+		default:
+			throw new IllegalArgumentException("Unknown operator string: " + afclOperatorString);
+		}
+	}
+
+	/**
+	 * Returns the summary object for the given afcl string.
+	 * 
+	 * @param summaryString the afcl string
+	 * @return the summary object for the given afcl string
+	 */
+	public static Summary getSummaryForString(String summaryString) {
+		switch (summaryString) {
+		case ConstantsAfcl.summaryStringAnd:
+			return Summary.AND;
+
+		case ConstantsAfcl.summaryStringOr:
+			return Summary.OR;
+
+		default:
+			throw new IllegalArgumentException("Unknown summary string: " + summaryString);
 		}
 	}
 
@@ -77,7 +147,7 @@ public final class UtilsAfcl {
 			return DataType.String;
 		}
 		default:
-			throw new IllegalArgumentException("Data type string: " + afclString);
+			throw new IllegalArgumentException("Unknown data type string: " + afclString);
 		}
 	}
 
@@ -192,5 +262,54 @@ public final class UtilsAfcl {
 	 */
 	protected static String getSrcSubString(final String srcString, final boolean producer) {
 		return producer ? srcString.split(ConstantsAfcl.SourceAffix)[0] : srcString.split(ConstantsAfcl.SourceAffix)[1];
+	}
+
+	/**
+	 * Returns true iff the given string describes the src of a data out of an if
+	 * compound.
+	 * 
+	 * @param srcString the src string
+	 * @return true iff the given string describes the src of a data out of an if
+	 *         compound
+	 */
+	public static boolean isIfOutSrc(String srcString) {
+		return srcString.contains(ConstantsAfcl.IfFuncSeparator);
+	}
+
+	/**
+	 * Returns the substring of the first function read from the given if src
+	 * string.
+	 * 
+	 * @param srcString the if src string
+	 * @return the substring of the first function read from the given if src string
+	 */
+	public static String getFirstSubStringIfOut(String srcString) {
+		return getIfOutSubString(srcString, true);
+	}
+
+	/**
+	 * Returns the substring of the second function read from the given if src
+	 * string.
+	 * 
+	 * @param srcString the if src string
+	 * @return the substring of the second function read from the given if src
+	 *         string
+	 */
+	public static String getSecondSubStringIfOut(String srcString) {
+		return getIfOutSubString(srcString, false);
+	}
+
+	/**
+	 * Returns either the first of the second substring of the given src string of
+	 * an if out.
+	 * 
+	 * @param srcString the given string
+	 * @param first     true iff asking for the first string
+	 * @return either the first of the second substring of the given src string of
+	 *         an if out
+	 */
+	protected static String getIfOutSubString(String srcString, boolean first) {
+		return first ? srcString.split(ConstantsAfcl.IfFuncSeparator)[0]
+				: srcString.split(ConstantsAfcl.IfFuncSeparator)[1];
 	}
 }

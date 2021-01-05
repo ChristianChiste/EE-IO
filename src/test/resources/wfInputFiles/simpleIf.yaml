@@ -11,7 +11,8 @@ dataIns:
     type: "bool"
     source: "c1"
   - name: "cond2"
-    type: "string"      
+    type: "string"
+    source: "c2"        
 workflowBody:
   - if:
       name: "ifCompound"
@@ -21,7 +22,7 @@ workflowBody:
           source: "simple_if/input1"
         - name: "num2"
           type: "number"
-          source: "simple_if/input1"
+          source: "simple_if/input2"
         - name: "c1"
           type: "bool"
           source: "simple_if/cond1"
@@ -33,10 +34,11 @@ workflowBody:
         conditions:
           - data1: "ifCompound/c1"
             data2: "true"
-            operator: "=="
+            operator: "AND"
           - data1: "simple_if/cond2"
             data2: "abc"
             operator: "startsWith"
+            negation: "true"
       then:
         - function:
             name: "func1"
@@ -71,5 +73,5 @@ workflowBody:
           source: "func1/output,func2/out"
 dataOuts:
   - name: "wf_result"
-    type: "result"
+    type: "number"
     source: "ifCompound/res"

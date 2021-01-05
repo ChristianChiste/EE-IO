@@ -3,6 +3,7 @@ package at.uibk.dps.ee.io.afcl;
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
+import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.DataOutsAtomic;
@@ -50,6 +51,15 @@ public final class HierarchyLevellingAfcl {
 			} else {
 				// points to data out
 				return getSrcDataId(AfclApiWrapper.getDataOutSrc(function, dataName), workflow);
+			}
+		} else if (function instanceof IfThenElse) {
+			// pointing to an if compound
+			if (AfclApiWrapper.pointsToInput(afclSource, function)) {
+				// points to data in
+				return getSrcDataId(AfclApiWrapper.getDataInSrc(function, dataName), workflow);
+			}else {
+				// points to data out of if compound => there should be a data node with the data out src as id
+				return AfclApiWrapper.getDataOutSrc(function, dataName);
 			}
 		} else {
 			throw new IllegalStateException("Not yet implemented.");
