@@ -23,7 +23,6 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunctionSyntax.SyntaxType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
-import at.uibk.dps.ee.visualization.model.EnactmentGraphViewer;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility;
 import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
@@ -36,8 +35,6 @@ public class IfAfclTest {
 		Workflow wf = Graphs.getIfWf();
 
 		EnactmentGraph result = GraphGenerationAfcl.generateEnactmentGraph(wf);
-
-		EnactmentGraphViewer.view(result);
 		
 		// test the node and edge number
 		int funcNum = 0;

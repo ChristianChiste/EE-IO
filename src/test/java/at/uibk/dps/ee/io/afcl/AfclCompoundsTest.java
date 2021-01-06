@@ -13,7 +13,7 @@ import at.uibk.dps.ee.model.properties.PropertyServiceData.NodeType;
 import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
 
-public class CompoundConstructionAfclTest {
+public class AfclCompoundsTest {
 
 	@Test
 	public void testAddConstantDataNode() {
@@ -28,7 +28,7 @@ public class CompoundConstructionAfclTest {
 		dataIn.setType("number");
 		dataIn.setSource("5");
 
-		CompoundConstructionAfcl.addDataInConstant(graph, function, dataIn);
+		AfclCompounds.addDataInConstant(graph, function, dataIn);
 
 		assertEquals(1, graph.getEdgeCount());
 		assertEquals(2, graph.getVertexCount());
