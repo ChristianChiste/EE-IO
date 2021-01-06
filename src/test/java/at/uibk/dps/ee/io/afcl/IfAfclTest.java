@@ -13,6 +13,9 @@ import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.objects.Condition;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
+import at.uibk.dps.ee.model.properties.PropertyServiceData;
+import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
+import at.uibk.dps.ee.model.properties.PropertyServiceData.NodeType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency.TypeDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependencyControlIf;
@@ -75,7 +78,7 @@ public class IfAfclTest {
 		}
 		assertNotNull(choiceFunc);
 		assertNotNull(condFunc);
-		
+
 		String condFuncId = ConstantsTestCoreEEiO.simpleIfIfName;
 		assertEquals(condFuncId, condFunc.getId());
 
@@ -91,6 +94,13 @@ public class IfAfclTest {
 		Task condInput2 = result.getVertex(ConstantsTestCoreEEiO.simpleIfConditionInput2Name);
 		Task condConst1 = result.getVertex(ConstantsTestCoreEEiO.simpleIfConditionConst1Name);
 		Task condConst2 = result.getVertex(ConstantsTestCoreEEiO.simpleIfConditionConst2Name);
+
+		assertEquals(NodeType.Constant, PropertyServiceData.getNodeType(condConst1));
+		assertEquals(NodeType.Constant, PropertyServiceData.getNodeType(condConst2));
+		assertEquals(DataType.Boolean, PropertyServiceData.getDataType(condConst1));
+		assertTrue(PropertyServiceData.getContent(condConst1).getAsBoolean());
+		assertEquals(DataType.String, PropertyServiceData.getDataType(condConst2));
+		assertEquals("abc", PropertyServiceData.getContent(condConst2).getAsString());
 
 		// get the data successor node
 		String conditionVertexId = ConstantsTestCoreEEiO.simpleIfIfName + ConstantsEEModel.DecisionVariableSuffix;
@@ -142,12 +152,13 @@ public class IfAfclTest {
 		// test the choice function node
 		assertNotNull(result.getVertex(ConstantsTestCoreEEiO.simpleIfFunc1OutName));
 		assertNotNull(result.getVertex(ConstantsTestCoreEEiO.simpleIfFunc2OutName));
-		String func1func2Name = ConstantsTestCoreEEiO.simpleIfFunc1OutName + ConstantsAfcl.IfFuncSeparator + ConstantsTestCoreEEiO.simpleIfFunc2OutName;
+		String func1func2Name = ConstantsTestCoreEEiO.simpleIfFunc1OutName + ConstantsAfcl.IfFuncSeparator
+				+ ConstantsTestCoreEEiO.simpleIfFunc2OutName;
 		assertNotNull(result.getVertex(func1func2Name));
-		
+
 		Task func1Out = result.getVertex(ConstantsTestCoreEEiO.simpleIfFunc1OutName);
 		Task func2Out = result.getVertex(ConstantsTestCoreEEiO.simpleIfFunc2OutName);
-		Task func1func2Out = result.getVertex(func1func2Name); 
+		Task func1func2Out = result.getVertex(func1func2Name);
 
 		// its in- and out edges
 		Set<Task> choicePred = new HashSet<>(result.getPredecessors(choiceFunc));

@@ -217,10 +217,10 @@ public final class AfclCompoundsIf {
 		final String secondInput = getConditionDataSrc(condition.getData2(), conditionFunction.getId(), workflow);
 		final Operator operator = UtilsAfcl.getOperatorForString(condition.getOperator());
 		final DataType dataType = operator.getDataType();
-		addConditionIn(graph, conditionFunction, firstInput, dataType);
-		addConditionIn(graph, conditionFunction, secondInput, dataType);
+		final Task conditionInFirst = addConditionIn(graph, conditionFunction, firstInput, dataType);
+		final Task conditionInSecond = addConditionIn(graph, conditionFunction, secondInput, dataType);
 		final boolean negation = AfclApiWrapper.getNegation(condition);
-		return new Condition(firstInput, secondInput, operator, negation);
+		return new Condition(conditionInFirst.getId(), conditionInSecond.getId(), operator, negation);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public final class AfclCompoundsIf {
 		if (UtilsAfcl.isSrcString(conditionDataString)) {
 			return HierarchyLevellingAfcl.getSrcDataId(conditionDataString, workflow);
 		} else {
-			return conditionFunctionId + ConstantsAfcl.SourceAffix + conditionDataString;
+			return conditionDataString;
 		}
 	}
 
@@ -249,13 +249,14 @@ public final class AfclCompoundsIf {
 	 * @param conditionFunction the function node modeling the condition function
 	 * @param dataString        the data string
 	 * @param dataType          the data type
+	 * @return the created data node
 	 */
-	protected static void addConditionIn(final EnactmentGraph graph, final Task conditionFunction,
+	protected static Task addConditionIn(final EnactmentGraph graph, final Task conditionFunction,
 			final String dataString, final DataType dataType) {
 		if (UtilsAfcl.isSrcString(dataString)) {
-			addConditionInDefault(graph, conditionFunction, dataString, dataType);
+			return addConditionInDefault(graph, conditionFunction, dataString, dataType);
 		} else {
-			addConditionInConstant(graph, conditionFunction, dataString, dataType);
+			return addConditionInConstant(graph, conditionFunction, dataString, dataType);
 		}
 	}
 
@@ -267,17 +268,19 @@ public final class AfclCompoundsIf {
 	 * @param conditionFunction the node modeling the condition function
 	 * @param dataString        the src string
 	 * @param dataType          the expected data type
+	 * @return the created data node
 	 */
-	protected static void addConditionInConstant(final EnactmentGraph graph, final Task conditionFunction,
+	protected static Task addConditionInConstant(final EnactmentGraph graph, final Task conditionFunction,
 			final String dataString, final DataType dataType) {
 		final String dataNodeId = conditionFunction.getId() + ConstantsAfcl.SourceAffix + dataString;
 		final String jsonKey = dataNodeId;
 		final JsonElement content = JsonParser.parseString(dataString);
 
-		final Task constantDataNode = PropertyServiceData.createConstantNode(dataNodeId, dataType, content);
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(constantDataNode,
-				conditionFunction, jsonKey);
-		graph.addEdge(dependency, constantDataNode, conditionFunction, EdgeType.DIRECTED);
+		final Task result = PropertyServiceData.createConstantNode(dataNodeId, dataType, content);
+		final Dependency dependency = PropertyServiceDependency.createDataDependency(result, conditionFunction,
+				jsonKey);
+		graph.addEdge(dependency, result, conditionFunction, EdgeType.DIRECTED);
+		return result;
 	}
 
 	/**
@@ -288,13 +291,15 @@ public final class AfclCompoundsIf {
 	 * @param conditionFunction the node modeling the condition function
 	 * @param dataString        the src string
 	 * @param dataType          the expected data type
+	 * @return the created data node
 	 */
-	protected static void addConditionInDefault(final EnactmentGraph graph, final Task conditionFunction,
+	protected static Task addConditionInDefault(final EnactmentGraph graph, final Task conditionFunction,
 			final String dataString, final DataType dataType) {
 		final String jsonKey = dataString;
-		final Task dataNode = AfclCompounds.assureDataNodePresence(dataString, dataType, graph);
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(dataNode, conditionFunction,
+		final Task result = AfclCompounds.assureDataNodePresence(dataString, dataType, graph);
+		final Dependency dependency = PropertyServiceDependency.createDataDependency(result, conditionFunction,
 				jsonKey);
-		graph.addEdge(dependency, dataNode, conditionFunction, EdgeType.DIRECTED);
+		graph.addEdge(dependency, result, conditionFunction, EdgeType.DIRECTED);
+		return result;
 	}
 }
