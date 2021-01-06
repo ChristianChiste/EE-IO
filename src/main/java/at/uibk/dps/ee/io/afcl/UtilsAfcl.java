@@ -62,7 +62,7 @@ public final class UtilsAfcl {
 	 * @param afclOperatorString the given afcl string
 	 * @return the {@link Operator} object
 	 */
-	public static Operator getOperatorForString(String afclOperatorString) {
+	public static Operator getOperatorForString(final String afclOperatorString) {
 		switch (afclOperatorString) {
 		case ConstantsAfcl.operatorStringContains: {
 			return Operator.CONTAINS;
@@ -108,7 +108,7 @@ public final class UtilsAfcl {
 	 * @param summaryString the afcl string
 	 * @return the summary object for the given afcl string
 	 */
-	public static Summary getSummaryForString(String summaryString) {
+	public static Summary getSummaryForString(final String summaryString) {
 		switch (summaryString) {
 		case ConstantsAfcl.summaryStringAnd:
 			return Summary.AND;
@@ -272,7 +272,7 @@ public final class UtilsAfcl {
 	 * @return true iff the given string describes the src of a data out of an if
 	 *         compound
 	 */
-	public static boolean isIfOutSrc(String srcString) {
+	public static boolean isIfOutSrc(final String srcString) {
 		return srcString.contains(ConstantsAfcl.IfFuncSeparator);
 	}
 
@@ -308,7 +308,7 @@ public final class UtilsAfcl {
 	 * @return either the first of the second substring of the given src string of
 	 *         an if out
 	 */
-	protected static String getIfOutSubString(String srcString, boolean first) {
+	protected static String getIfOutSubString(final String srcString, final boolean first) {
 		return first ? srcString.split(ConstantsAfcl.IfFuncSeparator)[0]
 				: srcString.split(ConstantsAfcl.IfFuncSeparator)[1];
 	}

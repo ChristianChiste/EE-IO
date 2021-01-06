@@ -57,13 +57,13 @@ public final class AfclCompoundsIf {
 	 */
 	protected static void addIf(final EnactmentGraph graph, final IfThenElse ifCompound, final Workflow workflow) {
 		// create and add the condition function, get the condition variable
-		Task conditionVariable = addConditionFunction(graph, ifCompound, workflow);
+		final Task conditionVariable = addConditionFunction(graph, ifCompound, workflow);
 		// add the then branch
 		addIfBranch(graph, ifCompound, workflow, conditionVariable, true);
 		// add the else branch
 		addIfBranch(graph, ifCompound, workflow, conditionVariable, false);
 		// create and add a choice function for each data out
-		for (DataOuts dataOut : AfclApiWrapper.getDataOuts(ifCompound)) {
+		for (final DataOuts dataOut : AfclApiWrapper.getDataOuts(ifCompound)) {
 			addChoiceFunction(graph, dataOut, ifCompound, workflow);
 		}
 	}
@@ -78,9 +78,9 @@ public final class AfclCompoundsIf {
 	 * @param isThen              true iff modeling the then branch
 	 */
 	protected static void addIfBranch(final EnactmentGraph graph, final IfThenElse ifCompound, final Workflow workflow,
-			Task conditionalVariable, boolean isThen) {
+			final Task conditionalVariable, final boolean isThen) {
 		// remember all function nodes in the graph now
-		Set<Task> tasksBeforeAdding = AfclCompounds.getFunctionNodes(graph);
+		final Set<Task> tasksBeforeAdding = AfclCompounds.getFunctionNodes(graph);
 		// add the contents of the branch
 		final List<Function> functionsToAdd = isThen ? ifCompound.getThen() : ifCompound.getElse();
 		for (final Function function : functionsToAdd) {
@@ -95,8 +95,8 @@ public final class AfclCompoundsIf {
 		tasksAfterAdding.removeAll(tasksBeforeAdding);
 		// connect them to the condition variable
 		for (final Task newTask : tasksAfterAdding) {
-			Dependency dependency = PropertyServiceDependencyControlIf.createControlIfDependency(conditionalVariable,
-					newTask, isThen);
+			final Dependency dependency = PropertyServiceDependencyControlIf
+					.createControlIfDependency(conditionalVariable, newTask, isThen);
 			graph.addEdge(dependency, conditionalVariable, newTask, EdgeType.DIRECTED);
 		}
 	}
@@ -151,16 +151,16 @@ public final class AfclCompoundsIf {
 	protected static void checkDataOutIfSrc(final DataOuts dataOut, final EnactmentGraph graph) {
 		final String srcString = AfclApiWrapper.getSource(dataOut);
 		final String dataOutName = AfclApiWrapper.getName(dataOut);
-		final String firstSrc = UtilsAfcl.getFirstSubStringIfOut(srcString);
-		final String secondSrc = UtilsAfcl.getSecondSubStringIfOut(srcString);
 		if (!UtilsAfcl.isIfOutSrc(srcString)) {
 			throw new IllegalArgumentException("The src of data out " + AfclApiWrapper.getName(dataOut)
 					+ " does not look like the out of an if compound.");
 		}
+		final String firstSrc = UtilsAfcl.getFirstSubStringIfOut(srcString);
 		if (!UtilsAfcl.isSrcString(firstSrc)) {
 			throw new IllegalArgumentException(
 					"First part of the if data out " + dataOutName + " does not point to a function out.");
 		}
+		final String secondSrc = UtilsAfcl.getSecondSubStringIfOut(srcString);
 		if (!UtilsAfcl.isSrcString(secondSrc)) {
 			throw new IllegalArgumentException(
 					"Second part of the if data out " + dataOutName + " does not point to a function out.");
@@ -212,7 +212,7 @@ public final class AfclCompoundsIf {
 	 * @param conditionFunction the task modeling the condition function
 	 */
 	protected static Condition addConditionNode(final EnactmentGraph graph, final ACondition condition,
-			Task conditionFunction, Workflow workflow) {
+			final Task conditionFunction, final Workflow workflow) {
 		final String firstInput = getConditionDataSrc(condition.getData1(), conditionFunction.getId(), workflow);
 		final String secondInput = getConditionDataSrc(condition.getData2(), conditionFunction.getId(), workflow);
 		final Operator operator = UtilsAfcl.getOperatorForString(condition.getOperator());

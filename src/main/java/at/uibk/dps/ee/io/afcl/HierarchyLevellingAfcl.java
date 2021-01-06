@@ -57,8 +57,9 @@ public final class HierarchyLevellingAfcl {
 			if (AfclApiWrapper.pointsToInput(afclSource, function)) {
 				// points to data in
 				return getSrcDataId(AfclApiWrapper.getDataInSrc(function, dataName), workflow);
-			}else {
-				// points to data out of if compound => there should be a data node with the data out src as id
+			} else {
+				// points to data out of if compound => there should be a data node with the
+				// data out src as id
 				return AfclApiWrapper.getDataOutSrc(function, dataName);
 			}
 		} else {

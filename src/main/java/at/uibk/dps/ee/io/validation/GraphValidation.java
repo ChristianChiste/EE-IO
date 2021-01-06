@@ -33,11 +33,9 @@ public final class GraphValidation {
 	 */
 	protected static void checkForDisconnectedDataNodes(final EnactmentGraph graph) {
 		for (final Task task : graph) {
-			if (TaskPropertyService.isCommunication(task)) {
-				if (graph.getIncidentEdges(task).isEmpty()) {
-					throw new IllegalStateException(
-							"The generated graph contains a disconnected data node: " + task.getId());
-				}
+			if (TaskPropertyService.isCommunication(task) && graph.getIncidentEdges(task).isEmpty()) {
+				throw new IllegalStateException(
+						"The generated graph contains a disconnected data node: " + task.getId());
 			}
 		}
 	}
