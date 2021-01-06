@@ -283,7 +283,7 @@ public final class UtilsAfcl {
 	 * @param srcString the if src string
 	 * @return the substring of the first function read from the given if src string
 	 */
-	public static String getFirstSubStringIfOut(String srcString) {
+	public static String getFirstSubStringIfOut(final String srcString) {
 		return getIfOutSubString(srcString, true);
 	}
 
@@ -295,7 +295,7 @@ public final class UtilsAfcl {
 	 * @return the substring of the second function read from the given if src
 	 *         string
 	 */
-	public static String getSecondSubStringIfOut(String srcString) {
+	public static String getSecondSubStringIfOut(final String srcString) {
 		return getIfOutSubString(srcString, false);
 	}
 

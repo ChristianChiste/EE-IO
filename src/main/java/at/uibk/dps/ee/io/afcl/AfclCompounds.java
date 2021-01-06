@@ -75,9 +75,9 @@ public final class AfclCompounds {
 	 * @param graph the given graph
 	 * @return a set of all function nodes in the given graph
 	 */
-	protected static Set<Task> getFunctionNodes(EnactmentGraph graph) {
-		Set<Task> result = new HashSet<>();
-		for (Task task : graph) {
+	protected static Set<Task> getFunctionNodes(final EnactmentGraph graph) {
+		final Set<Task> result = new HashSet<>();
+		for (final Task task : graph) {
 			if (TaskPropertyService.isProcess(task)) {
 				result.add(task);
 			}

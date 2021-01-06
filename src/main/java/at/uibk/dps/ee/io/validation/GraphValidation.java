@@ -22,7 +22,7 @@ public final class GraphValidation {
 	 * 
 	 * @param graph the given graph
 	 */
-	public static void validateGraph(EnactmentGraph graph) {
+	public static void validateGraph(final EnactmentGraph graph) {
 		checkForDisconnectedDataNodes(graph);
 	}
 
@@ -31,8 +31,8 @@ public final class GraphValidation {
 	 * 
 	 * @param graph the graph to check
 	 */
-	protected static void checkForDisconnectedDataNodes(EnactmentGraph graph) {
-		for (Task task : graph) {
+	protected static void checkForDisconnectedDataNodes(final EnactmentGraph graph) {
+		for (final Task task : graph) {
 			if (TaskPropertyService.isCommunication(task)) {
 				if (graph.getIncidentEdges(task).isEmpty()) {
 					throw new IllegalStateException(
