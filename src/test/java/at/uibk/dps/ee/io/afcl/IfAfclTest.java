@@ -21,8 +21,8 @@ import at.uibk.dps.ee.model.properties.PropertyServiceDependency.TypeDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependencyControlIf;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionSyntax;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionSyntax.SyntaxType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.SyntaxType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
@@ -38,7 +38,6 @@ public class IfAfclTest {
 		Workflow wf = Graphs.getIfWf();
 
 		EnactmentGraph result = GraphGenerationAfcl.generateEnactmentGraph(wf);
-		
 		// test the node and edge number
 		int funcNum = 0;
 		int dataNum = 0;
@@ -70,8 +69,8 @@ public class IfAfclTest {
 					assertEquals(UtilityType.Condition, PropertyServiceFunctionUtility.getUtilityType(t));
 					condFunc = t;
 				}
-				if (PropertyServiceFunction.getType(t).equals(FunctionType.Syntax)) {
-					assertEquals(SyntaxType.EarliestInput, PropertyServiceFunctionSyntax.getSyntaxType(t));
+				if (PropertyServiceFunction.getType(t).equals(FunctionType.DataFlow)) {
+					assertEquals(SyntaxType.EarliestInput, PropertyServiceFunctionDataFlow.getSyntaxType(t));
 					choiceFunc = t;
 				}
 			}
@@ -105,7 +104,7 @@ public class IfAfclTest {
 		// get the data successor node
 		String conditionVertexId = ConstantsTestCoreEEiO.simpleIfIfName + ConstantsEEModel.DecisionVariableSuffix;
 		assertNotNull(result.getVertex(conditionVertexId));
-		Task conditionVertex = result.getVertex(conditionVertexId);
+		Task decisionVariable = result.getVertex(conditionVertexId);
 
 		// its properties
 
@@ -129,23 +128,31 @@ public class IfAfclTest {
 		assertTrue(predecessors.contains(condConst2));
 		Set<Task> successors = new HashSet<>(result.getSuccessors(condFunc));
 		assertEquals(1, successors.size());
-		assertTrue(successors.contains(conditionVertex));
+		assertTrue(successors.contains(decisionVariable));
+		assertEquals(NodeType.Decision, PropertyServiceData.getNodeType(decisionVariable));
 
+		// check the json key of the in edge
+		Dependency inEdge = result.getInEdges(decisionVariable).iterator().next();
+		String expectedDecVarJsonKey = decisionVariable.getId();
+		assertEquals(expectedDecVarJsonKey, PropertyServiceDependency.getJsonKey(inEdge));
+		
 		// the decision variable and its successors
-		Set<Task> successorsCondition = new HashSet<>(result.getSuccessors(conditionVertex));
+		Set<Task> successorsCondition = new HashSet<>(result.getSuccessors(decisionVariable));
 		assertEquals(2, successorsCondition.size());
 		assertTrue(successorsCondition.contains(func1Node));
 		assertTrue(successorsCondition.contains(func2Node));
-		for (Dependency outEdge : result.getOutEdges(conditionVertex)) {
+		for (Dependency outEdge : result.getOutEdges(decisionVariable)) {
 			if (result.getDest(outEdge).equals(func1Node)) {
 				// check that func1 is the then
 				assertEquals(PropertyServiceDependency.getType(outEdge), TypeDependency.ControlIf);
 				assertTrue(PropertyServiceDependencyControlIf.getActivation(outEdge));
+				assertEquals(expectedDecVarJsonKey, PropertyServiceDependency.getJsonKey(outEdge));
 			}
 			if (result.getDest(outEdge).equals(func2Node)) {
 				// check that func2 is the else
 				assertEquals(PropertyServiceDependency.getType(outEdge), TypeDependency.ControlIf);
 				assertFalse(PropertyServiceDependencyControlIf.getActivation(outEdge));
+				assertEquals(expectedDecVarJsonKey, PropertyServiceDependency.getJsonKey(outEdge));
 			}
 		}
 

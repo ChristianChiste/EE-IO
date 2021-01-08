@@ -21,12 +21,13 @@ import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependencyControlIf;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionSyntax;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
+import at.uibk.dps.ee.model.properties.PropertyServiceData.NodeType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionSyntax.SyntaxType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.SyntaxType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -71,14 +72,14 @@ public final class AfclCompoundsIf {
 	/**
 	 * Adds the nodes modeling an if branch of the given if compound
 	 * 
-	 * @param graph               the enactment graph
-	 * @param ifCompound          the if compound that is being modeled
-	 * @param workflow            the afcl workflow object
-	 * @param conditionalVariable the condition variable
-	 * @param isThen              true iff modeling the then branch
+	 * @param graph            the enactment graph
+	 * @param ifCompound       the if compound that is being modeled
+	 * @param workflow         the afcl workflow object
+	 * @param decisionVariable the decision variable
+	 * @param isThen           true iff modeling the then branch
 	 */
 	protected static void addIfBranch(final EnactmentGraph graph, final IfThenElse ifCompound, final Workflow workflow,
-			final Task conditionalVariable, final boolean isThen) {
+			final Task decisionVariable, final boolean isThen) {
 		// remember all function nodes in the graph now
 		final Set<Task> tasksBeforeAdding = AfclCompounds.getFunctionNodes(graph);
 		// add the contents of the branch
@@ -95,9 +96,9 @@ public final class AfclCompoundsIf {
 		tasksAfterAdding.removeAll(tasksBeforeAdding);
 		// connect them to the condition variable
 		for (final Task newTask : tasksAfterAdding) {
-			final Dependency dependency = PropertyServiceDependencyControlIf
-					.createControlIfDependency(conditionalVariable, newTask, isThen);
-			graph.addEdge(dependency, conditionalVariable, newTask, EdgeType.DIRECTED);
+			final Dependency dependency = PropertyServiceDependencyControlIf.createControlIfDependency(decisionVariable,
+					newTask, decisionVariable.getId(), isThen);
+			graph.addEdge(dependency, decisionVariable, newTask, EdgeType.DIRECTED);
 		}
 	}
 
@@ -120,7 +121,7 @@ public final class AfclCompoundsIf {
 		final Task secondSrcNode = graph.getVertex(secondSrc);
 		// create the choice function node
 		final String funcNodeId = firstSrc + ConstantsEEModel.EarliestArrivalFuncAffix + secondSrc;
-		final Task choiceFunction = PropertyServiceFunctionSyntax.createSyntaxFunction(funcNodeId,
+		final Task choiceFunction = PropertyServiceFunctionDataFlow.createSyntaxFunction(funcNodeId,
 				SyntaxType.EarliestInput);
 		// add the inputs (kind-of the same as data ins for an atomic)
 		final Dependency inEdgeFirst = PropertyServiceDependency.createDataDependency(firstSrcNode, choiceFunction,
@@ -130,7 +131,7 @@ public final class AfclCompoundsIf {
 				ConstantsEEModel.EarliestArrivalJsonKey);
 		graph.addEdge(inEdgeSecond, secondSrcNode, choiceFunction, EdgeType.DIRECTED);
 		// add the output
-		final String jsonKey = AfclApiWrapper.getName(dataOut);
+		final String jsonKey = ConstantsEEModel.EarliestArrivalJsonKey;
 		final String dataNodeId = srcString;
 		final DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
 		// retrieve or create the data node
@@ -150,12 +151,12 @@ public final class AfclCompoundsIf {
 	 */
 	protected static void checkDataOutIfSrc(final DataOuts dataOut, final EnactmentGraph graph) {
 		final String srcString = AfclApiWrapper.getSource(dataOut);
-		final String dataOutName = AfclApiWrapper.getName(dataOut);
 		if (!UtilsAfcl.isIfOutSrc(srcString)) {
 			throw new IllegalArgumentException("The src of data out " + AfclApiWrapper.getName(dataOut)
 					+ " does not look like the out of an if compound.");
 		}
 		final String firstSrc = UtilsAfcl.getFirstSubStringIfOut(srcString);
+		final String dataOutName = AfclApiWrapper.getName(dataOut);
 		if (!UtilsAfcl.isSrcString(firstSrc)) {
 			throw new IllegalArgumentException(
 					"First part of the if data out " + dataOutName + " does not point to a function out.");
@@ -196,9 +197,11 @@ public final class AfclCompoundsIf {
 		final Summary summary = UtilsAfcl.getSummaryForString(ifCompound.getCondition().getCombinedWith());
 		PropertyServiceFunctionUtilityCondition.setSummary(funcNode, summary);
 		final String decVarId = AfclApiWrapper.getName(ifCompound) + ConstantsEEModel.DecisionVariableSuffix;
+		// create the decision variable
 		final Task decisionVariableNode = new Communication(decVarId);
+		PropertyServiceData.setNodeType(decisionVariableNode, NodeType.Decision);
 		final Dependency dependency = PropertyServiceDependency.createDataDependency(funcNode, decisionVariableNode,
-				ConstantsEEModel.DecisionVariableJsonKey);
+				decVarId);
 		graph.addEdge(dependency, funcNode, decisionVariableNode, EdgeType.DIRECTED);
 		return decisionVariableNode;
 	}
