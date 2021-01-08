@@ -27,7 +27,7 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.NodeType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.SyntaxType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.DataFlowType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -121,8 +121,8 @@ public final class AfclCompoundsIf {
 		final Task secondSrcNode = graph.getVertex(secondSrc);
 		// create the choice function node
 		final String funcNodeId = firstSrc + ConstantsEEModel.EarliestArrivalFuncAffix + secondSrc;
-		final Task choiceFunction = PropertyServiceFunctionDataFlow.createSyntaxFunction(funcNodeId,
-				SyntaxType.EarliestInput);
+		final Task choiceFunction = PropertyServiceFunctionDataFlow.createDataFlowFunction(funcNodeId,
+				DataFlowType.EarliestInput);
 		// add the inputs (kind-of the same as data ins for an atomic)
 		final Dependency inEdgeFirst = PropertyServiceDependency.createDataDependency(firstSrcNode, choiceFunction,
 				ConstantsEEModel.EarliestArrivalJsonKey);

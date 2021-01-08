@@ -22,7 +22,7 @@ import at.uibk.dps.ee.model.properties.PropertyServiceDependencyControlIf;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.SyntaxType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.DataFlowType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
@@ -70,7 +70,7 @@ public class IfAfclTest {
 					condFunc = t;
 				}
 				if (PropertyServiceFunction.getType(t).equals(FunctionType.DataFlow)) {
-					assertEquals(SyntaxType.EarliestInput, PropertyServiceFunctionDataFlow.getSyntaxType(t));
+					assertEquals(DataFlowType.EarliestInput, PropertyServiceFunctionDataFlow.getDataFlowType(t));
 					choiceFunc = t;
 				}
 			}
@@ -135,7 +135,7 @@ public class IfAfclTest {
 		Dependency inEdge = result.getInEdges(decisionVariable).iterator().next();
 		String expectedDecVarJsonKey = decisionVariable.getId();
 		assertEquals(expectedDecVarJsonKey, PropertyServiceDependency.getJsonKey(inEdge));
-		
+
 		// the decision variable and its successors
 		Set<Task> successorsCondition = new HashSet<>(result.getSuccessors(decisionVariable));
 		assertEquals(2, successorsCondition.size());
