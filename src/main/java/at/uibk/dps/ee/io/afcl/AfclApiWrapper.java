@@ -27,6 +27,10 @@ public final class AfclApiWrapper {
 	private AfclApiWrapper() {
 	}
 
+	public static boolean hasConstraints(DataIns dataIn) {
+		return !(dataIn.getConstraints() == null || dataIn.getConstraints().isEmpty());
+	}
+
 	/**
 	 * Returns true if the given src string points to an input of the given
 	 * non-atomic function. Returns false if it points to an output. Throws an
@@ -152,7 +156,7 @@ public final class AfclApiWrapper {
 		}
 		return dataOut.getSource();
 	}
-	
+
 	public static String getName(DataOuts dataOut) {
 		if (dataOut.getName() == null) {
 			throw new IllegalArgumentException("Name not set for data out");

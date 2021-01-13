@@ -11,12 +11,12 @@ public final class ConstantsAfcl {
 	// The string used to create the source name out of the function/compound name
 	// and the data in/out name
 	public static final String SourceAffix = "/";
-	public static final String IfFuncSeparator = ",";	
+	public static final String IfFuncSeparator = ",";
 
 	// boolean strings
 	public static final String afclTrue = "true";
 	public static final String afclFalse = "false";
-	
+
 	// Strings defining the data types
 	public static final String typeStringNumber = "number";
 	public static final String typeStringString = "string";
@@ -36,7 +36,7 @@ public final class ConstantsAfcl {
 	public static final String operatorStringEndsWith = "endsWith";
 	public static final String operatorStringAnd = "AND";
 	public static final String operatorStringOr = "OR";
-	
+
 	// String defining the conidition summary
 	public static final String summaryStringAnd = "and";
 	public static final String summaryStringOr = "or";
@@ -47,6 +47,9 @@ public final class ConstantsAfcl {
 
 	// Strings describing certain properties
 	public static final String propertyConstraintResourceLink = "resource";
+
+	// Constraint properties
+	public static final String constraintNameElementIndex = "element-index";
 
 	/**
 	 * No constructor.

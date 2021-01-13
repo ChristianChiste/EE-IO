@@ -10,9 +10,10 @@ public class ConstantsTestCoreEEiO {
 
 	// constants for the afcl test input
 	public static final String cfclFileSingleAtomic = "src/test/resources/wfInputFiles/singleAtomic.yaml";
-	public static final String cfclFileSeqPar = "src/test/resources/wfInputFiles/seqPar.yaml"; 
+	public static final String cfclFileSeqPar = "src/test/resources/wfInputFiles/seqPar.yaml";
 	public static final String cfclFileIf = "src/test/resources/wfInputFiles/simpleIf.yaml";
-	
+	public static final String cfclFileElementIndex = "src/test/resources/wfInputFiles/atomicElementIndex.yaml";
+
 	// single atomic names
 	public static final String wfNameAtomic = "single Atomic";
 	public static final String inputNameAtomic = "input_name";
@@ -24,7 +25,7 @@ public class ConstantsTestCoreEEiO {
 	public static final String wfFunctionOutputNameAtomic = "myOutput";
 	public static final String wfFunctionResourceNameAtomic = "my_res_link";
 	public static final int wfSingleAtomicConstant = 5;
-	
+
 	// simple if names
 	public static final String simpleIfIfName = "ifCompound";
 	public static final String simpleIfConditionInput1Name = "simple_if/cond1";
@@ -33,6 +34,11 @@ public class ConstantsTestCoreEEiO {
 	public static final String simpleIfConditionConst2Name = "ifCompound/abc";
 	public static final String simpleIfFunc1OutName = "func1/output";
 	public static final String simpleIfFunc2OutName = "func2/out";
+
+	// element index names
+	public static final String elementIndexRawDataName = "single Atomic/input_collection";
+	public static final String elementIndexDataProcessingName = "single Atomic/input_collection|--|element-index|--|0,3:6:2";
+	public static final String elementIndexProcessedDataName = "single Atomic/input_collection|--|0,3:6:2";
 
 	// constants for the read/write test
 	public static final String xmlFileTestReadWrite = "src/test/resources/xmlFiles/testAtomicWrite.xml";

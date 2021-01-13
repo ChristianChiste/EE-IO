@@ -26,11 +26,15 @@ public class Graphs {
 	public static Workflow getSeqParWf() {
 		return getWf(ConstantsTestCoreEEiO.cfclFileSeqPar);
 	}
-	
+
 	public static Workflow getIfWf() {
 		return getWf(ConstantsTestCoreEEiO.cfclFileIf);
 	}
-	
+
+	public static Workflow getElementIndexWf() {
+		return getWf(ConstantsTestCoreEEiO.cfclFileElementIndex);
+	}
+
 	protected static Workflow getWf(String fileName) {
 		try {
 			byte[] data = UtilsSocket.readFileToBytes(fileName);

@@ -13,10 +13,14 @@ import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.DataIns;
+import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
+import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
+import at.uibk.dps.ee.model.objects.SubCollections;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityElementIndex;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import net.sf.opendse.model.Communication;
 import net.sf.opendse.model.Dependency;
@@ -115,18 +119,89 @@ public final class AfclCompounds {
 	 * @param dataIn   the given data in
 	 */
 	protected static void addDataInDefault(final EnactmentGraph graph, final Task function, final DataIns dataIn) {
+		// create/retrieve the data node
 		final String dataNodeId = AfclApiWrapper.getSource(dataIn);
 		final String srcFunc = UtilsAfcl.getProducerId(dataNodeId);
 		if (srcFunc.equals(function.getId())) {
 			throw new IllegalStateException("Function " + function.getId() + " depends on itself.");
 		}
 		final String jsonKey = AfclApiWrapper.getName(dataIn);
-		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+		DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 		// retrieve or create the data node
 		final Task dataNodeIn = assureDataNodePresence(dataNodeId, dataType, graph);
-		// create annotate, and insert the edge
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(dataNodeIn, function, jsonKey);
-		graph.addEdge(dependency, dataNodeIn, function, EdgeType.DIRECTED);
+
+		if (isElementIndexDataIn(dataIn)) {
+			dataType = DataType.Collection;
+			String subCollectionString = getElementIndexValue(dataIn);
+			subCollectionString = subCollectionString.replaceAll("\\s+", "");
+			String subCollectionDataId = dataNodeId + ConstantsEEModel.DependencyAffix + subCollectionString;
+			// create the data node for the processed data
+			DataType processedDataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+			if (!UtilsAfcl.doesElementIdxValueMapToOneValue(subCollectionString)
+					&& !processedDataType.equals(DataType.Collection)) {
+				throw new IllegalStateException("Processing the src " + srcFunc + " with the elementIdx string "
+						+ subCollectionDataId + " will result in a collection, not in a  " + processedDataType.name());
+			}
+			final Task processedDataNode = assureDataNodePresence(subCollectionDataId, processedDataType, graph);
+			SubCollections subcollections = UtilsAfcl.getSubcollectionsForString(subCollectionString);
+			// create the function node for the elementIdx function
+			Task elementIdxFunctionNode = PropertyServiceFunctionUtilityElementIndex
+					.createElementIndexTask(dataNodeId, subcollections);
+			// connect the nodes
+			// raw data to idx function
+			final Dependency dependency1 = PropertyServiceDependency.createDataDependency(dataNodeIn,
+					elementIdxFunctionNode, jsonKey);
+			graph.addEdge(dependency1, dataNodeIn, elementIdxFunctionNode, EdgeType.DIRECTED);
+			final Dependency dependency2 = PropertyServiceDependency.createDataDependency(elementIdxFunctionNode,
+					processedDataNode, jsonKey);
+			graph.addEdge(dependency2, elementIdxFunctionNode, processedDataNode, EdgeType.DIRECTED);
+			final Dependency dependency3 = PropertyServiceDependency.createDataDependency(processedDataNode, function,
+					jsonKey);
+			graph.addEdge(dependency3, processedDataNode, function, EdgeType.DIRECTED);
+		} else {
+			// create annotate, and insert the edge (default case)
+			final Dependency dependency = PropertyServiceDependency.createDataDependency(dataNodeIn, function, jsonKey);
+			graph.addEdge(dependency, dataNodeIn, function, EdgeType.DIRECTED);
+		}
+	}
+
+	/**
+	 * Returns true if the given data in is annotated as an element index data in.
+	 * 
+	 * @param dataIn the given data in
+	 * @return true if the given data in is annotated as an element index data in
+	 */
+	protected static boolean isElementIndexDataIn(DataIns dataIn) {
+		if (!AfclApiWrapper.hasConstraints(dataIn)) {
+			return false;
+		}
+		for (PropertyConstraint constraint : dataIn.getConstraints()) {
+			if (constraint.getName().equals(ConstantsAfcl.constraintNameElementIndex)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the value string of the given data in. Throws an exception if no
+	 * element index constraint is defined for the data in.
+	 * 
+	 * @param dataIn the given data in
+	 * @return the values string of the data in
+	 */
+	protected static String getElementIndexValue(DataIns dataIn) {
+		if (!isElementIndexDataIn(dataIn)) {
+			throw new IllegalArgumentException("The data in with the name " + AfclApiWrapper.getName(dataIn)
+					+ " has no element index constraint.");
+		}
+		for (PropertyConstraint constraint : dataIn.getConstraints()) {
+			if (constraint.getName().equals(ConstantsAfcl.constraintNameElementIndex)) {
+				return constraint.getValue();
+			}
+		}
+		// this line should never be reached
+		throw new IllegalArgumentException("No value found for element index constraint.");
 	}
 
 	/**

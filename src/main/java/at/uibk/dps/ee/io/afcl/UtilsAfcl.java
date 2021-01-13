@@ -6,7 +6,12 @@ import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
+import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
+import at.uibk.dps.ee.model.objects.SubCollection;
+import at.uibk.dps.ee.model.objects.SubCollectionElement;
+import at.uibk.dps.ee.model.objects.SubCollectionStartEndStride;
+import at.uibk.dps.ee.model.objects.SubCollections;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
@@ -33,6 +38,97 @@ public final class UtilsAfcl {
 	 */
 	public enum CompoundType {
 		Atomic, Sequence, Parallel, If
+	}
+
+	/**
+	 * Returns the subcollections object for the given subcollections string.
+	 * 
+	 * @param subcollectionsString the given subcollections string
+	 * @return the subcollections object for the given subcollections string
+	 */
+	public static SubCollections getSubcollectionsForString(String subcollectionsString) {
+		SubCollections result = new SubCollections();
+		// remove the white spaces
+		subcollectionsString = subcollectionsString.replaceAll("\\s+", "");
+		if (subcollectionsString.contains(ConstantsEEModel.ElementIndexValueSeparatorExternal)) {
+			// multiple comma-separated values
+			for (String subString : subcollectionsString.split(ConstantsEEModel.ElementIndexValueSeparatorExternal)) {
+				result.add(getSubCollectionForString(subString));
+			}
+		} else {
+			// only one number
+			result.add(getSubCollectionForString(subcollectionsString));
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the subcollection for the given string.
+	 * 
+	 * @param subcollectionString the given string
+	 * @return the subcollection for the given string
+	 */
+	protected static SubCollection getSubCollectionForString(String subcollectionString) {
+		if (subcollectionString.contains(ConstantsEEModel.ElementIndexValueSeparatorInternal)) {
+			// start end stride
+			int numberSeparators = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal).length
+					- 1;
+			if (numberSeparators == 1) {
+				String startString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[0];
+				String endString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[1];
+				int start = startString.length() == 0 ? -1 : readElemendIdxInt(startString);
+				int end = endString.length() == 0 ? -1 : readElemendIdxInt(endString);
+				int stride = -1;
+				return new SubCollectionStartEndStride(start, end, stride);
+			}else if (numberSeparators == 2) {
+				String startString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[0];
+				String endString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[1];
+				String strideString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[2];
+				int start = startString.length() == 0 ? -1 : readElemendIdxInt(startString);
+				int end = endString.length() == 0 ? -1 : readElemendIdxInt(endString);
+				int stride = strideString.length() == 0 ? -1 : readElemendIdxInt(strideString);
+				return new SubCollectionStartEndStride(start, end, stride);
+			}else {
+				throw new IllegalArgumentException("Too many internal element index separators.");
+			}
+		} else {
+			// element
+			int idx = readElemendIdxInt(subcollectionString);
+			return new SubCollectionElement(idx);
+		}
+	}
+
+	/**
+	 * Interprets the given string as int.
+	 * 
+	 * @param intString the given string
+	 * @return the given string as int
+	 */
+	protected static int readElemendIdxInt(String intString) {
+		try {
+			return Integer.parseInt(intString);
+		} catch (NumberFormatException exc) {
+			throw new IllegalArgumentException("Incorrect num string for element idx: " + intString);
+		}
+	}
+
+	/**
+	 * Returns true if the given element idx value maps to a value.
+	 * 
+	 * @param elementIdxValue the given element idx value
+	 * @return true if the given element idx value maps to a value
+	 */
+	public static boolean doesElementIdxValueMapToOneValue(String elementIdxValue) {
+		if (elementIdxValue.contains(ConstantsEEModel.ElementIndexValueSeparatorExternal)
+				|| elementIdxValue.contains(ConstantsEEModel.ElementIndexValueSeparatorInternal)) {
+			return false;
+		}
+		try {
+			Integer.parseInt(elementIdxValue);
+			return true;
+		} catch (NumberFormatException exc) {
+			return false;
+		}
 	}
 
 	/**

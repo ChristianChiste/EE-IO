@@ -14,6 +14,10 @@ import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.io.afcl.UtilsAfcl.CompoundType;
+import at.uibk.dps.ee.model.objects.SubCollection;
+import at.uibk.dps.ee.model.objects.SubCollectionElement;
+import at.uibk.dps.ee.model.objects.SubCollectionStartEndStride;
+import at.uibk.dps.ee.model.objects.SubCollections;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 
@@ -24,6 +28,38 @@ public class UtilsAfclTest {
 		assertEquals(CompoundType.Atomic, UtilsAfcl.getCompoundType(new AtomicFunction()));
 	}
 
+	@Test
+	public void testGetSubcollectionsForString() {
+		String string1 = "3";
+		String string2 = "1::2";
+		String string3 = "1, 1:2, :3:1";
+		
+		SubCollections result1 = UtilsAfcl.getSubcollectionsForString(string1);
+		SubCollections result2 = UtilsAfcl.getSubcollectionsForString(string2);
+		SubCollections result3 = UtilsAfcl.getSubcollectionsForString(string3);
+		
+		assertEquals(1, result1.size());
+		SubCollection sub1 = result1.get(0);
+		assertTrue(sub1 instanceof SubCollectionElement);
+		assertEquals("3", sub1.toString());
+		
+		assertEquals(1, result2.size());
+		SubCollection sub2 = result2.get(0);
+		assertTrue(sub2 instanceof SubCollectionStartEndStride);
+		assertEquals("1::2", sub2.toString());
+		
+		assertEquals(3, result3.size());
+		SubCollection sub31 = result3.get(0);
+		assertTrue(sub31 instanceof SubCollectionElement);
+		assertEquals("1", sub31.toString());
+		SubCollection sub32 = result3.get(1);
+		assertTrue(sub32 instanceof SubCollectionStartEndStride);
+		assertEquals("1:2:", sub32.toString());
+		SubCollection sub33 = result3.get(2);
+		assertTrue(sub33 instanceof SubCollectionStartEndStride);
+		assertEquals(":3:1", sub33.toString());
+	}
+	
 	@Test
 	public void testDataNodeId() {
 		String producerId = "producer";
