@@ -37,8 +37,11 @@ public class ConstantsTestCoreEEiO {
 
 	// element index names
 	public static final String elementIndexRawDataName = "single Atomic/input_collection";
-	public static final String elementIndexDataProcessingName = "single Atomic/input_collection|--|element-index|--|0,3:6:2";
-	public static final String elementIndexProcessedDataName = "single Atomic/input_collection|--|0,3:6:2";
+	public static final String elementIndexDataProcessingName = "single Atomic/input_collection|--|element-index|--|data,3:6:data";
+	public static final String elementIndexProcessedDataName = "single Atomic/input_collection|--|single Atomic/input_index, 3:6:single Atomic/input_stride";
+	public static final String elementIndexInputIndex = "single Atomic/input_index";
+	public static final String elementIndexInputStride = "single Atomic/input_stride";
+	public static final String elementExpectedSubCollString = "data,3:6:data";
 
 	// constants for the read/write test
 	public static final String xmlFileTestReadWrite = "src/test/resources/xmlFiles/testAtomicWrite.xml";

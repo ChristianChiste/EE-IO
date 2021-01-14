@@ -8,10 +8,6 @@ import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
-import at.uibk.dps.ee.model.objects.SubCollection;
-import at.uibk.dps.ee.model.objects.SubCollectionElement;
-import at.uibk.dps.ee.model.objects.SubCollectionStartEndStride;
-import at.uibk.dps.ee.model.objects.SubCollections;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
@@ -41,61 +37,82 @@ public final class UtilsAfcl {
 	}
 
 	/**
-	 * Returns the subcollections object for the given subcollections string.
+	 * Generates the actual string used for the node annotation from the string in
+	 * AFCL.
 	 * 
-	 * @param subcollectionsString the given subcollections string
-	 * @return the subcollections object for the given subcollections string
+	 * @param afclString the afcl string
+	 * @return the string for the annotation.
 	 */
-	public static SubCollections getSubcollectionsForString(String subcollectionsString) {
-		SubCollections result = new SubCollections();
-		// remove the white spaces
-		subcollectionsString = subcollectionsString.replaceAll("\\s+", "");
-		if (subcollectionsString.contains(ConstantsEEModel.ElementIndexValueSeparatorExternal)) {
-			// multiple comma-separated values
-			for (String subString : subcollectionsString.split(ConstantsEEModel.ElementIndexValueSeparatorExternal)) {
-				result.add(getSubCollectionForString(subString));
+	public static String generateEidxString(String afclString) {
+		StringBuffer result = new StringBuffer();
+		if (afclString.contains(ConstantsEEModel.EIdxSeparatorExternal)) {
+			// more than one element
+			String [] subStrings = afclString.split(ConstantsEEModel.EIdxSeparatorExternal); 
+			int subStringNum = subStrings.length;
+			for (int i = 0; i < subStringNum; i++) {
+				if (i > 0) {
+					result.append(ConstantsEEModel.EIdxSeparatorExternal);
+				}
+				String subString = subStrings[i];
+				result.append(processInternalEidx(subString));
 			}
 		} else {
-			// only one number
-			result.add(getSubCollectionForString(subcollectionsString));
+			// one element
+			result.append(processInternalEidx(afclString));
 		}
-		return result;
+		return result.toString();
 	}
 
 	/**
-	 * Returns the subcollection for the given string.
+	 * Processes a part of the afcl string representing one operation.
 	 * 
-	 * @param subcollectionString the given string
-	 * @return the subcollection for the given string
+	 * @param afclSubString the given substring
+	 * @return the substring to use for the annotation.
 	 */
-	protected static SubCollection getSubCollectionForString(String subcollectionString) {
-		if (subcollectionString.contains(ConstantsEEModel.ElementIndexValueSeparatorInternal)) {
-			// start end stride
-			int numberSeparators = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal).length
-					- 1;
-			if (numberSeparators == 1) {
-				String startString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[0];
-				String endString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[1];
-				int start = startString.length() == 0 ? -1 : readElemendIdxInt(startString);
-				int end = endString.length() == 0 ? -1 : readElemendIdxInt(endString);
-				int stride = -1;
-				return new SubCollectionStartEndStride(start, end, stride);
-			}else if (numberSeparators == 2) {
-				String startString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[0];
-				String endString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[1];
-				String strideString = subcollectionString.split(ConstantsEEModel.ElementIndexValueSeparatorInternal)[2];
-				int start = startString.length() == 0 ? -1 : readElemendIdxInt(startString);
-				int end = endString.length() == 0 ? -1 : readElemendIdxInt(endString);
-				int stride = strideString.length() == 0 ? -1 : readElemendIdxInt(strideString);
-				return new SubCollectionStartEndStride(start, end, stride);
-			}else {
-				throw new IllegalArgumentException("Too many internal element index separators.");
+	protected static String processInternalEidx(String afclSubString) {
+		if (afclSubString.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
+			String[] substrings = afclSubString.split(ConstantsEEModel.EIdxSeparatorInternal);
+			int subStringNum = substrings.length;
+			if (subStringNum > 3) {
+				throw new IllegalArgumentException("Illegal EIDX string: " + afclSubString);
 			}
+			StringBuffer result = new StringBuffer();
+			for (int i = 0; i < subStringNum; i++) {
+				if (i > 0) {
+					result.append(ConstantsEEModel.EIdxSeparatorInternal);
+				}
+				String subString = substrings[i];
+				// index
+				if (isSrcString(subString)) {
+					result.append(ConstantsEEModel.EIdxDataKeyWord);
+				} else {
+					// No source string => remove wss
+					subString = removeWhiteSpaces(subString);
+					if (!subString.isEmpty()) {
+						result.append(String.valueOf(readElemendIdxInt(subString)));
+					}
+				}
+			}
+			return result.toString();
 		} else {
-			// element
-			int idx = readElemendIdxInt(subcollectionString);
-			return new SubCollectionElement(idx);
+			// index
+			if (isSrcString(afclSubString)) {
+				return ConstantsEEModel.EIdxDataKeyWord;
+			} else {
+				afclSubString = removeWhiteSpaces(afclSubString);
+				return String.valueOf(readElemendIdxInt(afclSubString));
+			}
 		}
+	}
+
+	/**
+	 * Removes white spaces from the string.
+	 * 
+	 * @param input the input strin (with white spaces)
+	 * @return the string without white spaces
+	 */
+	protected static String removeWhiteSpaces(String input) {
+		return input.replaceAll("[\\s|\\u00A0]+", "");
 	}
 
 	/**
@@ -119,8 +136,8 @@ public final class UtilsAfcl {
 	 * @return true if the given element idx value maps to a value
 	 */
 	public static boolean doesElementIdxValueMapToOneValue(String elementIdxValue) {
-		if (elementIdxValue.contains(ConstantsEEModel.ElementIndexValueSeparatorExternal)
-				|| elementIdxValue.contains(ConstantsEEModel.ElementIndexValueSeparatorInternal)) {
+		if (elementIdxValue.contains(ConstantsEEModel.EIdxSeparatorExternal)
+				|| elementIdxValue.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
 			return false;
 		}
 		try {

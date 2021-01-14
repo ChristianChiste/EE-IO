@@ -15,8 +15,8 @@ import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.model.constants.ConstantsEEModel;
+import at.uibk.dps.ee.model.constants.ConstantsEEModel.EIdxParameters;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
-import at.uibk.dps.ee.model.objects.SubCollections;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
@@ -133,7 +133,6 @@ public final class AfclCompounds {
 		if (isElementIndexDataIn(dataIn)) {
 			dataType = DataType.Collection;
 			String subCollectionString = getElementIndexValue(dataIn);
-			subCollectionString = subCollectionString.replaceAll("\\s+", "");
 			String subCollectionDataId = dataNodeId + ConstantsEEModel.DependencyAffix + subCollectionString;
 			// create the data node for the processed data
 			DataType processedDataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
@@ -143,18 +142,15 @@ public final class AfclCompounds {
 						+ subCollectionDataId + " will result in a collection, not in a  " + processedDataType.name());
 			}
 			final Task processedDataNode = assureDataNodePresence(subCollectionDataId, processedDataType, graph);
-			SubCollections subcollections = UtilsAfcl.getSubcollectionsForString(subCollectionString);
-			// create the function node for the elementIdx function
-			Task elementIdxFunctionNode = PropertyServiceFunctionUtilityElementIndex
-					.createElementIndexTask(dataNodeId, subcollections);
+			Task processingNode = processEIdxAfclString(subCollectionString, dataNodeId, graph);
 			// connect the nodes
 			// raw data to idx function
-			final Dependency dependency1 = PropertyServiceDependency.createDataDependency(dataNodeIn,
-					elementIdxFunctionNode, jsonKey);
-			graph.addEdge(dependency1, dataNodeIn, elementIdxFunctionNode, EdgeType.DIRECTED);
-			final Dependency dependency2 = PropertyServiceDependency.createDataDependency(elementIdxFunctionNode,
+			final Dependency dependency1 = PropertyServiceDependency.createDataDependency(dataNodeIn, processingNode,
+					jsonKey);
+			graph.addEdge(dependency1, dataNodeIn, processingNode, EdgeType.DIRECTED);
+			final Dependency dependency2 = PropertyServiceDependency.createDataDependency(processingNode,
 					processedDataNode, jsonKey);
-			graph.addEdge(dependency2, elementIdxFunctionNode, processedDataNode, EdgeType.DIRECTED);
+			graph.addEdge(dependency2, processingNode, processedDataNode, EdgeType.DIRECTED);
 			final Dependency dependency3 = PropertyServiceDependency.createDataDependency(processedDataNode, function,
 					jsonKey);
 			graph.addEdge(dependency3, processedDataNode, function, EdgeType.DIRECTED);
@@ -163,6 +159,89 @@ public final class AfclCompounds {
 			final Dependency dependency = PropertyServiceDependency.createDataDependency(dataNodeIn, function, jsonKey);
 			graph.addEdge(dependency, dataNodeIn, function, EdgeType.DIRECTED);
 		}
+	}
+
+	/**
+	 * Processes the given afcl string describing an element index relation. Returns
+	 * the node representing the processing function after establishing all graph
+	 * connections to the EIdx inputs (e.g. index or stride).
+	 * 
+	 * @param afclEIdxString     the afcl string describing the element index
+	 * @param dataProcessingNode the node which will process the collection
+	 * @param graph              the enactment graph
+	 * @return the node representing the processing function after establishing all
+	 *         graph connections
+	 */
+	protected static Task processEIdxAfclString(String afclEIdxString, String dataNodeId, EnactmentGraph graph) {
+		String subCollString = UtilsAfcl.generateEidxString(afclEIdxString);
+		Task result = PropertyServiceFunctionUtilityElementIndex.createElementIndexTask(dataNodeId, subCollString);
+		// iterate through the string. Make a connection every time we see a source.
+		if (afclEIdxString.contains(ConstantsEEModel.EIdxSeparatorExternal)) {
+			// more than one element
+			String[] substrings = afclEIdxString.split(ConstantsEEModel.EIdxSeparatorExternal);
+			for (int idx = 0; idx < substrings.length; idx++) {
+				String substring = substrings[idx];
+				processEIdxAfclSubString(substring, result, graph, idx);
+			}
+		} else {
+			processEIdxAfclSubString(afclEIdxString, result, graph, 0);
+		}
+		return result;
+	}
+
+	/**
+	 * If necessary, establish the node connections for the given substring (if e.g.
+	 * the stride is defined by a data out).
+	 * 
+	 * @param subString    the substring
+	 * @param functionNode the processing node
+	 * @param graph        the enactment graph
+	 * 
+	 */
+	protected static void processEIdxAfclSubString(String subString, Task functionNode, EnactmentGraph graph, int idx) {
+		if (subString.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
+			// start end stride
+			String[] subSubstrings = subString.split(ConstantsEEModel.EIdxSeparatorInternal);
+			for (int idxIdx = 0; idxIdx < subSubstrings.length; idxIdx++) {
+				String subSubString = subSubstrings[idxIdx];
+				if (UtilsAfcl.isSrcString(subSubString)) {
+					Task inputNode = assureDataNodePresence(subSubString, DataType.Number, graph);
+					EIdxParameters params = null;
+					if (idxIdx == 0) {
+						params = EIdxParameters.Start;
+					} else if (idxIdx == 1) {
+						params = EIdxParameters.End;
+					} else {
+						params = EIdxParameters.Stride;
+					}
+					connectEidxInput(functionNode, inputNode, params, graph, idx);
+				}
+			}
+		} else {
+			// index
+			if (UtilsAfcl.isSrcString(subString)) {
+				EIdxParameters params = EIdxParameters.Index;
+				Task inputNode = assureDataNodePresence(subString, DataType.Number, graph);
+				connectEidxInput(functionNode, inputNode, params, graph, idx);
+			}
+		}
+	}
+
+	/**
+	 * Connects the nodes to establish a connection between a param input and the
+	 * EIdx function
+	 * 
+	 * @param function the EIDX function node
+	 * @param data     the data node
+	 * @param param    the type of paramenter
+	 * @param graph    the enactment graph
+	 * @param idx      the index within the EIdx string
+	 */
+	protected static void connectEidxInput(Task function, Task data, EIdxParameters param, EnactmentGraph graph,
+			int idx) {
+		String jsonKey = param.name() + ConstantsEEModel.EIdxEdgeIdxSeparator + idx;
+		Dependency dependency = PropertyServiceDependency.createDataDependency(data, function, jsonKey);
+		graph.addEdge(dependency, data, function, EdgeType.DIRECTED);
 	}
 
 	/**

@@ -4,6 +4,12 @@ dataIns:
   - name: "input_collection"
     type: "collection"
     source: "int_array"
+  - name: "input_stride"
+    type: "number"
+    source: "stride"
+  - name: "input_index"
+    type: "number"
+    source: "index"    
 workflowBody:
   - function:
       name: "atomicFunction"
@@ -14,7 +20,7 @@ workflowBody:
           source: "single Atomic/input_collection"
           constraints:
             - name: "element-index"
-              value: 0, 3:6:2
+              value: single Atomic/input_index, 3:6:single Atomic/input_stride
         - name: "myInput2"
           type: "number"
           source: "5"          
