@@ -48,6 +48,7 @@
     
     <rule ref="category/java/errorprone.xml">
     	<exclude name="BeanMembersShouldSerialize"/>
+    	<exclude name="AvoidLiteralsInIfCondition"/>
     </rule>
     
     <!--  Things I have to add to the master rule set -->
