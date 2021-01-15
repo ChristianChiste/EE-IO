@@ -131,11 +131,13 @@ public final class AfclCompounds {
 		final Task dataNodeIn = assureDataNodePresence(dataNodeId, dataType, graph);
 
 		if (isElementIndexDataIn(dataIn)) {
-			dataType = DataType.Collection;
-			String subCollectionString = getElementIndexValue(dataIn);
-			String subCollectionDataId = dataNodeId + ConstantsEEModel.DependencyAffix + subCollectionString;
+			if (!dataType.equals(DataType.Collection)) {
+				throw new IllegalStateException("Element index defined on non-collection data.");
+			}
+			final String subCollectionString = getElementIndexValue(dataIn);
+			final String subCollectionDataId = dataNodeId + ConstantsEEModel.DependencyAffix + subCollectionString;
 			// create the data node for the processed data
-			DataType processedDataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+			final DataType processedDataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 			if (!UtilsAfcl.doesElementIdxValueMapToOneValue(subCollectionString)
 					&& !processedDataType.equals(DataType.Collection)) {
 				throw new IllegalStateException("Processing the src " + srcFunc + " with the elementIdx string "
@@ -200,30 +202,29 @@ public final class AfclCompounds {
 	 * @param graph        the enactment graph
 	 * 
 	 */
-	protected static void processEIdxAfclSubString(String subString, Task functionNode, EnactmentGraph graph, int idx) {
+	protected static void processEIdxAfclSubString(final String subString, final Task functionNode,
+			final EnactmentGraph graph, final int idx) {
 		if (subString.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
 			// start end stride
-			String[] subSubstrings = subString.split(ConstantsEEModel.EIdxSeparatorInternal);
+			final String[] subSubstrings = subString.split(ConstantsEEModel.EIdxSeparatorInternal);
 			for (int idxIdx = 0; idxIdx < subSubstrings.length; idxIdx++) {
-				String subSubString = subSubstrings[idxIdx];
+				final String subSubString = subSubstrings[idxIdx];
 				if (UtilsAfcl.isSrcString(subSubString)) {
-					Task inputNode = assureDataNodePresence(subSubString, DataType.Number, graph);
-					EIdxParameters params = null;
+					final Task inputNode = assureDataNodePresence(subSubString, DataType.Number, graph);
 					if (idxIdx == 0) {
-						params = EIdxParameters.Start;
+						connectEidxInput(functionNode, inputNode, EIdxParameters.Start, graph, idx);
 					} else if (idxIdx == 1) {
-						params = EIdxParameters.End;
+						connectEidxInput(functionNode, inputNode, EIdxParameters.End, graph, idx);
 					} else {
-						params = EIdxParameters.Stride;
+						connectEidxInput(functionNode, inputNode, EIdxParameters.Stride, graph, idx);
 					}
-					connectEidxInput(functionNode, inputNode, params, graph, idx);
 				}
 			}
 		} else {
 			// index
 			if (UtilsAfcl.isSrcString(subString)) {
-				EIdxParameters params = EIdxParameters.Index;
-				Task inputNode = assureDataNodePresence(subString, DataType.Number, graph);
+				final EIdxParameters params = EIdxParameters.Index;
+				final Task inputNode = assureDataNodePresence(subString, DataType.Number, graph);
 				connectEidxInput(functionNode, inputNode, params, graph, idx);
 			}
 		}

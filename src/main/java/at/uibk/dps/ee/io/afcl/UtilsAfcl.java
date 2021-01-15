@@ -99,8 +99,8 @@ public final class UtilsAfcl {
 			if (isSrcString(afclSubString)) {
 				return ConstantsEEModel.EIdxDataKeyWord;
 			} else {
-				afclSubString = removeWhiteSpaces(afclSubString);
-				return String.valueOf(readElemendIdxInt(afclSubString));
+				String afclSubStringNoWs = removeWhiteSpaces(afclSubString);
+				return String.valueOf(readElemendIdxInt(afclSubStringNoWs));
 			}
 		}
 	}
