@@ -126,7 +126,7 @@ public final class AfclCompounds {
 			throw new IllegalStateException("Function " + function.getId() + " depends on itself.");
 		}
 		final String jsonKey = AfclApiWrapper.getName(dataIn);
-		DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 		// retrieve or create the data node
 		final Task dataNodeIn = assureDataNodePresence(dataNodeId, dataType, graph);
 
@@ -257,7 +257,7 @@ public final class AfclCompounds {
 		if (!AfclApiWrapper.hasConstraints(dataIn)) {
 			return false;
 		}
-		for (PropertyConstraint constraint : dataIn.getConstraints()) {
+		for (final PropertyConstraint constraint : dataIn.getConstraints()) {
 			if (constraint.getName().equals(ConstantsAfcl.constraintNameElementIndex)) {
 				return true;
 			}

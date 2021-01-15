@@ -69,7 +69,7 @@ public final class UtilsAfcl {
 	 * @param afclSubString the given substring
 	 * @return the substring to use for the annotation.
 	 */
-	protected static String processInternalEidx(String afclSubString) {
+	protected static String processInternalEidx(final String afclSubString) {
 		if (afclSubString.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
 			final String[] substrings = afclSubString.split(ConstantsEEModel.EIdxSeparatorInternal);
 			final int subStringNum = substrings.length;
@@ -99,7 +99,7 @@ public final class UtilsAfcl {
 			if (isSrcString(afclSubString)) {
 				return ConstantsEEModel.EIdxDataKeyWord;
 			} else {
-				String afclSubStringNoWs = removeWhiteSpaces(afclSubString);
+				final String afclSubStringNoWs = removeWhiteSpaces(afclSubString);
 				return String.valueOf(readElemendIdxInt(afclSubStringNoWs));
 			}
 		}
@@ -125,7 +125,7 @@ public final class UtilsAfcl {
 		try {
 			return Integer.parseInt(intString);
 		} catch (NumberFormatException exc) {
-			throw new IllegalArgumentException("Incorrect num string for element idx: " + intString);
+			throw new IllegalArgumentException("Incorrect num string for element idx: " + intString, exc);
 		}
 	}
 
@@ -135,7 +135,7 @@ public final class UtilsAfcl {
 	 * @param elementIdxValue the given element idx value
 	 * @return true if the given element idx value maps to a value
 	 */
-	public static boolean doesElementIdxValueMapToOneValue(String elementIdxValue) {
+	public static boolean doesElementIdxValueMapToOneValue(final String elementIdxValue) {
 		if (elementIdxValue.contains(ConstantsEEModel.EIdxSeparatorExternal)
 				|| elementIdxValue.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
 			return false;
