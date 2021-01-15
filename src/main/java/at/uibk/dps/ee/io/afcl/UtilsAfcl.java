@@ -43,17 +43,17 @@ public final class UtilsAfcl {
 	 * @param afclString the afcl string
 	 * @return the string for the annotation.
 	 */
-	public static String generateEidxString(String afclString) {
-		StringBuffer result = new StringBuffer();
+	public static String generateEidxString(final String afclString) {
+		final StringBuffer result = new StringBuffer();
 		if (afclString.contains(ConstantsEEModel.EIdxSeparatorExternal)) {
 			// more than one element
-			String [] subStrings = afclString.split(ConstantsEEModel.EIdxSeparatorExternal); 
-			int subStringNum = subStrings.length;
+			final String[] subStrings = afclString.split(ConstantsEEModel.EIdxSeparatorExternal);
+			final int subStringNum = subStrings.length;
 			for (int i = 0; i < subStringNum; i++) {
 				if (i > 0) {
 					result.append(ConstantsEEModel.EIdxSeparatorExternal);
 				}
-				String subString = subStrings[i];
+				final String subString = subStrings[i];
 				result.append(processInternalEidx(subString));
 			}
 		} else {
@@ -71,12 +71,12 @@ public final class UtilsAfcl {
 	 */
 	protected static String processInternalEidx(String afclSubString) {
 		if (afclSubString.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
-			String[] substrings = afclSubString.split(ConstantsEEModel.EIdxSeparatorInternal);
-			int subStringNum = substrings.length;
+			final String[] substrings = afclSubString.split(ConstantsEEModel.EIdxSeparatorInternal);
+			final int subStringNum = substrings.length;
 			if (subStringNum > 3) {
 				throw new IllegalArgumentException("Illegal EIDX string: " + afclSubString);
 			}
-			StringBuffer result = new StringBuffer();
+			final StringBuffer result = new StringBuffer();
 			for (int i = 0; i < subStringNum; i++) {
 				if (i > 0) {
 					result.append(ConstantsEEModel.EIdxSeparatorInternal);
@@ -111,7 +111,7 @@ public final class UtilsAfcl {
 	 * @param input the input strin (with white spaces)
 	 * @return the string without white spaces
 	 */
-	protected static String removeWhiteSpaces(String input) {
+	protected static String removeWhiteSpaces(final String input) {
 		return input.replaceAll("[\\s|\\u00A0]+", "");
 	}
 
@@ -121,7 +121,7 @@ public final class UtilsAfcl {
 	 * @param intString the given string
 	 * @return the given string as int
 	 */
-	protected static int readElemendIdxInt(String intString) {
+	protected static int readElemendIdxInt(final String intString) {
 		try {
 			return Integer.parseInt(intString);
 		} catch (NumberFormatException exc) {

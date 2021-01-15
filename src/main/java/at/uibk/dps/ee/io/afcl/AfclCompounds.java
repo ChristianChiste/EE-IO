@@ -142,7 +142,7 @@ public final class AfclCompounds {
 						+ subCollectionDataId + " will result in a collection, not in a  " + processedDataType.name());
 			}
 			final Task processedDataNode = assureDataNodePresence(subCollectionDataId, processedDataType, graph);
-			Task processingNode = processEIdxAfclString(subCollectionString, dataNodeId, graph);
+			final Task processingNode = processEIdxAfclString(subCollectionString, dataNodeId, graph);
 			// connect the nodes
 			// raw data to idx function
 			final Dependency dependency1 = PropertyServiceDependency.createDataDependency(dataNodeIn, processingNode,
@@ -172,15 +172,17 @@ public final class AfclCompounds {
 	 * @return the node representing the processing function after establishing all
 	 *         graph connections
 	 */
-	protected static Task processEIdxAfclString(String afclEIdxString, String dataNodeId, EnactmentGraph graph) {
-		String subCollString = UtilsAfcl.generateEidxString(afclEIdxString);
-		Task result = PropertyServiceFunctionUtilityElementIndex.createElementIndexTask(dataNodeId, subCollString);
+	protected static Task processEIdxAfclString(final String afclEIdxString, final String dataNodeId,
+			final EnactmentGraph graph) {
+		final String subCollString = UtilsAfcl.generateEidxString(afclEIdxString);
+		final Task result = PropertyServiceFunctionUtilityElementIndex.createElementIndexTask(dataNodeId,
+				subCollString);
 		// iterate through the string. Make a connection every time we see a source.
 		if (afclEIdxString.contains(ConstantsEEModel.EIdxSeparatorExternal)) {
 			// more than one element
-			String[] substrings = afclEIdxString.split(ConstantsEEModel.EIdxSeparatorExternal);
+			final String[] substrings = afclEIdxString.split(ConstantsEEModel.EIdxSeparatorExternal);
 			for (int idx = 0; idx < substrings.length; idx++) {
-				String substring = substrings[idx];
+				final String substring = substrings[idx];
 				processEIdxAfclSubString(substring, result, graph, idx);
 			}
 		} else {
@@ -237,10 +239,10 @@ public final class AfclCompounds {
 	 * @param graph    the enactment graph
 	 * @param idx      the index within the EIdx string
 	 */
-	protected static void connectEidxInput(Task function, Task data, EIdxParameters param, EnactmentGraph graph,
-			int idx) {
-		String jsonKey = param.name() + ConstantsEEModel.EIdxEdgeIdxSeparator + idx;
-		Dependency dependency = PropertyServiceDependency.createDataDependency(data, function, jsonKey);
+	protected static void connectEidxInput(final Task function, final Task data, final EIdxParameters param,
+			final EnactmentGraph graph, final int idx) {
+		final String jsonKey = param.name() + ConstantsEEModel.EIdxEdgeIdxSeparator + idx;
+		final Dependency dependency = PropertyServiceDependency.createDataDependency(data, function, jsonKey);
 		graph.addEdge(dependency, data, function, EdgeType.DIRECTED);
 	}
 
@@ -250,7 +252,7 @@ public final class AfclCompounds {
 	 * @param dataIn the given data in
 	 * @return true if the given data in is annotated as an element index data in
 	 */
-	protected static boolean isElementIndexDataIn(DataIns dataIn) {
+	protected static boolean isElementIndexDataIn(final DataIns dataIn) {
 		if (!AfclApiWrapper.hasConstraints(dataIn)) {
 			return false;
 		}
@@ -269,7 +271,7 @@ public final class AfclCompounds {
 	 * @param dataIn the given data in
 	 * @return the values string of the data in
 	 */
-	protected static String getElementIndexValue(DataIns dataIn) {
+	protected static String getElementIndexValue(final DataIns dataIn) {
 		if (!isElementIndexDataIn(dataIn)) {
 			throw new IllegalArgumentException("The data in with the name " + AfclApiWrapper.getName(dataIn)
 					+ " has no element index constraint.");
