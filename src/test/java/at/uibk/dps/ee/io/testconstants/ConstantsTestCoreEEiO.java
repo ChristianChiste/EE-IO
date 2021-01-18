@@ -50,8 +50,8 @@ public class ConstantsTestCoreEEiO {
 			+ ConstantsEEModel.KeyWordSeparator2 + CollectionOperation.ElementIndex.name()
 			+ ConstantsEEModel.KeyWordSeparator2 + elementExpectedSubCollString;
 	public static final String elementIndexDataProcessingName = elementIndexRawDataName
-			+ ConstantsEEModel.DependencyAffix + CollectionOperation.ElementIndex.name()
-			+ ConstantsEEModel.DependencyAffix + elementExpectedSubCollString;
+			+ ConstantsEEModel.KeywordSeparator1 + CollectionOperation.ElementIndex.name()
+			+ ConstantsEEModel.KeywordSeparator1 + elementExpectedSubCollString;
 
 	// constants for the read/write test
 	public static final String xmlFileTestReadWrite = "src/test/resources/xmlFiles/testAtomicWrite.xml";

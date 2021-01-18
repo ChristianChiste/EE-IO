@@ -6,7 +6,6 @@ import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
-import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
@@ -59,99 +58,6 @@ public final class UtilsAfcl {
 	}
 
 	/**
-	 * Generates the actual string used for the node annotation from the string in
-	 * AFCL.
-	 * 
-	 * @param afclString the afcl string
-	 * @return the string for the annotation.
-	 */
-	public static String generateEidxString(final String afclString) {
-		final StringBuffer result = new StringBuffer();
-		if (afclString.contains(ConstantsEEModel.EIdxSeparatorExternal)) {
-			// more than one element
-			final String[] subStrings = afclString.split(ConstantsEEModel.EIdxSeparatorExternal);
-			final int subStringNum = subStrings.length;
-			for (int i = 0; i < subStringNum; i++) {
-				if (i > 0) {
-					result.append(ConstantsEEModel.EIdxSeparatorExternal);
-				}
-				final String subString = subStrings[i];
-				result.append(processInternalEidx(subString));
-			}
-		} else {
-			// one element
-			result.append(processInternalEidx(afclString));
-		}
-		return result.toString();
-	}
-
-	/**
-	 * Processes a part of the afcl string representing one operation.
-	 * 
-	 * @param afclSubString the given substring
-	 * @return the substring to use for the annotation.
-	 */
-	protected static String processInternalEidx(final String afclSubString) {
-		if (afclSubString.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
-			final String[] substrings = afclSubString.split(ConstantsEEModel.EIdxSeparatorInternal);
-			final int subStringNum = substrings.length;
-			if (subStringNum > 3) {
-				throw new IllegalArgumentException("Illegal EIDX string: " + afclSubString);
-			}
-			final StringBuffer result = new StringBuffer();
-			for (int i = 0; i < subStringNum; i++) {
-				if (i > 0) {
-					result.append(ConstantsEEModel.EIdxSeparatorInternal);
-				}
-				String subString = substrings[i];
-				// index
-				if (isSrcString(subString)) {
-					result.append(ConstantsEEModel.EIdxDataKeyWord);
-				} else {
-					// No source string => remove wss
-					subString = removeWhiteSpaces(subString);
-					if (!subString.isEmpty()) {
-						result.append(String.valueOf(readElemendIdxInt(subString)));
-					}
-				}
-			}
-			return result.toString();
-		} else {
-			// index
-			if (isSrcString(afclSubString)) {
-				return ConstantsEEModel.EIdxDataKeyWord;
-			} else {
-				final String afclSubStringNoWs = removeWhiteSpaces(afclSubString);
-				return String.valueOf(readElemendIdxInt(afclSubStringNoWs));
-			}
-		}
-	}
-
-	/**
-	 * Removes white spaces from the string.
-	 * 
-	 * @param input the input strin (with white spaces)
-	 * @return the string without white spaces
-	 */
-	protected static String removeWhiteSpaces(final String input) {
-		return input.replaceAll("[\\s|\\u00A0]+", "");
-	}
-
-	/**
-	 * Interprets the given string as int.
-	 * 
-	 * @param intString the given string
-	 * @return the given string as int
-	 */
-	protected static int readElemendIdxInt(final String intString) {
-		try {
-			return Integer.parseInt(intString);
-		} catch (NumberFormatException exc) {
-			throw new IllegalArgumentException("Incorrect num string for element idx: " + intString, exc);
-		}
-	}
-	
-	/**
 	 * Returns true if the given string is an int
 	 * 
 	 * @param string the given string
@@ -160,25 +66,6 @@ public final class UtilsAfcl {
 	public static boolean isInt(String string) {
 		try {
 			Integer.parseInt(string);
-			return true;
-		} catch (NumberFormatException exc) {
-			return false;
-		}
-	}
-
-	/**
-	 * Returns true if the given element idx value maps to a value.
-	 * 
-	 * @param elementIdxValue the given element idx value
-	 * @return true if the given element idx value maps to a value
-	 */
-	public static boolean doesElementIdxValueMapToOneValue(final String elementIdxValue) {
-		if (elementIdxValue.contains(ConstantsEEModel.EIdxSeparatorExternal)
-				|| elementIdxValue.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
-			return false;
-		}
-		try {
-			Integer.parseInt(elementIdxValue);
 			return true;
 		} catch (NumberFormatException exc) {
 			return false;
