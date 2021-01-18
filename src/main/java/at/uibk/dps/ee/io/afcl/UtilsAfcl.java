@@ -10,6 +10,7 @@ import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections.CollectionOperation;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
 
 /**
@@ -34,6 +35,27 @@ public final class UtilsAfcl {
 	 */
 	public enum CompoundType {
 		Atomic, Sequence, Parallel, If
+	}
+
+	/**
+	 * Gets the collection operation corresponding to the afcl contraint name
+	 * 
+	 * @param constraintName the afcl contraint name
+	 * @param value          the constraint value
+	 * @return the collection operation corresponding to the afcl contraint name
+	 */
+	public static CollectionOperation getCollectionOperationType(String constraintName, String value) {
+		switch (constraintName) {
+		case ConstantsAfcl.constraintNameElementIndex:
+			return CollectionOperation.ElementIndex;
+		case ConstantsAfcl.constraintNameReplicate:
+			return CollectionOperation.Replicate;
+		case ConstantsAfcl.constraintNameBlock:
+			return value.contains(ConstantsAfcl.constraintSeparatorBlock) ? CollectionOperation.Block
+					: CollectionOperation.Split;
+		default:
+			throw new IllegalArgumentException("unknown collection operation " + constraintName);
+		}
 	}
 
 	/**
@@ -126,6 +148,21 @@ public final class UtilsAfcl {
 			return Integer.parseInt(intString);
 		} catch (NumberFormatException exc) {
 			throw new IllegalArgumentException("Incorrect num string for element idx: " + intString, exc);
+		}
+	}
+	
+	/**
+	 * Returns true if the given string is an int
+	 * 
+	 * @param string the given string
+	 * @return true if the given string is an int
+	 */
+	public static boolean isInt(String string) {
+		try {
+			Integer.parseInt(string);
+			return true;
+		} catch (NumberFormatException exc) {
+			return false;
 		}
 	}
 

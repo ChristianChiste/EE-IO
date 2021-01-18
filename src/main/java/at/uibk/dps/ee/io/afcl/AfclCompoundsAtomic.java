@@ -10,8 +10,6 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionServerless;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
-import edu.uci.ics.jung.graph.util.EdgeType;
-import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
 
 /**
@@ -82,9 +80,7 @@ public final class AfclCompoundsAtomic {
 		final DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
 		// retrieve or create the data node
 		final Task dataNodeOut = AfclCompounds.assureDataNodePresence(dataNodeId, dataType, graph);
-		// create, annotate, and add the dependency to the graph
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(function, dataNodeOut, jsonKey);
-		graph.addEdge(dependency, function, dataNodeOut, EdgeType.DIRECTED);
+		PropertyServiceDependency.addDataDependency(function, dataNodeOut, jsonKey, graph);
 	}
 
 	/**

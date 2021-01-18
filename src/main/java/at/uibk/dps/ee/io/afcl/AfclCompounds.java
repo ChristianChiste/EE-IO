@@ -13,17 +13,11 @@ import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.DataIns;
-import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
-import at.uibk.dps.ee.model.constants.ConstantsEEModel;
-import at.uibk.dps.ee.model.constants.ConstantsEEModel.EIdxParameters;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityElementIndex;
-import edu.uci.ics.jung.graph.util.EdgeType;
 import net.sf.opendse.model.Communication;
-import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
 import net.sf.opendse.model.properties.TaskPropertyService;
 
@@ -105,9 +99,7 @@ public final class AfclCompounds {
 		final JsonElement content = JsonParser.parseString(jsonString);
 
 		final Task constantDataNode = PropertyServiceData.createConstantNode(dataNodeId, dataType, content);
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(constantDataNode, function,
-				jsonKey);
-		graph.addEdge(dependency, constantDataNode, function, EdgeType.DIRECTED);
+		PropertyServiceDependency.addDataDependency(constantDataNode, function, jsonKey, graph);
 	}
 
 	/**
@@ -129,161 +121,15 @@ public final class AfclCompounds {
 		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 		// retrieve or create the data node
 		final Task dataNodeIn = assureDataNodePresence(dataNodeId, dataType, graph);
-
-		if (isElementIndexDataIn(dataIn)) {
-			if (!dataType.equals(DataType.Collection)) {
-				throw new IllegalStateException("Element index defined on non-collection data.");
-			}
-			final String subCollectionString = getElementIndexValue(dataIn);
-			final String subCollectionDataId = dataNodeId + ConstantsEEModel.DependencyAffix + subCollectionString;
-			// create the data node for the processed data
-			final DataType processedDataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
-			if (!UtilsAfcl.doesElementIdxValueMapToOneValue(subCollectionString)
-					&& !processedDataType.equals(DataType.Collection)) {
-				throw new IllegalStateException("Processing the src " + srcFunc + " with the elementIdx string "
-						+ subCollectionDataId + " will result in a collection, not in a  " + processedDataType.name());
-			}
-			final Task processedDataNode = assureDataNodePresence(subCollectionDataId, processedDataType, graph);
-			final Task processingNode = processEIdxAfclString(subCollectionString, dataNodeId, graph);
-			// connect the nodes
-			// raw data to idx function
-			final Dependency dependency1 = PropertyServiceDependency.createDataDependency(dataNodeIn, processingNode,
-					jsonKey);
-			graph.addEdge(dependency1, dataNodeIn, processingNode, EdgeType.DIRECTED);
-			final Dependency dependency2 = PropertyServiceDependency.createDataDependency(processingNode,
-					processedDataNode, jsonKey);
-			graph.addEdge(dependency2, processingNode, processedDataNode, EdgeType.DIRECTED);
-			final Dependency dependency3 = PropertyServiceDependency.createDataDependency(processedDataNode, function,
-					jsonKey);
-			graph.addEdge(dependency3, processedDataNode, function, EdgeType.DIRECTED);
-		} else {
-			// create annotate, and insert the edge (default case)
-			final Dependency dependency = PropertyServiceDependency.createDataDependency(dataNodeIn, function, jsonKey);
-			graph.addEdge(dependency, dataNodeIn, function, EdgeType.DIRECTED);
+		Task connectsToFunction = dataNodeIn;
+		// check whether we have any collection operations
+		if (AfclCollectionOperations.hasCollectionOperations(dataIn)) {
+			DataType expectedDataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+			connectsToFunction = AfclCollectionOperations.modelCollectionOperations(dataIn, dataNodeIn, graph,
+					expectedDataType);
 		}
-	}
-
-	/**
-	 * Processes the given afcl string describing an element index relation. Returns
-	 * the node representing the processing function after establishing all graph
-	 * connections to the EIdx inputs (e.g. index or stride).
-	 * 
-	 * @param afclEIdxString     the afcl string describing the element index
-	 * @param dataProcessingNode the node which will process the collection
-	 * @param graph              the enactment graph
-	 * @return the node representing the processing function after establishing all
-	 *         graph connections
-	 */
-	protected static Task processEIdxAfclString(final String afclEIdxString, final String dataNodeId,
-			final EnactmentGraph graph) {
-		final String subCollString = UtilsAfcl.generateEidxString(afclEIdxString);
-		final Task result = PropertyServiceFunctionUtilityElementIndex.createElementIndexTask(dataNodeId,
-				subCollString);
-		// iterate through the string. Make a connection every time we see a source.
-		if (afclEIdxString.contains(ConstantsEEModel.EIdxSeparatorExternal)) {
-			// more than one element
-			final String[] substrings = afclEIdxString.split(ConstantsEEModel.EIdxSeparatorExternal);
-			for (int idx = 0; idx < substrings.length; idx++) {
-				final String substring = substrings[idx];
-				processEIdxAfclSubString(substring, result, graph, idx);
-			}
-		} else {
-			processEIdxAfclSubString(afclEIdxString, result, graph, 0);
-		}
-		return result;
-	}
-
-	/**
-	 * If necessary, establish the node connections for the given substring (if e.g.
-	 * the stride is defined by a data out).
-	 * 
-	 * @param subString    the substring
-	 * @param functionNode the processing node
-	 * @param graph        the enactment graph
-	 * 
-	 */
-	protected static void processEIdxAfclSubString(final String subString, final Task functionNode,
-			final EnactmentGraph graph, final int idx) {
-		if (subString.contains(ConstantsEEModel.EIdxSeparatorInternal)) {
-			// start end stride
-			final String[] subSubstrings = subString.split(ConstantsEEModel.EIdxSeparatorInternal);
-			for (int idxIdx = 0; idxIdx < subSubstrings.length; idxIdx++) {
-				final String subSubString = subSubstrings[idxIdx];
-				if (UtilsAfcl.isSrcString(subSubString)) {
-					final Task inputNode = assureDataNodePresence(subSubString, DataType.Number, graph);
-					if (idxIdx == 0) {
-						connectEidxInput(functionNode, inputNode, EIdxParameters.Start, graph, idx);
-					} else if (idxIdx == 1) {
-						connectEidxInput(functionNode, inputNode, EIdxParameters.End, graph, idx);
-					} else {
-						connectEidxInput(functionNode, inputNode, EIdxParameters.Stride, graph, idx);
-					}
-				}
-			}
-		} else {
-			// index
-			if (UtilsAfcl.isSrcString(subString)) {
-				final EIdxParameters params = EIdxParameters.Index;
-				final Task inputNode = assureDataNodePresence(subString, DataType.Number, graph);
-				connectEidxInput(functionNode, inputNode, params, graph, idx);
-			}
-		}
-	}
-
-	/**
-	 * Connects the nodes to establish a connection between a param input and the
-	 * EIdx function
-	 * 
-	 * @param function the EIDX function node
-	 * @param data     the data node
-	 * @param param    the type of paramenter
-	 * @param graph    the enactment graph
-	 * @param idx      the index within the EIdx string
-	 */
-	protected static void connectEidxInput(final Task function, final Task data, final EIdxParameters param,
-			final EnactmentGraph graph, final int idx) {
-		final String jsonKey = param.name() + ConstantsEEModel.EIdxEdgeIdxSeparator + idx;
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(data, function, jsonKey);
-		graph.addEdge(dependency, data, function, EdgeType.DIRECTED);
-	}
-
-	/**
-	 * Returns true if the given data in is annotated as an element index data in.
-	 * 
-	 * @param dataIn the given data in
-	 * @return true if the given data in is annotated as an element index data in
-	 */
-	protected static boolean isElementIndexDataIn(final DataIns dataIn) {
-		if (!AfclApiWrapper.hasConstraints(dataIn)) {
-			return false;
-		}
-		for (final PropertyConstraint constraint : dataIn.getConstraints()) {
-			if (constraint.getName().equals(ConstantsAfcl.constraintNameElementIndex)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the value string of the given data in. Throws an exception if no
-	 * element index constraint is defined for the data in.
-	 * 
-	 * @param dataIn the given data in
-	 * @return the values string of the data in
-	 */
-	protected static String getElementIndexValue(final DataIns dataIn) {
-		if (!isElementIndexDataIn(dataIn)) {
-			throw new IllegalArgumentException("The data in with the name " + AfclApiWrapper.getName(dataIn)
-					+ " has no element index constraint.");
-		}
-		for (PropertyConstraint constraint : dataIn.getConstraints()) {
-			if (constraint.getName().equals(ConstantsAfcl.constraintNameElementIndex)) {
-				return constraint.getValue();
-			}
-		}
-		// this line should never be reached
-		throw new IllegalArgumentException("No value found for element index constraint.");
+		// connect the current node to the function
+		PropertyServiceDependency.addDataDependency(connectsToFunction, function, jsonKey, graph);
 	}
 
 	/**

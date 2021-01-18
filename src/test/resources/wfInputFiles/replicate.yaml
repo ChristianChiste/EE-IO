@@ -21,8 +21,6 @@ workflowBody:
           constraints:
             - name: "element-index"
               value: single Atomic/input_index, 3:6:single Atomic/input_stride
-            - name: "element-index"
-              value: 5  
         - name: "myInput2"
           type: "number"
           source: "5"          

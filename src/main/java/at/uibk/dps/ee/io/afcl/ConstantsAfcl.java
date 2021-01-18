@@ -50,6 +50,12 @@ public final class ConstantsAfcl {
 
 	// Constraint properties
 	public static final String constraintNameElementIndex = "element-index";
+	public static final String constraintSeparatorEIdxOuter = ",";
+	public static final String constraintSeparatorEIdxInner = ":";
+	public static final String constraintNameBlock = "block";
+	public static final String constraintSeparatorBlock = ",";
+	public static final String constraintNameReplicate = "replicate";
+	
 
 	/**
 	 * No constructor.

@@ -1,5 +1,8 @@
 package at.uibk.dps.ee.io.testconstants;
 
+import at.uibk.dps.ee.model.constants.ConstantsEEModel;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections.CollectionOperation;
+
 /**
  * Container for the constants used within the tests.
  * 
@@ -37,11 +40,18 @@ public class ConstantsTestCoreEEiO {
 
 	// element index names
 	public static final String elementIndexRawDataName = "single Atomic/input_collection";
-	public static final String elementIndexDataProcessingName = "single Atomic/input_collection|--|element-index|--|data,3:6:data";
-	public static final String elementIndexProcessedDataName = "single Atomic/input_collection|--|single Atomic/input_index, 3:6:single Atomic/input_stride";
+	public static final String elementIndexIndexName = "single Atomic/input_index";
+	public static final String elementIndexStrideName = "single Atomic/input_stride";
 	public static final String elementIndexInputIndex = "single Atomic/input_index";
 	public static final String elementIndexInputStride = "single Atomic/input_stride";
-	public static final String elementExpectedSubCollString = "data,3:6:data";
+	public static final String elementExpectedSubCollString = elementIndexIndexName + ", 3:6:"
+			+ elementIndexInputStride;
+	public static final String elementIndexProcessedDataName = elementIndexRawDataName
+			+ ConstantsEEModel.KeyWordSeparator2 + CollectionOperation.ElementIndex.name()
+			+ ConstantsEEModel.KeyWordSeparator2 + elementExpectedSubCollString;
+	public static final String elementIndexDataProcessingName = elementIndexRawDataName
+			+ ConstantsEEModel.DependencyAffix + CollectionOperation.ElementIndex.name()
+			+ ConstantsEEModel.DependencyAffix + elementExpectedSubCollString;
 
 	// constants for the read/write test
 	public static final String xmlFileTestReadWrite = "src/test/resources/xmlFiles/testAtomicWrite.xml";

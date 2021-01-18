@@ -124,12 +124,10 @@ public final class AfclCompoundsIf {
 		final Task choiceFunction = PropertyServiceFunctionDataFlow.createDataFlowFunction(funcNodeId,
 				DataFlowType.EarliestInput);
 		// add the inputs (kind-of the same as data ins for an atomic)
-		final Dependency inEdgeFirst = PropertyServiceDependency.createDataDependency(firstSrcNode, choiceFunction,
-				ConstantsEEModel.EarliestArrivalJsonKey);
-		graph.addEdge(inEdgeFirst, firstSrcNode, choiceFunction, EdgeType.DIRECTED);
-		final Dependency inEdgeSecond = PropertyServiceDependency.createDataDependency(secondSrcNode, choiceFunction,
-				ConstantsEEModel.EarliestArrivalJsonKey);
-		graph.addEdge(inEdgeSecond, secondSrcNode, choiceFunction, EdgeType.DIRECTED);
+		PropertyServiceDependency.addDataDependency(firstSrcNode, choiceFunction,
+				ConstantsEEModel.EarliestArrivalJsonKey, graph);
+		PropertyServiceDependency.addDataDependency(secondSrcNode, choiceFunction,
+				ConstantsEEModel.EarliestArrivalJsonKey, graph);
 		// add the output
 		final String jsonKey = ConstantsEEModel.EarliestArrivalJsonKey;
 		final String dataNodeId = srcString;
@@ -137,9 +135,7 @@ public final class AfclCompoundsIf {
 		// retrieve or create the data node
 		final Task dataNodeOut = AfclCompounds.assureDataNodePresence(dataNodeId, dataType, graph);
 		// create, annotate, and add the dependency to the graph
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(choiceFunction, dataNodeOut,
-				jsonKey);
-		graph.addEdge(dependency, choiceFunction, dataNodeOut, EdgeType.DIRECTED);
+		PropertyServiceDependency.addDataDependency(choiceFunction, dataNodeOut, jsonKey, graph);
 	}
 
 	/**
@@ -200,9 +196,7 @@ public final class AfclCompoundsIf {
 		// create the decision variable
 		final Task decisionVariableNode = new Communication(decVarId);
 		PropertyServiceData.setNodeType(decisionVariableNode, NodeType.Decision);
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(funcNode, decisionVariableNode,
-				decVarId);
-		graph.addEdge(dependency, funcNode, decisionVariableNode, EdgeType.DIRECTED);
+		PropertyServiceDependency.addDataDependency(funcNode, decisionVariableNode, decVarId, graph);
 		return decisionVariableNode;
 	}
 
@@ -280,9 +274,7 @@ public final class AfclCompoundsIf {
 		final JsonElement content = JsonParser.parseString(dataString);
 
 		final Task result = PropertyServiceData.createConstantNode(dataNodeId, dataType, content);
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(result, conditionFunction,
-				jsonKey);
-		graph.addEdge(dependency, result, conditionFunction, EdgeType.DIRECTED);
+		PropertyServiceDependency.addDataDependency(result, conditionFunction, jsonKey, graph);
 		return result;
 	}
 
@@ -300,9 +292,7 @@ public final class AfclCompoundsIf {
 			final String dataString, final DataType dataType) {
 		final String jsonKey = dataString;
 		final Task result = AfclCompounds.assureDataNodePresence(dataString, dataType, graph);
-		final Dependency dependency = PropertyServiceDependency.createDataDependency(result, conditionFunction,
-				jsonKey);
-		graph.addEdge(dependency, result, conditionFunction, EdgeType.DIRECTED);
+		PropertyServiceDependency.addDataDependency(result, conditionFunction, jsonKey, graph);
 		return result;
 	}
 }
