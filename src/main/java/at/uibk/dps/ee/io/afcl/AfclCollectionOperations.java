@@ -40,14 +40,14 @@ public final class AfclCollectionOperations {
 	 *                      function
 	 * @return the data node with the processed data
 	 */
-	public static Task modelCollectionOperations(DataIns dataIn, Task originalData, EnactmentGraph graph,
-			DataType finalDataType) {
+	public static Task modelCollectionOperations(final DataIns dataIn, final Task originalData,
+			final EnactmentGraph graph, final DataType finalDataType) {
 		if (!PropertyServiceData.getDataType(originalData).equals(DataType.Collection)) {
 			throw new IllegalStateException(
 					"Collections operations applied to non-collection data " + originalData.getId());
 		}
 		// get a list of the collection constraints
-		List<PropertyConstraint> collectionConstraints = dataIn.getConstraints().stream()
+		final List<PropertyConstraint> collectionConstraints = dataIn.getConstraints().stream()
 				.filter(constraint -> isCollectionConstraint(constraint)).collect(Collectors.toList());
 		Task processedData = originalData;
 		for (PropertyConstraint contraint : collectionConstraints) {
@@ -67,33 +67,34 @@ public final class AfclCollectionOperations {
 	 * @param graph        the enactment graph
 	 * @return the node with the processed data (from the one operation)
 	 */
-	protected static Task modelCollectionOperation(PropertyConstraint contraint, String jsonKey, Task originalData,
-			EnactmentGraph graph, DataType finalDataType) {
+	protected static Task modelCollectionOperation(final PropertyConstraint contraint, final String jsonKey,
+			final Task originalData, final EnactmentGraph graph, final DataType finalDataType) {
 		// create the function node modeling the operation
-		String subCollectionString = contraint.getValue();
-		CollectionOperation operationType = UtilsAfcl.getCollectionOperationType(contraint.getName(),
+		final String subCollectionString = contraint.getValue();
+		final CollectionOperation operationType = UtilsAfcl.getCollectionOperationType(contraint.getName(),
 				subCollectionString);
-		Task operationNode = PropertyServiceFunctionUtilityCollections.createCollectionOperation(originalData.getId(),
-				subCollectionString, operationType);
+		final Task operationNode = PropertyServiceFunctionUtilityCollections
+				.createCollectionOperation(originalData.getId(), subCollectionString, operationType);
 		// connect it to the original data
 		PropertyServiceDependency.addDataDependency(originalData, operationNode, jsonKey, graph);
 		// make the src connections where necessary
-		List<String> inputStrings = getSubstrings(subCollectionString, operationType);
-		boolean illegalStringsPresent = !inputStrings.stream()
+		final List<String> inputStrings = getSubstrings(subCollectionString, operationType);
+		final boolean illegalStringsPresent = !inputStrings.stream()
 				.allMatch(string -> isLegalEntryString(string, operationType));
 		if (illegalStringsPresent) {
 			throw new IllegalArgumentException("Illegal collection operation strings: " + inputStrings);
 		}
-		Set<String> srcInputStrings = inputStrings.stream().filter(string -> UtilsAfcl.isSrcString(string))
+		final Set<String> srcInputStrings = inputStrings.stream().filter(string -> UtilsAfcl.isSrcString(string))
 				.collect(Collectors.toSet());
 		srcInputStrings.forEach(srcString -> attachOperationInput(srcString, operationNode, graph));
 
 		// create the node for the processed data
-		String processedDataId = originalData.getId() + ConstantsEEModel.KeyWordSeparator2 + operationType.name()
+		final String processedDataId = originalData.getId() + ConstantsEEModel.KeyWordSeparator2 + operationType.name()
 				+ ConstantsEEModel.KeyWordSeparator2 + subCollectionString;
-		boolean oneElementResult = operationType.equals(CollectionOperation.ElementIndex) && inputStrings.size() == 1;
-		DataType processedDataType = oneElementResult ? finalDataType : DataType.Collection;
-		Task processedData = AfclCompounds.assureDataNodePresence(processedDataId, processedDataType, graph);
+		final boolean oneElementResult = operationType.equals(CollectionOperation.ElementIndex)
+				&& inputStrings.size() == 1;
+		final DataType processedDataType = oneElementResult ? finalDataType : DataType.Collection;
+		final Task processedData = AfclCompounds.assureDataNodePresence(processedDataId, processedDataType, graph);
 		PropertyServiceDependency.addDataDependency(operationNode, processedData, jsonKey, graph);
 		return processedData;
 	}
@@ -107,8 +108,9 @@ public final class AfclCollectionOperations {
 	 * @param operationNode the function node
 	 * @param graph         the enactment graph
 	 */
-	protected static void attachOperationInput(String srcString, Task operationNode, EnactmentGraph graph) {
-		Task inputData = AfclCompounds.assureDataNodePresence(srcString, DataType.Number, graph);
+	protected static void attachOperationInput(final String srcString, final Task operationNode,
+			final EnactmentGraph graph) {
+		final Task inputData = AfclCompounds.assureDataNodePresence(srcString, DataType.Number, graph);
 		PropertyServiceDependency.addDataDependency(inputData, operationNode, srcString, graph);
 	}
 
@@ -120,8 +122,8 @@ public final class AfclCollectionOperations {
 	 * @param operation
 	 * @return
 	 */
-	protected static List<String> getSubstrings(String subcollectionString, CollectionOperation operation) {
-		List<String> result = new ArrayList<>();
+	protected static List<String> getSubstrings(final String subcollectionString, final CollectionOperation operation) {
+		final List<String> result = new ArrayList<>();
 		if (operation.equals(CollectionOperation.Replicate) || operation.equals(CollectionOperation.Split)) {
 			result.add(subcollectionString);
 			return result;
@@ -153,14 +155,11 @@ public final class AfclCollectionOperations {
 	 * @param innerEidxString
 	 * @return
 	 */
-	protected static List<String> getInnerEidxSubstrings(String innerEidxString) {
-		List<String> result = new ArrayList<>();
+	protected static List<String> getInnerEidxSubstrings(final String innerEidxString) {
 		if (innerEidxString.contains(ConstantsAfcl.constraintSeparatorEIdxInner)) {
-			result.addAll(Arrays.asList(innerEidxString.split(ConstantsAfcl.constraintSeparatorEIdxInner)));
-			return result;
+			return Arrays.asList(innerEidxString.split(ConstantsAfcl.constraintSeparatorEIdxInner));
 		} else {
-			result.add(innerEidxString);
-			return result;
+			return Arrays.asList(innerEidxString);
 		}
 	}
 
@@ -171,11 +170,11 @@ public final class AfclCollectionOperations {
 	 * @param operation   the operation type
 	 * @return true if the given substring is legal.
 	 */
-	protected static boolean isLegalEntryString(String entryString, CollectionOperation operation) {
+	protected static boolean isLegalEntryString(final String entryString, final CollectionOperation operation) {
 		if (UtilsAfcl.isSrcString(entryString)) {
 			return true;
 		}
-		String noWsString = entryString.trim();
+		final String noWsString = entryString.trim();
 		if (operation.equals(CollectionOperation.ElementIndex) && noWsString.isEmpty()) {
 			return true;
 		}
@@ -193,7 +192,7 @@ public final class AfclCollectionOperations {
 	 * @return true if the provided dataIn has at least one constraint defining a
 	 *         collection operation
 	 */
-	public static boolean hasCollectionOperations(DataIns dataIn) {
+	public static boolean hasCollectionOperations(final DataIns dataIn) {
 		if (!AfclApiWrapper.hasConstraints(dataIn)) {
 			return false;
 		}
@@ -206,7 +205,7 @@ public final class AfclCollectionOperations {
 	 * @param constraint the provided constraint.
 	 * @return true if the provided constraint relates to collection operations
 	 */
-	protected static boolean isCollectionConstraint(PropertyConstraint constraint) {
+	protected static boolean isCollectionConstraint(final PropertyConstraint constraint) {
 		final String name = constraint.getName();
 		return name.equals(ConstantsAfcl.constraintNameBlock) || name.equals(ConstantsAfcl.constraintNameElementIndex)
 				|| name.equals(ConstantsAfcl.constraintNameReplicate);
