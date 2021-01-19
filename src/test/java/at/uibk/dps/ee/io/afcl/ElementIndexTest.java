@@ -11,7 +11,6 @@ import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections.CollectionOperation;
-import at.uibk.dps.ee.visualization.model.EnactmentGraphViewer;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections;
 import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
@@ -24,7 +23,6 @@ public class ElementIndexTest {
 
 		Workflow atomicElementIndexWf = Graphs.getElementIndexWf();
 		EnactmentGraph result = GraphGenerationAfcl.generateEnactmentGraph(atomicElementIndexWf);
-		EnactmentGraphViewer.view(result);
 		// we can assume that the atomic part is done right
 
 		// what we want to check is that
