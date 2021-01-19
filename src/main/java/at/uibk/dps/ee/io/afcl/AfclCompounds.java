@@ -124,7 +124,7 @@ public final class AfclCompounds {
 		Task connectsToFunction = dataNodeIn;
 		// check whether we have any collection operations
 		if (AfclCollectionOperations.hasCollectionOperations(dataIn)) {
-			DataType expectedDataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+			final DataType expectedDataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 			connectsToFunction = AfclCollectionOperations.modelCollectionOperations(dataIn, dataNodeIn, graph,
 					expectedDataType);
 		}

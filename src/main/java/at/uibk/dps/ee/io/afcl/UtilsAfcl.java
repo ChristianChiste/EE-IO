@@ -43,7 +43,7 @@ public final class UtilsAfcl {
 	 * @param value          the constraint value
 	 * @return the collection operation corresponding to the afcl contraint name
 	 */
-	public static CollectionOperation getCollectionOperationType(String constraintName, String value) {
+	public static CollectionOperation getCollectionOperationType(final String constraintName, final String value) {
 		switch (constraintName) {
 		case ConstantsAfcl.constraintNameElementIndex:
 			return CollectionOperation.ElementIndex;
@@ -63,7 +63,7 @@ public final class UtilsAfcl {
 	 * @param string the given string
 	 * @return true if the given string is an int
 	 */
-	public static boolean isInt(String string) {
+	public static boolean isInt(final String string) {
 		try {
 			Integer.parseInt(string);
 			return true;

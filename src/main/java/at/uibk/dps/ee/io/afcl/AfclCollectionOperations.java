@@ -50,7 +50,7 @@ public final class AfclCollectionOperations {
 		final List<PropertyConstraint> collectionConstraints = dataIn.getConstraints().stream()
 				.filter(constraint -> isCollectionConstraint(constraint)).collect(Collectors.toList());
 		Task processedData = originalData;
-		for (PropertyConstraint contraint : collectionConstraints) {
+		for (final PropertyConstraint contraint : collectionConstraints) {
 			processedData = modelCollectionOperation(contraint, dataIn.getName(), processedData, graph, finalDataType);
 		}
 		return processedData;
@@ -115,37 +115,61 @@ public final class AfclCollectionOperations {
 	}
 
 	/**
-	 * Converts the subcollection string into a list of strings, where each entry
-	 * could be a source string
+	 * Converts the subcollection string into a list of strings, where each entry is
+	 * a number, defined either as a value or as a source-reference to a data out
+	 * generating the value at run time.
 	 * 
-	 * @param subcollectionString
-	 * @param operation
-	 * @return
+	 * @param subcollectionString the subcollection string annotate in the afcl file
+	 * @param operation           the operation that the subcollection string
+	 *                            describes
+	 * @return list of strings, each of them describing a number
 	 */
 	protected static List<String> getSubstrings(final String subcollectionString, final CollectionOperation operation) {
-		final List<String> result = new ArrayList<>();
-		if (operation.equals(CollectionOperation.Replicate) || operation.equals(CollectionOperation.Split)) {
-			result.add(subcollectionString);
-			return result;
-		} else if (operation.equals(CollectionOperation.Block)) {
-			if (!subcollectionString.contains(ConstantsAfcl.constraintSeparatorBlock)) {
-				throw new IllegalArgumentException("Incorrect Block Constraint Argument: " + subcollectionString);
-			}
-			result.add(subcollectionString.split(ConstantsAfcl.constraintSeparatorBlock)[0]);
-			result.add(subcollectionString.split(ConstantsAfcl.constraintSeparatorBlock)[1]);
-			return result;
-		} else if (operation.equals(CollectionOperation.ElementIndex)) {
-			if (subcollectionString.contains(ConstantsAfcl.constraintSeparatorEIdxOuter)) {
-				for (String innerSubString : subcollectionString.split(ConstantsAfcl.constraintSeparatorEIdxOuter)) {
-					result.addAll(getInnerEidxSubstrings(innerSubString));
-				}
-			} else {
-				result.addAll(getInnerEidxSubstrings(subcollectionString));
-			}
-			return result;
-		} else {
+		switch (operation) {
+		case Replicate:
+			return getSubstringsReplicateSplit(subcollectionString);
+		case Split:
+			return getSubstringsReplicateSplit(subcollectionString);
+		case Block:
+			return getSubstringsBlock(subcollectionString);
+		case ElementIndex:
+			return getSubstringsEIdx(subcollectionString);
+		default:
 			throw new IllegalStateException("Unknown collection operation: " + operation.name());
 		}
+	}
+
+	/**
+	 * See the getSubstrings method. This one is used for replicate and split.
+	 */
+	protected static List<String> getSubstringsReplicateSplit(final String subcollectionString) {
+		return Arrays.asList(subcollectionString);
+	}
+
+	/**
+	 * See the getSubstrings method. This one is used for element index.
+	 */
+	protected static List<String> getSubstringsEIdx(final String subcollectionString) {
+		final List<String> result = new ArrayList<>();
+		if (subcollectionString.contains(ConstantsAfcl.constraintSeparatorEIdxOuter)) {
+			for (final String innerSubString : subcollectionString.split(ConstantsAfcl.constraintSeparatorEIdxOuter)) {
+				result.addAll(getInnerEidxSubstrings(innerSubString));
+			}
+		} else {
+			result.addAll(getInnerEidxSubstrings(subcollectionString));
+		}
+		return result;
+	}
+
+	/**
+	 * See the getSubstrings method. This one is used for block.
+	 */
+	protected static List<String> getSubstringsBlock(final String subcollectionString) {
+		if (!subcollectionString.contains(ConstantsAfcl.constraintSeparatorBlock)) {
+			throw new IllegalArgumentException("Incorrect Block Constraint Argument: " + subcollectionString);
+		}
+		return Arrays.asList(subcollectionString.split(ConstantsAfcl.constraintSeparatorBlock)[0],
+				subcollectionString.split(ConstantsAfcl.constraintSeparatorBlock)[1]);
 	}
 
 	/**
@@ -178,10 +202,7 @@ public final class AfclCollectionOperations {
 		if (operation.equals(CollectionOperation.ElementIndex) && noWsString.isEmpty()) {
 			return true;
 		}
-		if (UtilsAfcl.isInt(noWsString)) {
-			return true;
-		}
-		return false;
+		return UtilsAfcl.isInt(noWsString);
 	}
 
 	/**
