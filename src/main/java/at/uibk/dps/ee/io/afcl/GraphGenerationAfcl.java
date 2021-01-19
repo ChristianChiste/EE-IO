@@ -53,7 +53,7 @@ public final class GraphGenerationAfcl {
 	 * @param afclWorkflow the given workflow
 	 */
 	protected static void addWfFunctions(final EnactmentGraph graph, final Workflow afclWorkflow) {
-		for (final Function function : afclWorkflow.getWorkflowBody()) {
+		for (final Function function : AfclApiWrapper.getWfBody(afclWorkflow)) {
 			AfclCompounds.addFunctionCompound(graph, function, afclWorkflow);
 		}
 	}

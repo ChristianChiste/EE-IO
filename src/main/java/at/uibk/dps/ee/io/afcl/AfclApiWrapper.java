@@ -2,6 +2,7 @@ package at.uibk.dps.ee.io.afcl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
@@ -25,6 +26,17 @@ import at.uibk.dps.afcl.functions.objects.Section;
 public final class AfclApiWrapper {
 
 	private AfclApiWrapper() {
+	}
+
+	/**
+	 * Returns the list of wf functions if defined, otherwise returns an emtpy list.
+	 * 
+	 * @param workflow the processed AFCL workflow
+	 * @return the list of wf functions if defined, otherwise returns an emtpy list
+	 */
+	public static List<Function> getWfBody(Workflow workflow) {
+		return Optional.ofNullable(workflow.getWorkflowBody())
+				.orElseThrow(() -> new IllegalArgumentException("Workflow does not contain any functions."));
 	}
 
 	public static boolean hasConstraints(DataIns dataIn) {
