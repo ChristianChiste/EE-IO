@@ -16,11 +16,11 @@ import at.uibk.dps.afcl.functions.objects.DataOuts;
 import at.uibk.dps.ee.io.UtilsIO;
 import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.DataFlowType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections.OperationType;
 import net.sf.opendse.model.Communication;
 import net.sf.opendse.model.Task;
 
@@ -54,8 +54,9 @@ public final class AfclCompoundsParallelFor {
 		checkIterators(iterators, parallelFor.getName());
 		String distributionId = parallelFor.getName() + ConstantsEEModel.KeywordSeparator1
 				+ ConstantsEEModel.FuncNameUtilityDistribution;
-		Task distributionNode = PropertyServiceFunctionDataFlow.createDataFlowFunction(distributionId,
-				DataFlowType.Distribution);
+
+		Task distributionNode = PropertyServiceFunctionDataFlowCollections.createCollectionDataFlowTask(distributionId,
+				OperationType.Distribution, parallelFor.getName());
 
 		for (String iterator : iterators) {
 			processIterator(iterator, graph, AfclApiWrapper.getDataIns(parallelFor), distributionNode,
@@ -92,8 +93,8 @@ public final class AfclCompoundsParallelFor {
 		// create the aggregation function
 		String aggregationId = parallelForName + ConstantsEEModel.KeywordSeparator1
 				+ ConstantsEEModel.FuncNameUtilityAggregation + dataOut.getName();
-		Task aggregationNode = PropertyServiceFunctionDataFlow.createDataFlowFunction(aggregationId,
-				DataFlowType.Aggregation);
+		Task aggregationNode = PropertyServiceFunctionDataFlowCollections.createCollectionDataFlowTask(aggregationId,
+				OperationType.Aggregation, parallelForName);
 		// find the source and connect the aggregation node to it
 		String srcString = dataOut.getSource();
 		// TODO this has to be put into a method somewhere

@@ -60,6 +60,7 @@ public class ConstantsTestCoreEEiO {
 	public static final String parForRawConstDataName = "single Atomic/wf_coll2";
 	public static final String parForRawDistrNodeName = "single Atomic/wf_coll2";
 	public static final String parForRawAggrNodeName = "single Atomic/wf_coll2";
+	public static final String parForParForName = "parallelFor";
 
 	// constants for the read/write test
 	public static final String xmlFileTestReadWrite = "src/test/resources/xmlFiles/testAtomicWrite.xml";

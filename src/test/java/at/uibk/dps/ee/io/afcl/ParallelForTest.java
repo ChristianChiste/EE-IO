@@ -11,8 +11,8 @@ import at.uibk.dps.ee.io.testconstants.ConstantsTestCoreEEiO;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.DataFlowType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections.OperationType;
 import at.uibk.dps.ee.visualization.model.EnactmentGraphViewer;
 import net.sf.opendse.model.Task;
 import net.sf.opendse.model.properties.TaskPropertyService;
@@ -35,11 +35,14 @@ public class ParallelForTest {
 		assertEquals(7, dataCount);
 
 		// check root and leaf number
-		assertEquals(2, result.getVertices().stream().filter(task -> TaskPropertyService.isCommunication(task) && PropertyServiceData.isRoot(task)).count());
-		assertEquals(1, result.getVertices().stream().filter(task -> TaskPropertyService.isCommunication(task) && PropertyServiceData.isLeaf(task)).count());
+		assertEquals(2, result.getVertices().stream()
+				.filter(task -> TaskPropertyService.isCommunication(task) && PropertyServiceData.isRoot(task)).count());
+		assertEquals(1, result.getVertices().stream()
+				.filter(task -> TaskPropertyService.isCommunication(task) && PropertyServiceData.isLeaf(task)).count());
 
 		// get all the nodes
-		Task output = result.getVertices().stream().filter(task -> TaskPropertyService.isCommunication(task) && PropertyServiceData.isLeaf(task)).findAny()
+		Task output = result.getVertices().stream()
+				.filter(task -> TaskPropertyService.isCommunication(task) && PropertyServiceData.isLeaf(task)).findAny()
 				.orElseThrow(() -> new AssertionError());
 		assertEquals(DataType.Collection, PropertyServiceData.getDataType(output));
 		Task aggregationNode = result.getPredecessors(output).iterator().next();
@@ -63,10 +66,14 @@ public class ParallelForTest {
 		// check the annotation
 
 		// dist and aggr nodes
-		assertEquals(DataFlowType.Aggregation, PropertyServiceFunctionDataFlow.getDataFlowType(aggregationNode));
-		assertEquals(DataFlowType.Distribution, PropertyServiceFunctionDataFlow.getDataFlowType(distributionNode));
-
-		// check the edge json key annotation
+		assertEquals(OperationType.Aggregation,
+				PropertyServiceFunctionDataFlowCollections.getOperationType(aggregationNode));
+		assertEquals(OperationType.Distribution,
+				PropertyServiceFunctionDataFlowCollections.getOperationType(distributionNode));
+		assertEquals(ConstantsTestCoreEEiO.parForParForName,
+				PropertyServiceFunctionDataFlowCollections.getScope(aggregationNode));
+		assertEquals(ConstantsTestCoreEEiO.parForParForName,
+				PropertyServiceFunctionDataFlowCollections.getScope(distributionNode));
 
 	}
 
@@ -88,11 +95,11 @@ public class ParallelForTest {
 				.orElseThrow(() -> new AssertionError("Dist not found"));
 		Task aggregationNode = Optional.ofNullable(result.getVertex(ConstantsTestCoreEEiO.parForRawAggrNodeName))
 				.orElseThrow(() -> new AssertionError("Aggr not found"));
-		
+
 		// check the predecessor and successor counts
 		assertEquals(4, result.getPredecessorCount(distributionNode));
 		assertEquals(2, result.getSuccessorCount(distributionNode));
-		
+
 		assertEquals(2, result.getPredecessorCount(aggregationNode));
 		assertEquals(2, result.getSuccessorCount(aggregationNode));
 	}
