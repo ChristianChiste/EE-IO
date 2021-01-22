@@ -2,7 +2,8 @@ package at.uibk.dps.ee.io.afcl;
 
 import static org.junit.Assert.*;
 
-import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -77,30 +78,61 @@ public class ParallelForTest {
 
 	}
 
+	@Test
 	public void testParForMoreComplex() {
-		Workflow wf = Graphs.getParallelForWf();
+		Workflow wf = Graphs.getParallelForComplexWf();
 		// get the enactment graph
 		EnactmentGraph result = GraphGenerationAfcl.generateEnactmentGraph(wf);
-
+		Set<Task> functions = result.getVertices().stream().filter(task -> TaskPropertyService.isProcess(task))
+				.collect(Collectors.toSet());
 		// check the func and the data count
-		long funcCount = result.getVertices().stream().filter(task -> TaskPropertyService.isProcess(task)).count();
+		long funcCount = functions.size();
 		long dataCount = result.getVertices().stream().filter(task -> TaskPropertyService.isCommunication(task))
 				.count();
-
-		assertEquals(5, funcCount);
-		assertEquals(11, dataCount);
-
+		assertEquals(6, funcCount);
+		assertEquals(10, dataCount);
 		// get the distribution and the aggregation function
-		Task distributionNode = Optional.ofNullable(result.getVertex(ConstantsTestCoreEEiO.parForRawDistDataName))
-				.orElseThrow(() -> new AssertionError("Dist not found"));
-		Task aggregationNode = Optional.ofNullable(result.getVertex(ConstantsTestCoreEEiO.parForRawAggrNodeName))
-				.orElseThrow(() -> new AssertionError("Aggr not found"));
-
-		// check the predecessor and successor counts
-		assertEquals(4, result.getPredecessorCount(distributionNode));
+		Task distributionNode = result.getVertices().stream()
+				.filter(task -> PropertyServiceFunctionDataFlowCollections.isDistributionNode(task)).findAny()
+				.orElseThrow(() -> new AssertionError("Distribution node not found"));
+		Set<Task> aggregationNodes = result.getVertices().stream()
+				.filter(task -> PropertyServiceFunctionDataFlowCollections.isAggregationNode(task))
+				.collect(Collectors.toSet());
+		assertEquals(2, aggregationNodes.size());
+		for (Task aggre : aggregationNodes) {
+			assertEquals(1, result.getPredecessorCount(aggre));
+			assertEquals(1, result.getSuccessorCount(aggre));
+		}
+		assertEquals(2, result.getPredecessorCount(distributionNode));
 		assertEquals(2, result.getSuccessorCount(distributionNode));
-
-		assertEquals(2, result.getPredecessorCount(aggregationNode));
-		assertEquals(2, result.getSuccessorCount(aggregationNode));
+	}
+	
+	@Test
+	public void testParForIntIterator() {
+		Workflow wf = Graphs.getParallelForIntIteratorWf();
+		// get the enactment graph
+		EnactmentGraph result = GraphGenerationAfcl.generateEnactmentGraph(wf);
+		Set<Task> functions = result.getVertices().stream().filter(task -> TaskPropertyService.isProcess(task))
+				.collect(Collectors.toSet());
+		// check the func and the data count
+		long funcCount = functions.size();
+		long dataCount = result.getVertices().stream().filter(task -> TaskPropertyService.isCommunication(task))
+				.count();
+		assertEquals(5, funcCount);
+		assertEquals(9, dataCount);
+		// get the distribution and the aggregation function
+		Task distributionNode = result.getVertices().stream()
+				.filter(task -> PropertyServiceFunctionDataFlowCollections.isDistributionNode(task)).findAny()
+				.orElseThrow(() -> new AssertionError("Distribution node not found"));
+		Set<Task> aggregationNodes = result.getVertices().stream()
+				.filter(task -> PropertyServiceFunctionDataFlowCollections.isAggregationNode(task))
+				.collect(Collectors.toSet());
+		assertEquals(2, aggregationNodes.size());
+		for (Task aggre : aggregationNodes) {
+			assertEquals(1, result.getPredecessorCount(aggre));
+			assertEquals(1, result.getSuccessorCount(aggre));
+		}
+		assertEquals(1, result.getPredecessorCount(distributionNode));
+		assertEquals(1, result.getSuccessorCount(distributionNode));
 	}
 }

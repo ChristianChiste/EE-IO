@@ -6,28 +6,31 @@ dataIns:
     source: "inputSource"
   - name: "wf_coll2"
     type: "collection"
-    source: "inputSource2"    
+    source: "inputSource2"
+  - name: "variableIterator"
+    type: "number"
+    source: "iterator"        
 workflowBody:
   - parallelFor:
       name: "parallelFor"
       dataIns:
         - name: "parallel_coll2"
-          type: "number"
+          type: "collection"
           source: "single Atomic/wf_coll2"
         - name: "parallel_coll"
-          type: "number"
+          type: "collection"
           source: "single Atomic/wf_coll"
           constraints:
             - name: "block"
               value: 2,0      
-      iterators: [parallel_coll, parallel_coll2]
+      iterators: [single Atomic/variableIterator]
       loopBody:
         - function:
             name: "atomicFunctionFirst"
             type: "serverless"
             dataIns:
             - name: "myInput1"
-              type: "number"
+              type: "collection"
               source: "parallelFor/parallel_coll"
             - name: "myInput2"
               type: "collection"
@@ -45,7 +48,7 @@ workflowBody:
               type: "number"
               source: "atomicFunctionFirst/myOutput1"
             - name: "myInput3"
-              type: "number"
+              type: "collection"
               source: "parallelFor/parallel_coll2"                        
             dataOuts: 
             - name: "myOutput2"

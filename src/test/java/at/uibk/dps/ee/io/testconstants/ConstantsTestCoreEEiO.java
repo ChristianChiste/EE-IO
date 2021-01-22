@@ -18,6 +18,7 @@ public class ConstantsTestCoreEEiO {
 	public static final String cfclFileElementIndex = "src/test/resources/wfInputFiles/atomicElementIndex.yaml";
 	public static final String cfclFileParallelFor = "src/test/resources/wfInputFiles/parFor.yaml";
 	public static final String cfclFileParallelForConstIterator = "src/test/resources/wfInputFiles/parForConstIterator.yaml";
+	public static final String cfclFileParallelForIntIterator = "src/test/resources/wfInputFiles/parForIntIterator.yaml";
 
 	// single atomic names
 	public static final String wfNameAtomic = "single Atomic";
@@ -58,7 +59,6 @@ public class ConstantsTestCoreEEiO {
 	// parallel for names
 	public static final String parForRawDistDataName = "single Atomic/wf_coll";
 	public static final String parForRawConstDataName = "single Atomic/wf_coll2";
-	public static final String parForRawDistrNodeName = "single Atomic/wf_coll2";
 	public static final String parForRawAggrNodeName = "single Atomic/wf_coll2";
 	public static final String parForParForName = "parallelFor";
 
