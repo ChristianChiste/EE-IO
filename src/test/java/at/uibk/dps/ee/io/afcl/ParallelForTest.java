@@ -14,7 +14,6 @@ import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections.OperationType;
-import at.uibk.dps.ee.visualization.model.EnactmentGraphViewer;
 import net.sf.opendse.model.Task;
 import net.sf.opendse.model.properties.TaskPropertyService;
 
@@ -25,7 +24,6 @@ public class ParallelForTest {
 		Workflow wf = Graphs.getParallelForWf();
 		// get the enactment graph
 		EnactmentGraph result = GraphGenerationAfcl.generateEnactmentGraph(wf);
-		EnactmentGraphViewer.view(result);
 
 		// check the func and the data count
 		long funcCount = result.getVertices().stream().filter(task -> TaskPropertyService.isProcess(task)).count();
