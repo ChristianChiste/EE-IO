@@ -16,6 +16,8 @@ public class ConstantsTestCoreEEiO {
 	public static final String cfclFileSeqPar = "src/test/resources/wfInputFiles/seqPar.yaml";
 	public static final String cfclFileIf = "src/test/resources/wfInputFiles/simpleIf.yaml";
 	public static final String cfclFileElementIndex = "src/test/resources/wfInputFiles/atomicElementIndex.yaml";
+	public static final String cfclFileParallelFor = "src/test/resources/wfInputFiles/parFor.yaml";
+	public static final String cfclFileParallelForConstIterator = "src/test/resources/wfInputFiles/parForConstIterator.yaml";
 
 	// single atomic names
 	public static final String wfNameAtomic = "single Atomic";
@@ -52,6 +54,12 @@ public class ConstantsTestCoreEEiO {
 	public static final String elementIndexDataProcessingName = elementIndexRawDataName
 			+ ConstantsEEModel.KeywordSeparator1 + CollectionOperation.ElementIndex.name()
 			+ ConstantsEEModel.KeywordSeparator1 + elementExpectedSubCollString;
+
+	// parallel for names
+	public static final String parForRawDistDataName = "single Atomic/wf_coll";
+	public static final String parForRawConstDataName = "single Atomic/wf_coll2";
+	public static final String parForRawDistrNodeName = "single Atomic/wf_coll2";
+	public static final String parForRawAggrNodeName = "single Atomic/wf_coll2";
 
 	// constants for the read/write test
 	public static final String xmlFileTestReadWrite = "src/test/resources/xmlFiles/testAtomicWrite.xml";

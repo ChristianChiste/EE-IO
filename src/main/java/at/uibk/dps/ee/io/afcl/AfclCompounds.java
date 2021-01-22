@@ -11,6 +11,7 @@ import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
+import at.uibk.dps.afcl.functions.ParallelFor;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
@@ -62,6 +63,10 @@ public final class AfclCompounds {
 			AfclCompoundsIf.addIf(graph, (IfThenElse) function, workflow);
 			break;
 		}
+		case ParallelFor: {
+			AfclCompoundsParallelFor.addParallelFor(graph, (ParallelFor) function, workflow);
+			break;
+		}
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + UtilsAfcl.getCompoundType(function));
 		}
@@ -84,14 +89,34 @@ public final class AfclCompounds {
 	}
 
 	/**
+	 * Processes the given dataIn: generates a data node and connects it to the
+	 * function node.
+	 * 
+	 * @param graph        the enactment graph
+	 * @param function     the node modeling the function with the given data in
+	 * @param dataIn       the given data in (representing a constant input)
+	 * @param expectedType the data type we expect the node to have
+	 */
+	protected static void addDataIn(final EnactmentGraph graph, final Task function, final DataIns dataIn,
+			DataType expectedType) {
+		if (UtilsAfcl.isSrcString(AfclApiWrapper.getSource(dataIn))) {
+			AfclCompounds.addDataInDefault(graph, function, dataIn, expectedType);
+		} else {
+			AfclCompounds.addDataInConstant(graph, function, dataIn, expectedType);
+		}
+	}
+
+	/**
 	 * Processes the given dataIn representing constant data: generates a constant
 	 * data node and connects it to the function node.
 	 * 
-	 * @param graph    the enactment graph
-	 * @param function the node modeling the function with the given data in
-	 * @param dataIn   the given data in (representing a constant input)
+	 * @param graph        the enactment graph
+	 * @param function     the node modeling the function with the given data in
+	 * @param dataIn       the given data in (representing a constant input)
+	 * @param expectedType the datatype we expect the node to have
 	 */
-	protected static void addDataInConstant(final EnactmentGraph graph, final Task function, final DataIns dataIn) {
+	protected static void addDataInConstant(final EnactmentGraph graph, final Task function, final DataIns dataIn,
+			DataType expectedType) {
 		final String jsonKey = AfclApiWrapper.getName(dataIn);
 		final String dataNodeId = function.getId() + ConstantsAfcl.SourceAffix + jsonKey;
 		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
@@ -106,11 +131,13 @@ public final class AfclCompounds {
 	 * Processes the given data in by adding an edge (if data already in graph) or
 	 * an edge and a data node (if data not yet in graph) to the graph.
 	 * 
-	 * @param graph    the enactment graph
-	 * @param function the node modeling the function with the given data in
-	 * @param dataIn   the given data in
+	 * @param graph        the enactment graph
+	 * @param function     the node modeling the function with the given data in
+	 * @param dataIn       the given data in
+	 * @param expectedType the type expected in the node we are looking for
 	 */
-	protected static void addDataInDefault(final EnactmentGraph graph, final Task function, final DataIns dataIn) {
+	protected static void addDataInDefault(final EnactmentGraph graph, final Task function, final DataIns dataIn,
+			DataType expectedType) {
 		// create/retrieve the data node
 		final String dataNodeId = AfclApiWrapper.getSource(dataIn);
 		final String srcFunc = UtilsAfcl.getProducerId(dataNodeId);
@@ -118,9 +145,8 @@ public final class AfclCompounds {
 			throw new IllegalStateException("Function " + function.getId() + " depends on itself.");
 		}
 		final String jsonKey = AfclApiWrapper.getName(dataIn);
-		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 		// retrieve or create the data node
-		final Task dataNodeIn = assureDataNodePresence(dataNodeId, dataType, graph);
+		final Task dataNodeIn = assureDataNodePresence(dataNodeId, expectedType, graph);
 		Task connectsToFunction = dataNodeIn;
 		// check whether we have any collection operations
 		if (AfclCollectionOperations.hasCollectionOperations(dataIn)) {

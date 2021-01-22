@@ -5,6 +5,7 @@ import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
+import at.uibk.dps.afcl.functions.ParallelFor;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.DataOutsAtomic;
 
@@ -62,8 +63,23 @@ public final class HierarchyLevellingAfcl {
 				// data out src as id
 				return AfclApiWrapper.getDataOutSrc(function, dataName);
 			}
+		} else if (function instanceof ParallelFor) {
+			ParallelFor parFor = (ParallelFor) function;
+			if (AfclApiWrapper.pointsToInput(afclSource, function)) {
+				// parallel for data in
+				if (parFor.getIterators().contains(dataName)) {
+					// distribution node's id should match the source
+					return afclSource;
+				}else {
+					// backtrack to producer
+					return getSrcDataId(AfclApiWrapper.getDataInSrc(function, dataName), workflow);
+				}
+			}else {
+				// the aggregated data node's ID should match the src String
+				return afclSource;
+			}
 		} else {
-			throw new IllegalStateException("Not yet implemented.");
+			throw new IllegalStateException("Not yet implemented for " + function.getClass().getCanonicalName());
 		}
 	}
 

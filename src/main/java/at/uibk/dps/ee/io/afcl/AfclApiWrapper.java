@@ -9,6 +9,7 @@ import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
+import at.uibk.dps.afcl.functions.ParallelFor;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.ACondition;
 import at.uibk.dps.afcl.functions.objects.DataIns;
@@ -136,6 +137,15 @@ public final class AfclApiWrapper {
 				}
 			}
 			return null;
+		} else if (function instanceof ParallelFor) {
+			ParallelFor parFor = (ParallelFor) function;
+			for (Function loopBodyFunction : parFor.getLoopBody()) {
+				Function inside = searchInsideFunction(loopBodyFunction, name);
+				if (inside != null) {
+					return inside;
+				}
+			}
+			return null;
 		} else {
 			throw new IllegalStateException("Unknown compound");
 		}
@@ -229,6 +239,8 @@ public final class AfclApiWrapper {
 			return getDataIns((Sequence) func);
 		} else if (func instanceof IfThenElse) {
 			return getDataIns((IfThenElse) func);
+		} else if (func instanceof ParallelFor) {
+			return getDataIns((ParallelFor) func);
 		} else {
 			throw new IllegalStateException("Not yet implemented.");
 		}
@@ -241,9 +253,15 @@ public final class AfclApiWrapper {
 			return getDataOuts((Sequence) func);
 		} else if (func instanceof IfThenElse) {
 			return getDataOuts((IfThenElse) func);
+		} else if (func instanceof ParallelFor) {
+			return getDataOuts((ParallelFor) func);
 		} else {
 			throw new IllegalStateException("Not yet implemented.");
 		}
+	}
+
+	protected static List<DataOuts> getDataOuts(ParallelFor parallelFor) {
+		return Optional.ofNullable(parallelFor.getDataOuts()).orElse(new ArrayList<>());
 	}
 
 	public static List<DataIns> getDataIns(IfThenElse ifCompound) {
@@ -267,6 +285,10 @@ public final class AfclApiWrapper {
 		} else {
 			return parallel.getDataIns();
 		}
+	}
+
+	public static List<DataIns> getDataIns(ParallelFor parallelFor) {
+		return Optional.ofNullable(parallelFor.getDataIns()).orElse(new ArrayList<>());
 	}
 
 	public static List<DataIns> getDataIns(Sequence seq) {

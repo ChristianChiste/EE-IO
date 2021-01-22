@@ -4,6 +4,7 @@ import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.Parallel;
+import at.uibk.dps.afcl.functions.ParallelFor;
 import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
@@ -33,7 +34,7 @@ public final class UtilsAfcl {
 	 *
 	 */
 	public enum CompoundType {
-		Atomic, Sequence, Parallel, If
+		Atomic, Sequence, Parallel, If, ParallelFor
 	}
 
 	/**
@@ -50,8 +51,9 @@ public final class UtilsAfcl {
 		case ConstantsAfcl.constraintNameReplicate:
 			return CollectionOperation.Replicate;
 		case ConstantsAfcl.constraintNameBlock:
-			return value.contains(ConstantsAfcl.constraintSeparatorBlock) ? CollectionOperation.Block
-					: CollectionOperation.Split;
+			return CollectionOperation.Block;
+		case ConstantsAfcl.constraintNameSplit:
+			return CollectionOperation.Split;
 		default:
 			throw new IllegalArgumentException("unknown collection operation " + constraintName);
 		}
@@ -87,6 +89,8 @@ public final class UtilsAfcl {
 			return CompoundType.Parallel;
 		} else if (function instanceof IfThenElse) {
 			return CompoundType.If;
+		} else if (function instanceof ParallelFor) {
+			return CompoundType.ParallelFor;
 		} else {
 			throw new IllegalArgumentException(
 					"The function " + function.getName() + " is a compound of an unknown type.");

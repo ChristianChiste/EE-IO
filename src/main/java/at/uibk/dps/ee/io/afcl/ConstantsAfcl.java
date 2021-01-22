@@ -53,6 +53,7 @@ public final class ConstantsAfcl {
 	public static final String constraintSeparatorEIdxOuter = ",";
 	public static final String constraintSeparatorEIdxInner = ":";
 	public static final String constraintNameBlock = "block";
+	public static final String constraintNameSplit = "split";
 	public static final String constraintSeparatorBlock = ",";
 	public static final String constraintNameReplicate = "replicate";
 	

@@ -35,8 +35,8 @@ dependencies {
 	
 	implementation 'com.github.ApolloCEC:socketUtils:-SNAPSHOT'
 	
-	// dependencies to projects within Apollo Main
-	implementation 'com.github.stefanpedratscher:AFCLCore:-SNAPSHOT'
+	// dependencies to projects from other parts of Apollo
+	implementation 'com.github.Apollo-AFCL:AFCLCore:newParallelForSyntax-SNAPSHOT'
 	
 	// gson to define the format of the exchanged messages
 	implementation 'com.google.code.gson:gson:2.8.6'

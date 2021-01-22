@@ -28,7 +28,7 @@ public class AfclCompoundsTest {
 		dataIn.setType("number");
 		dataIn.setSource("5");
 
-		AfclCompounds.addDataInConstant(graph, function, dataIn);
+		AfclCompounds.addDataInConstant(graph, function, dataIn, DataType.Number);
 
 		assertEquals(1, graph.getEdgeCount());
 		assertEquals(2, graph.getVertexCount());
@@ -45,5 +45,4 @@ public class AfclCompoundsTest {
 		assertEquals(DataType.Number, PropertyServiceData.getDataType(data));
 		assertEquals(5, PropertyServiceData.getContent(data).getAsInt());
 	}
-
 }

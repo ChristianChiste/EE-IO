@@ -1,0 +1,70 @@
+---
+name: "single Atomic"
+dataIns:
+  - name: "wf_coll"
+    type: "collection"
+    source: "inputSource"
+  - name: "wf_coll2"
+    type: "collection"
+    source: "inputSource2"
+  - name: "variableIterator"
+    type: "number"
+    source: "iterator"        
+workflowBody:
+  - parallelFor:
+      name: "parallelFor"
+      dataIns:
+        - name: "parallel_coll2"
+          type: "collection"
+          source: "single Atomic/wf_coll2"
+        - name: "parallel_coll"
+          type: "collection"
+          source: "single Atomic/wf_coll"
+          constraints:
+            - name: "block"
+              value: 2,0      
+      iterators: [10, parallelFor/parallel_coll, single Atomic/variableIterator, parallelFor/parallel_coll2]
+      loopBody:
+        - function:
+            name: "atomicFunctionFirst"
+            type: "serverless"
+            dataIns:
+            - name: "myInput1"
+              type: "number"
+              source: "parallelFor/parallel_coll"
+            - name: "myInput2"
+              type: "collection"
+              source: "single Atomic/wf_coll2"            
+            dataOuts: 
+            - name: "myOutput1"
+              type: "number"
+            - name: "myOutput3"
+              type: "number"  
+        - function:
+            name: "atomicFunctionSecond"
+            type: "serverless"
+            dataIns:
+            - name: "myInput2"
+              type: "number"
+              source: "atomicFunctionFirst/myOutput1"
+            - name: "myInput3"
+              type: "number"
+              source: "parallelFor/parallel_coll2"                        
+            dataOuts: 
+            - name: "myOutput2"
+              type: "string"                    
+      dataOuts:
+        - name: "result_collection"
+          type: "collection"
+          source: "atomicFunctionSecond/myOutput2"
+        - name: "result_collection2"
+          type: "collection"
+          source: "atomicFunctionFirst/myOutput3"         
+dataOuts:
+  - name: "overallOutput"
+    type: "collection"
+    source: "parallelFor/result_collection"
+  - name: "overallOutput2"
+    type: "collection"
+    source: "parallelFor/result_collection2"    
+

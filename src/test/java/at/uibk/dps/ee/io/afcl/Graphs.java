@@ -35,6 +35,14 @@ public class Graphs {
 		return getWf(ConstantsTestCoreEEiO.cfclFileElementIndex);
 	}
 
+	public static Workflow getParallelForWf() {
+		return getWf(ConstantsTestCoreEEiO.cfclFileParallelFor);
+	}
+
+	public static Workflow getParallelForConstIteratorWf() {
+		return getWf(ConstantsTestCoreEEiO.cfclFileParallelForConstIterator);
+	}
+
 	protected static Workflow getWf(String fileName) {
 		try {
 			byte[] data = UtilsSocket.readFileToBytes(fileName);
