@@ -219,7 +219,7 @@ public final class AfclCompoundsParallelFor {
 			String distributedDataId = parallelForName + ConstantsAfcl.SourceAffix + dataInIterator.getName();
 			DataType dataType = UtilsAfcl.getDataTypeForString(dataInIterator.getType());
 			Task distributedData = AfclCompounds.assureDataNodePresence(distributedDataId, dataType, graph);
-			String jsonKey = ConstantsEEModel.JsonKeyDistribution;
+			String jsonKey = dataInIterator.getName();
 			PropertyServiceDependency.addDataDependency(distributionNode, distributedData, jsonKey, graph);
 		}
 	}

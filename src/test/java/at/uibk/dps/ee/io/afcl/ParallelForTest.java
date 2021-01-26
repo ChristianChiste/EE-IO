@@ -12,8 +12,10 @@ import at.uibk.dps.ee.io.testconstants.ConstantsTestCoreEEiO;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
+import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections.OperationType;
+import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
 import net.sf.opendse.model.properties.TaskPropertyService;
 
@@ -24,7 +26,6 @@ public class ParallelForTest {
 		Workflow wf = Graphs.getParallelForWf();
 		// get the enactment graph
 		EnactmentGraph result = GraphGenerationAfcl.generateEnactmentGraph(wf);
-
 		// check the func and the data count
 		long funcCount = result.getVertices().stream().filter(task -> TaskPropertyService.isProcess(task)).count();
 		long dataCount = result.getVertices().stream().filter(task -> TaskPropertyService.isCommunication(task))
@@ -103,8 +104,13 @@ public class ParallelForTest {
 		}
 		assertEquals(2, result.getPredecessorCount(distributionNode));
 		assertEquals(2, result.getSuccessorCount(distributionNode));
+
+		for (Dependency outEdge : result.getOutEdges(distributionNode)) {
+			assertTrue(PropertyServiceDependency.getJsonKey(outEdge).equals(ConstantsTestCoreEEiO.parForColl1Name)
+					|| PropertyServiceDependency.getJsonKey(outEdge).equals(ConstantsTestCoreEEiO.parForColl2Name));
+		}
 	}
-	
+
 	@Test
 	public void testParForIntIterator() {
 		Workflow wf = Graphs.getParallelForIntIteratorWf();
@@ -119,10 +125,10 @@ public class ParallelForTest {
 		assertEquals(5, funcCount);
 		assertEquals(9, dataCount);
 		// get the distribution and the aggregation function
-		Task distributionNode = result.getVertices().stream()
+		Task distributionNode = functions.stream()
 				.filter(task -> PropertyServiceFunctionDataFlowCollections.isDistributionNode(task)).findAny()
 				.orElseThrow(() -> new AssertionError("Distribution node not found"));
-		Set<Task> aggregationNodes = result.getVertices().stream()
+		Set<Task> aggregationNodes = functions.stream()
 				.filter(task -> PropertyServiceFunctionDataFlowCollections.isAggregationNode(task))
 				.collect(Collectors.toSet());
 		assertEquals(2, aggregationNodes.size());
