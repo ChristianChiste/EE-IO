@@ -116,7 +116,7 @@ public final class AfclCompounds {
 	 * @param expectedType the datatype we expect the node to have
 	 */
 	protected static void addDataInConstant(final EnactmentGraph graph, final Task function, final DataIns dataIn,
-			DataType expectedType) {
+			final DataType expectedType) {
 		final String jsonKey = AfclApiWrapper.getName(dataIn);
 		final String dataNodeId = function.getId() + ConstantsAfcl.SourceAffix + jsonKey;
 		final DataType dataType = UtilsAfcl.getDataTypeForString(dataIn.getType());

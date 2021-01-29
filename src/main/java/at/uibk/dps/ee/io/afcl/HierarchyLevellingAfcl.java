@@ -46,28 +46,59 @@ public final class HierarchyLevellingAfcl {
 			return afclSource;
 		} else if (function instanceof Parallel || function instanceof Sequence) {
 			// pointing to a seq or a parallel
-			if (AfclApiWrapper.pointsToInput(afclSource, function)) {
-				// points to data in
-				return getSrcDataId(AfclApiWrapper.getDataInSrc(function, dataName), workflow);
-			} else {
-				// points to data out
-				return getSrcDataId(AfclApiWrapper.getDataOutSrc(function, dataName), workflow);
-			}
+			return getSrcDataIdSequenceParallel(afclSource, dataName, function, workflow);
 		} else if (function instanceof IfThenElse) {
-			// pointing to an if compound
-			if (AfclApiWrapper.pointsToInput(afclSource, function)) {
-				// points to data in
-				return getSrcDataId(AfclApiWrapper.getDataInSrc(function, dataName), workflow);
-			} else {
-				// points to data out of if compound => there should be a data node with the
-				// data out src as id
-				return AfclApiWrapper.getDataOutSrc(function, dataName);
-			}
+			return getSrcDataIdIfThenElse(afclSource, dataName, function, workflow);
 		} else if (function instanceof ParallelFor) {
 			final ParallelFor parFor = (ParallelFor) function;
 			return getSrcDataIdParallelFor(parFor, afclSource, dataName, workflow);
 		} else {
 			throw new IllegalStateException("Not yet implemented for " + function.getClass().getCanonicalName());
+		}
+	}
+
+	/**
+	 * Returns the corrected string for the case where the afcl string points to an
+	 * sequence or parallel compound.
+	 * 
+	 * @param afclSource the afcl source string
+	 * @param dataName   the name of the data the src string points to
+	 * @param function   the sequence or parallel compound
+	 * @param workflow   the workflow
+	 * @return the corrected string for the case where the afcl string points to an
+	 *         IF compound
+	 */
+	protected static String getSrcDataIdSequenceParallel(final String afclSource, final String dataName,
+			final Function seqParFunction, final Workflow workflow) {
+		if (AfclApiWrapper.pointsToInput(afclSource, seqParFunction)) {
+			// points to data in
+			return getSrcDataId(AfclApiWrapper.getDataInSrc(seqParFunction, dataName), workflow);
+		} else {
+			// points to data out
+			return getSrcDataId(AfclApiWrapper.getDataOutSrc(seqParFunction, dataName), workflow);
+		}
+	}
+
+	/**
+	 * Returns the corrected string for the case where the afcl string points to an
+	 * IF compound.
+	 * 
+	 * @param afclSource the afcl source string
+	 * @param dataName   the name of the data the src string points to
+	 * @param function   the if compound
+	 * @param workflow   the workflow
+	 * @return the corrected string for the case where the afcl string points to an
+	 *         IF compound
+	 */
+	protected static String getSrcDataIdIfThenElse(final String afclSource, final String dataName,
+			final Function ifFunction, final Workflow workflow) {
+		if (AfclApiWrapper.pointsToInput(afclSource, ifFunction)) {
+			// points to data in
+			return getSrcDataId(AfclApiWrapper.getDataInSrc(ifFunction, dataName), workflow);
+		} else {
+			// points to data out of if compound => there should be a data node with the
+			// data out src as id
+			return AfclApiWrapper.getDataOutSrc(ifFunction, dataName);
 		}
 	}
 

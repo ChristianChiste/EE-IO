@@ -93,7 +93,7 @@ public final class AfclCompoundsParallelFor {
 		// process the data outs and add the aggregate function
 		final Optional<List<DataOuts>> dataOuts = Optional.ofNullable(parallelFor.getDataOuts());
 		if (dataOuts.isPresent()) {
-			for (DataOuts dataOut : dataOuts.get()) {
+			for (final DataOuts dataOut : dataOuts.get()) {
 				attachAggregatedDataOut(dataOut, graph, parallelFor.getName());
 			}
 		}
@@ -140,11 +140,11 @@ public final class AfclCompoundsParallelFor {
 		PropertyServiceDependency.addDataDependency(dataToAggregate, aggregationNode,
 				ConstantsEEModel.JsonKeyAggregation, graph);
 		// create the node for the aggregated data
-		final String aggregatedId = parallelForName + ConstantsAfcl.SourceAffix + dataOut.getName();
 		final DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
 		if (!dataType.equals(DataType.Collection)) {
 			throw new IllegalStateException("The data out of a parallel for must be a collection.");
 		}
+		final String aggregatedId = parallelForName + ConstantsAfcl.SourceAffix + dataOut.getName();
 		final Task aggregatedData = new Communication(aggregatedId);
 		PropertyServiceData.setDataType(aggregatedData, dataType);
 		// connect it to the aggregation function
