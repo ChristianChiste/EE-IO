@@ -19,20 +19,20 @@ public final class UtilsIO {
 	 * @param intString the given string
 	 * @return the int read from the given string
 	 */
-	public static int readAsInt(String intString) {
+	public static int readAsInt(final String intString) {
 		if (!readableAsInt(intString)) {
 			throw new IllegalArgumentException("The string " + intString + " cannot be read as int.");
 		}
 		return Integer.parseInt(intString);
 	}
-	
+
 	/**
 	 * Returns true if the given string can be parsed to an int.
 	 * 
 	 * @param intString the given string
 	 * @return true if the given string can be parsed to an int
 	 */
-	public static boolean readableAsInt(String intString) {
+	public static boolean readableAsInt(final String intString) {
 		try {
 			Integer.parseInt(intString);
 			return true;

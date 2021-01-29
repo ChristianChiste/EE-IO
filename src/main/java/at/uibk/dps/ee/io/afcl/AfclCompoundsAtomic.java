@@ -38,7 +38,7 @@ public final class AfclCompoundsAtomic {
 		final Task atomicTask = createTaskFromAtomicFunction(atomicFunc);
 		// process the inputs
 		for (final DataIns dataIn : AfclApiWrapper.getDataIns(atomicFunc)) {
-			DataType expectedType = UtilsAfcl.getDataTypeForString(dataIn.getType());
+			final DataType expectedType = UtilsAfcl.getDataTypeForString(dataIn.getType());
 			AfclCompounds.addDataIn(graph, atomicTask, dataIn, expectedType);
 		}
 		// process the outputs

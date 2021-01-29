@@ -50,40 +50,40 @@ public final class AfclCompoundsParallelFor {
 			final Workflow workflow) {
 
 		// process the iterators and add the distribute function
-		List<String> iterators = parallelFor.getIterators().stream().map(String::trim).collect(Collectors.toList());
-		String distributionId = parallelFor.getName() + ConstantsEEModel.KeywordSeparator1
+		final List<String> iterators = parallelFor.getIterators().stream().map(String::trim)
+				.collect(Collectors.toList());
+		final String distributionId = parallelFor.getName() + ConstantsEEModel.KeywordSeparator1
 				+ ConstantsEEModel.FuncNameUtilityDistribution;
 
-		Task distributionNode = PropertyServiceFunctionDataFlowCollections.createCollectionDataFlowTask(distributionId,
-				OperationType.Distribution, parallelFor.getName());
+		final Task distributionNode = PropertyServiceFunctionDataFlowCollections
+				.createCollectionDataFlowTask(distributionId, OperationType.Distribution, parallelFor.getName());
 
-		List<DataIns> dataIns = AfclApiWrapper.getDataIns(parallelFor);
+		final List<DataIns> dataIns = AfclApiWrapper.getDataIns(parallelFor);
 
 		if (isIntIteratorList(iterators)) {
 			// create/find the node providing the iteration number
 			processIterator(iterators.get(0), graph, dataIns, distributionNode, parallelFor.getName());
 
 			// create the output of the distribution function
-			String nodeId = distributionNode.getId() + ConstantsEEModel.KeywordSeparator1
+			final String nodeId = distributionNode.getId() + ConstantsEEModel.KeywordSeparator1
 					+ ConstantsEEModel.JsonKeyConstantIterator;
-			DataType dataType = DataType.Boolean;
-			Task intIteratorDist = new Communication(nodeId);
-			PropertyServiceData.setDataType(intIteratorDist, dataType);
+			final Task intIteratorDist = new Communication(nodeId);
+			PropertyServiceData.setDataType(intIteratorDist, DataType.Boolean);
 			PropertyServiceDependency.addDataDependency(distributionNode, intIteratorDist,
 					ConstantsEEModel.JsonKeyConstantIterator, graph);
 
 			// make the loop body while remembering new nodes
 			final Set<Task> functionsBeforeAdding = AfclCompounds.getFunctionNodes(graph);
 			processTheLoopBody(parallelFor, graph, workflow);
-			Set<Task> functionsAfterAdding = AfclCompounds.getFunctionNodes(graph);
+			final Set<Task> functionsAfterAdding = AfclCompounds.getFunctionNodes(graph);
 			functionsAfterAdding.removeAll(functionsBeforeAdding);
 			// connect all functions to the loop output
-			for (Task bodyFunction : functionsAfterAdding) {
+			for (final Task bodyFunction : functionsAfterAdding) {
 				PropertyServiceDependency.addDataDependency(intIteratorDist, bodyFunction,
 						ConstantsEEModel.JsonKeyConstantIterator, graph);
 			}
 		} else {
-			for (String iterator : iterators) {
+			for (final String iterator : iterators) {
 				processIterator(iterator, graph, dataIns, distributionNode, parallelFor.getName());
 			}
 			// process the loop body
@@ -91,7 +91,7 @@ public final class AfclCompoundsParallelFor {
 		}
 
 		// process the data outs and add the aggregate function
-		Optional<List<DataOuts>> dataOuts = Optional.ofNullable(parallelFor.getDataOuts());
+		final Optional<List<DataOuts>> dataOuts = Optional.ofNullable(parallelFor.getDataOuts());
 		if (dataOuts.isPresent()) {
 			for (DataOuts dataOut : dataOuts.get()) {
 				attachAggregatedDataOut(dataOut, graph, parallelFor.getName());
@@ -106,9 +106,10 @@ public final class AfclCompoundsParallelFor {
 	 * @param graph       the enactment graph
 	 * @param workflow    the workflow
 	 */
-	protected static void processTheLoopBody(ParallelFor parallelFor, EnactmentGraph graph, Workflow workflow) {
+	protected static void processTheLoopBody(final ParallelFor parallelFor, final EnactmentGraph graph,
+			final Workflow workflow) {
 		// process the loop body
-		for (Function function : parallelFor.getLoopBody()) {
+		for (final Function function : parallelFor.getLoopBody()) {
 			if (function instanceof AtomicFunction) {
 				AfclCompoundsAtomic.addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);
 			} else {
@@ -125,26 +126,26 @@ public final class AfclCompoundsParallelFor {
 	 * @param graph           the enactment graph
 	 * @param parallelForName the name of the parallelFor function
 	 */
-	protected static void attachAggregatedDataOut(DataOuts dataOut, EnactmentGraph graph, String parallelForName) {
+	protected static void attachAggregatedDataOut(final DataOuts dataOut, final EnactmentGraph graph,
+			final String parallelForName) {
 		// create the aggregation function
-		String aggregationId = parallelForName + ConstantsEEModel.KeywordSeparator1
+		final String aggregationId = parallelForName + ConstantsEEModel.KeywordSeparator1
 				+ ConstantsEEModel.FuncNameUtilityAggregation + ConstantsEEModel.KeywordSeparator1 + dataOut.getName();
-		Task aggregationNode = PropertyServiceFunctionDataFlowCollections.createCollectionDataFlowTask(aggregationId,
-				OperationType.Aggregation, parallelForName);
+		final Task aggregationNode = PropertyServiceFunctionDataFlowCollections
+				.createCollectionDataFlowTask(aggregationId, OperationType.Aggregation, parallelForName);
 		// find the source and connect the aggregation node to it
-		String srcString = dataOut.getSource();
-		// TODO this has to be put into a method somewhere
-		Task dataToAggregate = Optional.ofNullable(graph.getVertex(srcString))
+		final String srcString = dataOut.getSource();
+		final Task dataToAggregate = Optional.ofNullable(graph.getVertex(srcString))
 				.orElseThrow(() -> new IllegalStateException("Cannot find data to aggregate: " + srcString));
-		String jsonKey = ConstantsEEModel.JsonKeyAggregation;
-		PropertyServiceDependency.addDataDependency(dataToAggregate, aggregationNode, jsonKey, graph);
+		PropertyServiceDependency.addDataDependency(dataToAggregate, aggregationNode,
+				ConstantsEEModel.JsonKeyAggregation, graph);
 		// create the node for the aggregated data
-		String aggregatedId = parallelForName + ConstantsAfcl.SourceAffix + dataOut.getName();
-		DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
+		final String aggregatedId = parallelForName + ConstantsAfcl.SourceAffix + dataOut.getName();
+		final DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
 		if (!dataType.equals(DataType.Collection)) {
 			throw new IllegalStateException("The data out of a parallel for must be a collection.");
 		}
-		Task aggregatedData = new Communication(aggregatedId);
+		final Task aggregatedData = new Communication(aggregatedId);
 		PropertyServiceData.setDataType(aggregatedData, dataType);
 		// connect it to the aggregation function
 		PropertyServiceDependency.addDataDependency(aggregationNode, aggregatedData,
@@ -157,7 +158,7 @@ public final class AfclCompoundsParallelFor {
 	 * @param iterators the iterator list
 	 * @return true iff the given list specifies a number-driven execution
 	 */
-	protected static boolean isIntIteratorList(List<String> iterators) {
+	protected static boolean isIntIteratorList(final List<String> iterators) {
 		if (iterators.size() == 1) {
 			return isIntIterator(iterators.get(0));
 		} else if (iterators.size() > 1) {
@@ -179,7 +180,7 @@ public final class AfclCompoundsParallelFor {
 	 * @return true iff the given iterator defines the iteration number rather than
 	 *         a collection to iterate over
 	 */
-	protected static boolean isIntIterator(String iterator) {
+	protected static boolean isIntIterator(final String iterator) {
 		return UtilsIO.readableAsInt(iterator) || UtilsAfcl.isSrcString(iterator);
 	}
 
@@ -192,8 +193,8 @@ public final class AfclCompoundsParallelFor {
 	 * @param dataIns          the list of data ins
 	 * @param distributionNode the node modeling the distribution operation.
 	 */
-	protected static void processIterator(String iterator, EnactmentGraph graph, List<DataIns> dataIns,
-			Task distributionNode, String parallelForName) {
+	protected static void processIterator(final String iterator, final EnactmentGraph graph,
+			final List<DataIns> dataIns, final Task distributionNode, final String parallelForName) {
 		// connect the data to distribute
 		if (UtilsAfcl.isSrcString(iterator)) {
 			// iterator from source
@@ -202,9 +203,9 @@ public final class AfclCompoundsParallelFor {
 					ConstantsEEModel.JsonKeyConstantIterator, graph);
 		} else if (UtilsIO.readableAsInt(iterator)) {
 			// iterator from constant number
-			int content = UtilsIO.readAsInt(iterator);
-			String jsonKey = ConstantsEEModel.JsonKeyConstantIterator;
-			Task dataTask = PropertyServiceData.createConstantNode(
+			final int content = UtilsIO.readAsInt(iterator);
+			final String jsonKey = ConstantsEEModel.JsonKeyConstantIterator;
+			final Task dataTask = PropertyServiceData.createConstantNode(
 					distributionNode.getId() + ConstantsEEModel.KeywordSeparator1 + jsonKey, DataType.Number,
 					new JsonPrimitive(content));
 			PropertyServiceDependency.addDataDependency(dataTask, distributionNode, jsonKey, graph);
@@ -213,13 +214,13 @@ public final class AfclCompoundsParallelFor {
 			if (!dataIns.stream().anyMatch(dataIn -> dataIn.getName().equals(iterator))) {
 				throw new IllegalStateException("No dataIns for the iterator " + iterator);
 			}
-			DataIns dataInIterator = dataIns.stream().filter(dataIn -> dataIn.getName().equals(iterator)).findAny()
-					.get();
+			final DataIns dataInIterator = dataIns.stream().filter(dataIn -> dataIn.getName().equals(iterator))
+					.findAny().get();
 			AfclCompounds.addDataInDefault(graph, distributionNode, dataInIterator, DataType.Collection);
-			String distributedDataId = parallelForName + ConstantsAfcl.SourceAffix + dataInIterator.getName();
-			DataType dataType = UtilsAfcl.getDataTypeForString(dataInIterator.getType());
-			Task distributedData = AfclCompounds.assureDataNodePresence(distributedDataId, dataType, graph);
-			String jsonKey = dataInIterator.getName();
+			final String distributedDataId = parallelForName + ConstantsAfcl.SourceAffix + dataInIterator.getName();
+			final DataType dataType = UtilsAfcl.getDataTypeForString(dataInIterator.getType());
+			final Task distributedData = AfclCompounds.assureDataNodePresence(distributedDataId, dataType, graph);
+			final String jsonKey = dataInIterator.getName();
 			PropertyServiceDependency.addDataDependency(distributionNode, distributedData, jsonKey, graph);
 		}
 	}

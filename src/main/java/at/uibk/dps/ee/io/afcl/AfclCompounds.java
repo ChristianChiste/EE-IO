@@ -98,7 +98,7 @@ public final class AfclCompounds {
 	 * @param expectedType the data type we expect the node to have
 	 */
 	protected static void addDataIn(final EnactmentGraph graph, final Task function, final DataIns dataIn,
-			DataType expectedType) {
+			final DataType expectedType) {
 		if (UtilsAfcl.isSrcString(AfclApiWrapper.getSource(dataIn))) {
 			AfclCompounds.addDataInDefault(graph, function, dataIn, expectedType);
 		} else {
