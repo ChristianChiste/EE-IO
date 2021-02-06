@@ -4,8 +4,8 @@
   <application>
     <task id="atomicFunction">
       <attributes>
-        <attribute name="FunctionType" type="STRING">Serverless</attribute>
-        <attribute name="Resource" type="STRING">my_res_link</attribute>
+        <attribute name="FunctionType" type="STRING">addition</attribute>
+        <attribute name="UsageType" type="STRING">User</attribute>
       </attributes>
     </task>
     <communication id="single Atomic/input_name">

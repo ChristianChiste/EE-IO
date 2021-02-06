@@ -3,10 +3,8 @@ package at.uibk.dps.ee.io.testclasses;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction.UsageType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionServerless;
 import net.sf.opendse.model.Communication;
 import net.sf.opendse.model.Task;
 
@@ -35,9 +33,7 @@ public class AtomicEGGenerator {
 		PropertyServiceData.setJsonKey(input, "inputSource");
 
 		// function node
-		Task atomic = new Task("atomicFunction");
-		PropertyServiceFunction.setUsageType(UsageType.Serverless, atomic);
-		PropertyServiceFunctionServerless.setResource(atomic, "my_res_link");
+		Task atomic = PropertyServiceFunctionUser.createUserTask("atomicFunction", "addition");
 
 		// output node
 		Task output = new Communication("atomicFunction/myOutput");
