@@ -26,7 +26,7 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.NodeType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunction.UsageType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.DataFlowType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
@@ -183,7 +183,7 @@ public final class AfclCompoundsIf {
 			final Workflow workflow) {
 		final String nodeId = AfclApiWrapper.getName(ifCompound);
 		final Task funcNode = new Task(nodeId);
-		PropertyServiceFunction.setType(FunctionType.Utility, funcNode);
+		PropertyServiceFunction.setUsageType(UsageType.Utility, funcNode);
 		PropertyServiceFunctionUtility.setUtilityType(funcNode, UtilityType.Condition);
 		final Set<Condition> conditions = new HashSet<>();
 		for (final ACondition afclCondition : ifCompound.getCondition().getConditions()) {

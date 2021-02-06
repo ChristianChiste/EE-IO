@@ -11,6 +11,10 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections
  */
 public class ConstantsTestCoreEEiO {
 
+	// constants for the resouces test input
+	public static final String resourceTestInputPath = "src/test/resources/resourceInputFiles/testInput.json";
+	
+	
 	// constants for the afcl test input
 	public static final String cfclFileSingleAtomic = "src/test/resources/wfInputFiles/singleAtomic.yaml";
 	public static final String cfclFileSeqPar = "src/test/resources/wfInputFiles/seqPar.yaml";

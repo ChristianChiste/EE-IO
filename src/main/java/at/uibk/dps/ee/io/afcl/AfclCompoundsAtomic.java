@@ -6,10 +6,8 @@ import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.afcl.functions.objects.DataOutsAtomic;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionServerless;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import net.sf.opendse.model.Task;
 
 /**
@@ -107,18 +105,8 @@ public final class AfclCompoundsAtomic {
 	 */
 	protected static Task createTaskFromAtomicFunction(final AtomicFunction atomFunc) {
 		final String funcId = atomFunc.getName();
-		final Task result = new Task(funcId);
 		final String functionTypeString = atomFunc.getType();
-		final FunctionType funcType = UtilsAfcl.getFunctionTypeForString(functionTypeString);
-		PropertyServiceFunction.setType(funcType, result);
-		if (funcType.equals(FunctionType.Serverless)) {
-			if (UtilsAfcl.isResourceSetAtomFunc(atomFunc)) {
-				PropertyServiceFunctionServerless.setResource(result, UtilsAfcl.getResLinkAtomicFunction(atomFunc));
-			}
-		} else if (!funcType.equals(FunctionType.Local)) {
-			throw new IllegalArgumentException("Function type " + funcType.name() + " not yet covered.");
-		}
-		return result;
+		return PropertyServiceFunctionUser.createUserTask(funcId, functionTypeString);
 	}
 
 }

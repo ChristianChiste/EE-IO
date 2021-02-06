@@ -9,7 +9,6 @@ import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections.CollectionOperation;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
 
@@ -189,26 +188,6 @@ public final class UtilsAfcl {
 		}
 		default:
 			throw new IllegalArgumentException("Unknown data type string: " + afclString);
-		}
-	}
-
-	/**
-	 * Returns the type of the enactable associated with the provided string.
-	 * 
-	 * @param afclString the string used as the type of the function in the afcl
-	 *                   file
-	 * @return the type of the enactable associated with the provided string
-	 */
-	public static FunctionType getFunctionTypeForString(final String afclString) {
-		switch (afclString) {
-		case ConstantsAfcl.functionTypeStringLocal: {
-			return FunctionType.Local;
-		}
-		case ConstantsAfcl.functionTypeStringServerless: {
-			return FunctionType.Serverless;
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected function type value: " + afclString);
 		}
 	}
 

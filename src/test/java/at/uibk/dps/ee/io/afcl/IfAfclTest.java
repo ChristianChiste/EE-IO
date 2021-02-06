@@ -20,7 +20,7 @@ import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency.TypeDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependencyControlIf;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
+import at.uibk.dps.ee.model.properties.PropertyServiceFunction.UsageType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.DataFlowType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
@@ -65,11 +65,11 @@ public class IfAfclTest {
 
 		for (Task t : result) {
 			if (TaskPropertyService.isProcess(t)) {
-				if (PropertyServiceFunction.getType(t).equals(FunctionType.Utility)) {
+				if (PropertyServiceFunction.getUsageType(t).equals(UsageType.Utility)) {
 					assertEquals(UtilityType.Condition, PropertyServiceFunctionUtility.getUtilityType(t));
 					condFunc = t;
 				}
-				if (PropertyServiceFunction.getType(t).equals(FunctionType.DataFlow)) {
+				if (PropertyServiceFunction.getUsageType(t).equals(UsageType.DataFlow)) {
 					assertEquals(DataFlowType.EarliestInput, PropertyServiceFunctionDataFlow.getDataFlowType(t));
 					choiceFunc = t;
 				}

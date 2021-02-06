@@ -15,7 +15,6 @@ import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.io.afcl.UtilsAfcl.CompoundType;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction.FunctionType;
 
 public class UtilsAfclTest {
 
@@ -37,18 +36,6 @@ public class UtilsAfclTest {
 		AtomicFunction input = new AtomicFunction();
 		input.setName("name");
 		UtilsAfcl.getResLinkAtomicFunction(input);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testGetFunctionTypeForStringWrongInput() {
-		UtilsAfcl.getFunctionTypeForString("unknown");
-	}
-
-	@Test
-	public void testGetFunctionTypeForString() {
-		assertEquals(FunctionType.Local, UtilsAfcl.getFunctionTypeForString(ConstantsAfcl.functionTypeStringLocal));
-		assertEquals(FunctionType.Serverless,
-				UtilsAfcl.getFunctionTypeForString(ConstantsAfcl.functionTypeStringServerless));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -81,17 +68,17 @@ public class UtilsAfclTest {
 		assertEquals(producerString, UtilsAfcl.getProducerId(srcString));
 		assertEquals(dataIdString, UtilsAfcl.getDataId(srcString));
 	}
-	
+
 	@Test
 	public void testSrcStringCheck() {
 		String producerString = "source";
 		String dataIdString = "data";
 		String constString = "5";
-		
+
 		String correct = producerString + ConstantsAfcl.SourceAffix + dataIdString;
 		String incorrect1 = ConstantsAfcl.SourceAffix + dataIdString;
 		String incorrect2 = producerString + ConstantsAfcl.SourceAffix;
-		
+
 		assertTrue(UtilsAfcl.isSrcString(correct));
 		assertFalse(UtilsAfcl.isSrcString(incorrect1));
 		assertFalse(UtilsAfcl.isSrcString(incorrect2));
