@@ -13,7 +13,13 @@ public class FunctionTypeEntry {
   protected String functionType;
   protected List<ResourceEntry> resources;
 
-  public FunctionTypeEntry(String functionType, List<ResourceEntry> resources) {
+  /**
+   * Default constructor used by Gson
+   * 
+   * @param functionType the function type string
+   * @param resources the list of resource entries
+   */
+  public FunctionTypeEntry(final String functionType, final List<ResourceEntry> resources) {
     this.functionType = functionType;
     this.resources = resources;
   }
@@ -22,7 +28,7 @@ public class FunctionTypeEntry {
     return functionType;
   }
 
-  public void setFunctionType(String functionType) {
+  public void setFunctionType(final String functionType) {
     this.functionType = functionType;
   }
 
@@ -30,7 +36,7 @@ public class FunctionTypeEntry {
     return resources;
   }
 
-  public void setResources(List<ResourceEntry> resources) {
+  public void setResources(final List<ResourceEntry> resources) {
     this.resources = resources;
   }
 }

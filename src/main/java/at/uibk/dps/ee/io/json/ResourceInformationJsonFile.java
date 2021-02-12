@@ -24,8 +24,8 @@ public class ResourceInformationJsonFile extends ArrayList<FunctionTypeEntry> {
    * @param filePath the path to the json file
    * @return the {@link ResourceInformationJsonFile} built from the file
    */
-  public static ResourceInformationJsonFile readFromFile(String filePath) {
-    Gson gson = new Gson();
+  public static ResourceInformationJsonFile readFromFile(final String filePath) {
+    final Gson gson = new Gson();
     String jsonString;
     try {
       jsonString = Files.readString(Paths.get(filePath));
