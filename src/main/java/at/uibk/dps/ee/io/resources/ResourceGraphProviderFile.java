@@ -31,8 +31,8 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
    * @param filePath the path to the file specifying the type mappings.
    */
   @Inject
-  public ResourceGraphProviderFile(
-      @Constant(value = "filePath", namespace = ResourceGraphProviderFile.class) String filePath) {
+  public ResourceGraphProviderFile(@Constant(value = "filePath",
+      namespace = ResourceGraphProviderFile.class) final String filePath) {
     this.resourceGraph = readResourceGraph(filePath);
   }
 
@@ -41,12 +41,20 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
     return resourceGraph;
   }
 
-  protected ResourceGraph readResourceGraph(String filePath) {
-    ResourceGraph result = new ResourceGraph();
-    ResourceInformationJsonFile resourceInformation =
+  /**
+   * Reads the type mapping json file located under the provided file path.
+   * Converts the information to a {@link ResourceGraph}. Returns the resource
+   * graph.
+   * 
+   * @param filePath the filePath of the json file describing the type mapping
+   * @return the resource graph built based on the information in the file
+   */
+  protected final ResourceGraph readResourceGraph(final String filePath) {
+    final ResourceGraph result = new ResourceGraph();
+    final ResourceInformationJsonFile resourceInformation =
         ResourceInformationJsonFile.readFromFile(filePath);
     // always add a node representing the EE
-    Resource eeRes = PropertyServiceResource.createResource(ConstantsEEModel.idLocalResource,
+    final Resource eeRes = PropertyServiceResource.createResource(ConstantsEEModel.idLocalResource,
         ResourceType.Local);
     result.addVertex(eeRes);
     resourceInformation.stream()
@@ -63,9 +71,9 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
    * @param ee the resource modeling the EE
    * @param resEntry the resource entry
    */
-  protected void processResourceEntry(ResourceGraph resourceGraph, Resource ee,
-      ResourceEntry resEntry) {
-    ResourceType resourceType = ResourceType.valueOf(resEntry.getType());
+  protected void processResourceEntry(final ResourceGraph resourceGraph, final Resource ee,
+      final ResourceEntry resEntry) {
+    final ResourceType resourceType = ResourceType.valueOf(resEntry.getType());
     Optional<Resource> newResourceOpt;
     if (resourceType.equals(ResourceType.Local)) {
       // nothing to do, EE already in the graph
@@ -74,7 +82,7 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
       }
       return;
     } else if (resourceType.equals(ResourceType.Serverless)) {
-      String uri =
+      final String uri =
           resEntry.getProperties().get(PropertyServiceResourceServerless.propNameUri).getAsString();
       newResourceOpt =
           Optional.of(PropertyServiceResourceServerless.createServerlessResource(uri, uri));
@@ -82,7 +90,7 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
     } else {
       throw new IllegalArgumentException("Unknown resource type: " + resourceType.name());
     }
-    Resource newRes = newResourceOpt.orElseThrow();
+    final Resource newRes = newResourceOpt.orElseThrow();
     // annotate all properties (if not already set)
     resEntry.getProperties().entrySet().stream()
         .filter(entry -> !newRes.getAttributeNames().contains(entry.getKey()))

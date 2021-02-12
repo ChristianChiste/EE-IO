@@ -36,7 +36,7 @@ public class SpecificationInputModule extends InputModule {
     return filePathAfcl;
   }
 
-  public void setFilePathAfcl(String filePathAfcl) {
+  public void setFilePathAfcl(final String filePathAfcl) {
     this.filePathAfcl = filePathAfcl;
   }
 
@@ -44,7 +44,7 @@ public class SpecificationInputModule extends InputModule {
     return filePathMappingFile;
   }
 
-  public void setFilePathMappingFile(String filePathMappingFile) {
+  public void setFilePathMappingFile(final String filePathMappingFile) {
     this.filePathMappingFile = filePathMappingFile;
   }
 

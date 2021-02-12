@@ -30,8 +30,8 @@ public class ResourceInformationJsonFile extends ArrayList<FunctionTypeEntry> {
     try {
       jsonString = Files.readString(Paths.get(filePath));
       return gson.fromJson(jsonString, ResourceInformationJsonFile.class);
-    } catch (IOException e) {
-      throw new IllegalStateException("IOException when trying to read resource input.");
+    } catch (IOException ioExc) {
+      throw new IllegalStateException("IOException when trying to read resource input.", ioExc);
     }
   }
 }
