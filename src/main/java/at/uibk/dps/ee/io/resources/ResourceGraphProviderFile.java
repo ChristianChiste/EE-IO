@@ -68,10 +68,10 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
    * connecting it to the EE node.
    * 
    * @param resourceGraph the resource graph
-   * @param ee the resource modeling the EE
+   * @param eeRes the resource modeling the EE
    * @param resEntry the resource entry
    */
-  protected void processResourceEntry(final ResourceGraph resourceGraph, final Resource ee,
+  protected void processResourceEntry(final ResourceGraph resourceGraph, final Resource eeRes,
       final ResourceEntry resEntry) {
     final ResourceType resourceType = ResourceType.valueOf(resEntry.getType());
     Optional<Resource> newResourceOpt;
@@ -96,6 +96,6 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
         .filter(entry -> !newRes.getAttributeNames().contains(entry.getKey()))
         .forEach(entry -> newRes.setAttribute(entry.getKey(), entry.getValue()));
     // connect resource to ee node
-    PropertyServiceLink.connectResources(resourceGraph, ee, newRes);
+    PropertyServiceLink.connectResources(resourceGraph, eeRes, newRes);
   }
 }
