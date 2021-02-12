@@ -10,30 +10,29 @@ import at.uibk.dps.ee.io.afcl.AfclReader;
 import at.uibk.dps.ee.model.graph.EnactmentGraphProvider;
 
 /**
- * The {@link AfclReaderFileModule} is used to read in the WF from a file in
- * afcl format.
+ * The {@link AfclReaderFileModule} is used to read in the WF from a file in afcl format.
  * 
  * @author Fedor Smirnov
  *
  */
 public class AfclReaderFileModule extends InputModule {
 
-	@Order(1)
-	@Info("The path to the .afcl file.")
-	@File
-	@Constant(value = "filePath", namespace = AfclReader.class)
-	public String filePath = "";
+  @Order(1)
+  @Info("The path to the .afcl file.")
+  @File
+  @Constant(value = "filePath", namespace = AfclReader.class)
+  public String filePath = "";
 
-	public String getFilePath() {
-		return filePath;
-	}
+  public String getFilePath() {
+    return filePath;
+  }
 
-	public void setFilePath(final String filePath) {
-		this.filePath = filePath;
-	}
+  public void setFilePath(final String filePath) {
+    this.filePath = filePath;
+  }
 
-	@Override
-	protected void config() {
-		bind(EnactmentGraphProvider.class).to(AfclReader.class);
-	}
+  @Override
+  protected void config() {
+    bind(EnactmentGraphProvider.class).to(AfclReader.class);
+  }
 }

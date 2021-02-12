@@ -32,13 +32,6 @@ public class UtilsAfclTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testNoResForAtomicFunc() {
-		AtomicFunction input = new AtomicFunction();
-		input.setName("name");
-		UtilsAfcl.getResLinkAtomicFunction(input);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
 	public void testGetDataTypeForStringWrongInput() {
 		UtilsAfcl.getDataTypeForString("unknown");
 	}
@@ -97,32 +90,5 @@ public class UtilsAfclTest {
 		propList.add(propConst);
 		atom.setProperties(propList);
 		assertTrue(UtilsAfcl.isResourceSetAtomFunc(atom));
-	}
-
-	@Test
-	public void testGetResLink() {
-		AtomicFunction atom = new AtomicFunction();
-		String resName = "res";
-		List<PropertyConstraint> propList = new ArrayList<>();
-		PropertyConstraint propConst = new PropertyConstraint();
-		propConst.setName(ConstantsAfcl.propertyConstraintResourceLink);
-		propConst.setValue(resName);
-		propList.add(propConst);
-		atom.setProperties(propList);
-		assertEquals(resName, UtilsAfcl.getResLinkAtomicFunction(atom));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testGetResourceNotSet1() {
-		AtomicFunction atom = new AtomicFunction();
-		UtilsAfcl.getResLinkAtomicFunction(atom);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testGetResourceNotSet2() {
-		AtomicFunction atom = new AtomicFunction();
-		List<PropertyConstraint> propList = new ArrayList<>();
-		atom.setProperties(propList);
-		UtilsAfcl.getResLinkAtomicFunction(atom);
 	}
 }

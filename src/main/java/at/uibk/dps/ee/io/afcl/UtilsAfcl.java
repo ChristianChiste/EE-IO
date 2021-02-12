@@ -210,24 +210,6 @@ public final class UtilsAfcl {
 	}
 
 	/**
-	 * Returns the resource link string from the given function.
-	 * 
-	 * @param atomFunc the afcl atomic function
-	 * @return the resource link string from the given function
-	 */
-	public static String getResLinkAtomicFunction(final AtomicFunction atomFunc) {
-		if (!isResourceSetAtomFunc(atomFunc)) {
-			throw new IllegalArgumentException("No resource annotated for atomic function " + atomFunc.getName());
-		}
-		for (final PropertyConstraint propConstraint : atomFunc.getProperties()) {
-			if (propConstraint.getName().equals(ConstantsAfcl.propertyConstraintResourceLink)) {
-				return propConstraint.getValue();
-			}
-		}
-		throw new IllegalArgumentException("No resource annotated for atomic function " + atomFunc.getName());
-	}
-
-	/**
 	 * Returns the ID of a data object which is created by the producer with the
 	 * producer ID and is named with the dataID
 	 * 

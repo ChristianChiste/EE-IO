@@ -17,22 +17,22 @@ import at.uibk.dps.ee.io.input.InputDataProviderFile;
  */
 public class InputReaderFileModule extends InputModule {
 
-	@Order(1)
-	@Info("Filepath to the .json file containing the WF input.")
-	@Constant(value = "filePath", namespace = InputDataProviderFile.class)
-	@File
-	public String filePath = "";
+  @Order(1)
+  @Info("Filepath to the .json file containing the WF input.")
+  @Constant(value = "filePath", namespace = InputDataProviderFile.class)
+  @File
+  public String filePath = "";
 
-	public String getFilePath() {
-		return filePath;
-	}
+  public String getFilePath() {
+    return filePath;
+  }
 
-	public void setFilePath(final String filePath) {
-		this.filePath = filePath;
-	}
+  public void setFilePath(final String filePath) {
+    this.filePath = filePath;
+  }
 
-	@Override
-	protected void config() {
-		bind(InputDataProvider.class).to(InputDataProviderFile.class);
-	}
+  @Override
+  protected void config() {
+    bind(InputDataProvider.class).to(InputDataProviderFile.class);
+  }
 }
