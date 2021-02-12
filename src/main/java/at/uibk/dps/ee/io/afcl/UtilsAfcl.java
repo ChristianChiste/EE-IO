@@ -20,298 +20,299 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.S
  */
 public final class UtilsAfcl {
 
-	/**
-	 * No constructor
-	 */
-	private UtilsAfcl() {
-	}
+  /**
+   * No constructor
+   */
+  private UtilsAfcl() {}
 
-	/**
-	 * Enum for the different compounds used in AFCL.
-	 * 
-	 * @author Fedor Smirnov
-	 *
-	 */
-	public enum CompoundType {
-		Atomic, Sequence, Parallel, If, ParallelFor
-	}
+  /**
+   * Enum for the different compounds used in AFCL.
+   * 
+   * @author Fedor Smirnov
+   *
+   */
+  public enum CompoundType {
+    Atomic, Sequence, Parallel, If, ParallelFor
+  }
 
-	/**
-	 * Gets the collection operation corresponding to the afcl contraint name
-	 * 
-	 * @param constraintName the afcl contraint name
-	 * @param value          the constraint value
-	 * @return the collection operation corresponding to the afcl contraint name
-	 */
-	public static CollectionOperation getCollectionOperationType(final String constraintName, final String value) {
-		switch (constraintName) {
-		case ConstantsAfcl.constraintNameElementIndex:
-			return CollectionOperation.ElementIndex;
-		case ConstantsAfcl.constraintNameReplicate:
-			return CollectionOperation.Replicate;
-		case ConstantsAfcl.constraintNameBlock:
-			return CollectionOperation.Block;
-		case ConstantsAfcl.constraintNameSplit:
-			return CollectionOperation.Split;
-		default:
-			throw new IllegalArgumentException("unknown collection operation " + constraintName);
-		}
-	}
+  /**
+   * Gets the collection operation corresponding to the afcl contraint name
+   * 
+   * @param constraintName the afcl contraint name
+   * @param value the constraint value
+   * @return the collection operation corresponding to the afcl contraint name
+   */
+  public static CollectionOperation getCollectionOperationType(final String constraintName,
+      final String value) {
+    switch (constraintName) {
+      case ConstantsAfcl.constraintNameElementIndex:
+        return CollectionOperation.ElementIndex;
+      case ConstantsAfcl.constraintNameReplicate:
+        return CollectionOperation.Replicate;
+      case ConstantsAfcl.constraintNameBlock:
+        return CollectionOperation.Block;
+      case ConstantsAfcl.constraintNameSplit:
+        return CollectionOperation.Split;
+      default:
+        throw new IllegalArgumentException("unknown collection operation " + constraintName);
+    }
+  }
 
-	/**
-	 * Returns true if the given string is an int
-	 * 
-	 * @param string the given string
-	 * @return true if the given string is an int
-	 */
-	public static boolean isInt(final String string) {
-		try {
-			Integer.parseInt(string);
-			return true;
-		} catch (NumberFormatException exc) {
-			return false;
-		}
-	}
+  /**
+   * Returns true if the given string is an int
+   * 
+   * @param string the given string
+   * @return true if the given string is an int
+   */
+  public static boolean isInt(final String string) {
+    try {
+      Integer.parseInt(string);
+      return true;
+    } catch (NumberFormatException exc) {
+      return false;
+    }
+  }
 
-	/**
-	 * Returns the compound type of the provided function
-	 * 
-	 * @param function the provided function
-	 * @return the compound type of the provided function
-	 */
-	public static CompoundType getCompoundType(final Function function) {
-		if (function instanceof AtomicFunction) {
-			return CompoundType.Atomic;
-		} else if (function instanceof Sequence) {
-			return CompoundType.Sequence;
-		} else if (function instanceof Parallel) {
-			return CompoundType.Parallel;
-		} else if (function instanceof IfThenElse) {
-			return CompoundType.If;
-		} else if (function instanceof ParallelFor) {
-			return CompoundType.ParallelFor;
-		} else {
-			throw new IllegalArgumentException(
-					"The function " + function.getName() + " is a compound of an unknown type.");
-		}
-	}
+  /**
+   * Returns the compound type of the provided function
+   * 
+   * @param function the provided function
+   * @return the compound type of the provided function
+   */
+  public static CompoundType getCompoundType(final Function function) {
+    if (function instanceof AtomicFunction) {
+      return CompoundType.Atomic;
+    } else if (function instanceof Sequence) {
+      return CompoundType.Sequence;
+    } else if (function instanceof Parallel) {
+      return CompoundType.Parallel;
+    } else if (function instanceof IfThenElse) {
+      return CompoundType.If;
+    } else if (function instanceof ParallelFor) {
+      return CompoundType.ParallelFor;
+    } else {
+      throw new IllegalArgumentException(
+          "The function " + function.getName() + " is a compound of an unknown type.");
+    }
+  }
 
-	/**
-	 * Returns the operator object for the given afcl string.
-	 * 
-	 * @param afclOperatorString the given afcl string
-	 * @return the {@link Operator} object
-	 */
-	public static Operator getOperatorForString(final String afclOperatorString) {
-		switch (afclOperatorString) {
-		case ConstantsAfcl.operatorStringContains: {
-			return Operator.CONTAINS;
-		}
-		case ConstantsAfcl.operatorStringEndsWith: {
-			return Operator.ENDS_WITH;
-		}
-		case ConstantsAfcl.operatorStringStartsWith: {
-			return Operator.STARTS_WITH;
-		}
-		case ConstantsAfcl.operatorStringEqual: {
-			return Operator.EQUAL;
-		}
-		case ConstantsAfcl.operatorStringUnequal: {
-			return Operator.UNEQUAL;
-		}
-		case ConstantsAfcl.operatorStringLess: {
-			return Operator.LESS;
-		}
-		case ConstantsAfcl.operatorStringLessEqual: {
-			return Operator.LESS_EQUAL;
-		}
-		case ConstantsAfcl.operatorStringGreater: {
-			return Operator.GREATER;
-		}
-		case ConstantsAfcl.operatorStringGreaterEqual: {
-			return Operator.GREATER_EQUAL;
-		}
-		case ConstantsAfcl.operatorStringAnd: {
-			return Operator.AND;
-		}
-		case ConstantsAfcl.operatorStringOr: {
-			return Operator.OR;
-		}
-		default:
-			throw new IllegalArgumentException("Unknown operator string: " + afclOperatorString);
-		}
-	}
+  /**
+   * Returns the operator object for the given afcl string.
+   * 
+   * @param afclOperatorString the given afcl string
+   * @return the {@link Operator} object
+   */
+  public static Operator getOperatorForString(final String afclOperatorString) {
+    switch (afclOperatorString) {
+      case ConstantsAfcl.operatorStringContains: {
+        return Operator.CONTAINS;
+      }
+      case ConstantsAfcl.operatorStringEndsWith: {
+        return Operator.ENDS_WITH;
+      }
+      case ConstantsAfcl.operatorStringStartsWith: {
+        return Operator.STARTS_WITH;
+      }
+      case ConstantsAfcl.operatorStringEqual: {
+        return Operator.EQUAL;
+      }
+      case ConstantsAfcl.operatorStringUnequal: {
+        return Operator.UNEQUAL;
+      }
+      case ConstantsAfcl.operatorStringLess: {
+        return Operator.LESS;
+      }
+      case ConstantsAfcl.operatorStringLessEqual: {
+        return Operator.LESS_EQUAL;
+      }
+      case ConstantsAfcl.operatorStringGreater: {
+        return Operator.GREATER;
+      }
+      case ConstantsAfcl.operatorStringGreaterEqual: {
+        return Operator.GREATER_EQUAL;
+      }
+      case ConstantsAfcl.operatorStringAnd: {
+        return Operator.AND;
+      }
+      case ConstantsAfcl.operatorStringOr: {
+        return Operator.OR;
+      }
+      default:
+        throw new IllegalArgumentException("Unknown operator string: " + afclOperatorString);
+    }
+  }
 
-	/**
-	 * Returns the summary object for the given afcl string.
-	 * 
-	 * @param summaryString the afcl string
-	 * @return the summary object for the given afcl string
-	 */
-	public static Summary getSummaryForString(final String summaryString) {
-		switch (summaryString) {
-		case ConstantsAfcl.summaryStringAnd:
-			return Summary.AND;
+  /**
+   * Returns the summary object for the given afcl string.
+   * 
+   * @param summaryString the afcl string
+   * @return the summary object for the given afcl string
+   */
+  public static Summary getSummaryForString(final String summaryString) {
+    switch (summaryString) {
+      case ConstantsAfcl.summaryStringAnd:
+        return Summary.AND;
 
-		case ConstantsAfcl.summaryStringOr:
-			return Summary.OR;
+      case ConstantsAfcl.summaryStringOr:
+        return Summary.OR;
 
-		default:
-			throw new IllegalArgumentException("Unknown summary string: " + summaryString);
-		}
-	}
+      default:
+        throw new IllegalArgumentException("Unknown summary string: " + summaryString);
+    }
+  }
 
-	/**
-	 * Returns the enum used by the property service based on the string used in the
-	 * afcl file.
-	 * 
-	 * @param afclString the string used in the afcl file
-	 * @return the enum used by the property service based on the string used in the
-	 *         afcl file
-	 */
-	public static DataType getDataTypeForString(final String afclString) {
-		switch (afclString) {
-		case ConstantsAfcl.typeStringBoolean: {
-			return DataType.Boolean;
-		}
-		case ConstantsAfcl.typeStringNumber: {
-			return DataType.Number;
-		}
-		case ConstantsAfcl.typeStringObject: {
-			return DataType.Object;
-		}
-		case ConstantsAfcl.typeStringCollection: {
-			return DataType.Collection;
-		}
-		case ConstantsAfcl.typeStringString: {
-			return DataType.String;
-		}
-		default:
-			throw new IllegalArgumentException("Unknown data type string: " + afclString);
-		}
-	}
+  /**
+   * Returns the enum used by the property service based on the string used in the
+   * afcl file.
+   * 
+   * @param afclString the string used in the afcl file
+   * @return the enum used by the property service based on the string used in the
+   *         afcl file
+   */
+  public static DataType getDataTypeForString(final String afclString) {
+    switch (afclString) {
+      case ConstantsAfcl.typeStringBoolean: {
+        return DataType.Boolean;
+      }
+      case ConstantsAfcl.typeStringNumber: {
+        return DataType.Number;
+      }
+      case ConstantsAfcl.typeStringObject: {
+        return DataType.Object;
+      }
+      case ConstantsAfcl.typeStringCollection: {
+        return DataType.Collection;
+      }
+      case ConstantsAfcl.typeStringString: {
+        return DataType.String;
+      }
+      default:
+        throw new IllegalArgumentException("Unknown data type string: " + afclString);
+    }
+  }
 
-	/**
-	 * Returns true if a resource is set for the given function.
-	 * 
-	 * @param atomFunc the given function.
-	 * @return true if a resource is set for the given function
-	 */
-	public static boolean isResourceSetAtomFunc(final AtomicFunction atomFunc) {
-		if (atomFunc.getProperties() == null) {
-			return false;
-		}
-		for (final PropertyConstraint propConstraint : atomFunc.getProperties()) {
-			if (propConstraint.getName().equals(ConstantsAfcl.propertyConstraintResourceLink)) {
-				return true;
-			}
-		}
-		return false;
-	}
+  /**
+   * Returns true if a resource is set for the given function.
+   * 
+   * @param atomFunc the given function.
+   * @return true if a resource is set for the given function
+   */
+  public static boolean isResourceSetAtomFunc(final AtomicFunction atomFunc) {
+    if (atomFunc.getProperties() == null) {
+      return false;
+    }
+    for (final PropertyConstraint propConstraint : atomFunc.getProperties()) {
+      if (propConstraint.getName().equals(ConstantsAfcl.propertyConstraintResourceLink)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-	/**
-	 * Returns the ID of a data object which is created by the producer with the
-	 * producer ID and is named with the dataID
-	 * 
-	 * @param producerId the id of the producer (function or the WF)
-	 * @param dataId     the name of the data
-	 * @return the ID of a data object which is created by the producer with the
-	 *         producer ID and is named with the dataID
-	 */
-	public static String getDataNodeId(final String producerId, final String dataId) {
-		return producerId + ConstantsAfcl.SourceAffix + dataId;
-	}
+  /**
+   * Returns the ID of a data object which is created by the producer with the
+   * producer ID and is named with the dataID
+   * 
+   * @param producerId the id of the producer (function or the WF)
+   * @param dataId the name of the data
+   * @return the ID of a data object which is created by the producer with the
+   *         producer ID and is named with the dataID
+   */
+  public static String getDataNodeId(final String producerId, final String dataId) {
+    return producerId + ConstantsAfcl.SourceAffix + dataId;
+  }
 
-	/**
-	 * Returns true iff the provided string describes data produced by a producer.
-	 * 
-	 * @param srcString the string to check
-	 * @return true iff the provided string describes data produced by a producer
-	 */
-	public static boolean isSrcString(final String srcString) {
-		final String affix = ConstantsAfcl.SourceAffix;
-		return srcString.contains(affix) && !srcString.startsWith(affix) && !srcString.endsWith(affix);
-	}
+  /**
+   * Returns true iff the provided string describes data produced by a producer.
+   * 
+   * @param srcString the string to check
+   * @return true iff the provided string describes data produced by a producer
+   */
+  public static boolean isSrcString(final String srcString) {
+    final String affix = ConstantsAfcl.SourceAffix;
+    return srcString.contains(affix) && !srcString.startsWith(affix) && !srcString.endsWith(affix);
+  }
 
-	/**
-	 * Reads the producer ID from the given srcString
-	 * 
-	 * @param srcString the given srcString
-	 * @return the producer ID from the given srcString
-	 */
-	public static String getProducerId(final String srcString) {
-		return getSrcSubString(srcString, true);
-	}
+  /**
+   * Reads the producer ID from the given srcString
+   * 
+   * @param srcString the given srcString
+   * @return the producer ID from the given srcString
+   */
+  public static String getProducerId(final String srcString) {
+    return getSrcSubString(srcString, true);
+  }
 
-	/**
-	 * Reads the data ID from the given srcString
-	 * 
-	 * @param srcString the given srcString
-	 * @return the data ID from the given srcString
-	 */
-	public static String getDataId(final String srcString) {
-		return getSrcSubString(srcString, false);
-	}
+  /**
+   * Reads the data ID from the given srcString
+   * 
+   * @param srcString the given srcString
+   * @return the data ID from the given srcString
+   */
+  public static String getDataId(final String srcString) {
+    return getSrcSubString(srcString, false);
+  }
 
-	/**
-	 * Returns a substring of the given src string correspopnding to the producer id
-	 * (true) or the data id (false).
-	 * 
-	 * @param srcString the srcString
-	 * @param producer  true if asking for the producer, false for the data id
-	 * @return a substring of the given src string correspopnding to the producer id
-	 *         (true) or the data id (false)
-	 */
-	protected static String getSrcSubString(final String srcString, final boolean producer) {
-		return producer ? srcString.split(ConstantsAfcl.SourceAffix)[0] : srcString.split(ConstantsAfcl.SourceAffix)[1];
-	}
+  /**
+   * Returns a substring of the given src string correspopnding to the producer id
+   * (true) or the data id (false).
+   * 
+   * @param srcString the srcString
+   * @param producer true if asking for the producer, false for the data id
+   * @return a substring of the given src string correspopnding to the producer id
+   *         (true) or the data id (false)
+   */
+  protected static String getSrcSubString(final String srcString, final boolean producer) {
+    return producer ? srcString.split(ConstantsAfcl.SourceAffix)[0]
+        : srcString.split(ConstantsAfcl.SourceAffix)[1];
+  }
 
-	/**
-	 * Returns true iff the given string describes the src of a data out of an if
-	 * compound.
-	 * 
-	 * @param srcString the src string
-	 * @return true iff the given string describes the src of a data out of an if
-	 *         compound
-	 */
-	public static boolean isIfOutSrc(final String srcString) {
-		return srcString.contains(ConstantsAfcl.IfFuncSeparator);
-	}
+  /**
+   * Returns true iff the given string describes the src of a data out of an if
+   * compound.
+   * 
+   * @param srcString the src string
+   * @return true iff the given string describes the src of a data out of an if
+   *         compound
+   */
+  public static boolean isIfOutSrc(final String srcString) {
+    return srcString.contains(ConstantsAfcl.IfFuncSeparator);
+  }
 
-	/**
-	 * Returns the substring of the first function read from the given if src
-	 * string.
-	 * 
-	 * @param srcString the if src string
-	 * @return the substring of the first function read from the given if src string
-	 */
-	public static String getFirstSubStringIfOut(final String srcString) {
-		return getIfOutSubString(srcString, true);
-	}
+  /**
+   * Returns the substring of the first function read from the given if src
+   * string.
+   * 
+   * @param srcString the if src string
+   * @return the substring of the first function read from the given if src string
+   */
+  public static String getFirstSubStringIfOut(final String srcString) {
+    return getIfOutSubString(srcString, true);
+  }
 
-	/**
-	 * Returns the substring of the second function read from the given if src
-	 * string.
-	 * 
-	 * @param srcString the if src string
-	 * @return the substring of the second function read from the given if src
-	 *         string
-	 */
-	public static String getSecondSubStringIfOut(final String srcString) {
-		return getIfOutSubString(srcString, false);
-	}
+  /**
+   * Returns the substring of the second function read from the given if src
+   * string.
+   * 
+   * @param srcString the if src string
+   * @return the substring of the second function read from the given if src
+   *         string
+   */
+  public static String getSecondSubStringIfOut(final String srcString) {
+    return getIfOutSubString(srcString, false);
+  }
 
-	/**
-	 * Returns either the first of the second substring of the given src string of
-	 * an if out.
-	 * 
-	 * @param srcString the given string
-	 * @param first     true iff asking for the first string
-	 * @return either the first of the second substring of the given src string of
-	 *         an if out
-	 */
-	protected static String getIfOutSubString(final String srcString, final boolean first) {
-		return first ? srcString.split(ConstantsAfcl.IfFuncSeparator)[0]
-				: srcString.split(ConstantsAfcl.IfFuncSeparator)[1];
-	}
+  /**
+   * Returns either the first of the second substring of the given src string of
+   * an if out.
+   * 
+   * @param srcString the given string
+   * @param first true iff asking for the first string
+   * @return either the first of the second substring of the given src string of
+   *         an if out
+   */
+  protected static String getIfOutSubString(final String srcString, final boolean first) {
+    return first ? srcString.split(ConstantsAfcl.IfFuncSeparator)[0]
+        : srcString.split(ConstantsAfcl.IfFuncSeparator)[1];
+  }
 }

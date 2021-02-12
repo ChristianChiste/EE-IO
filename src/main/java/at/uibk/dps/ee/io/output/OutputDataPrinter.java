@@ -15,9 +15,9 @@ import at.uibk.dps.ee.core.OutputDataHandler;
 @Singleton
 public class OutputDataPrinter implements OutputDataHandler {
 
-	@Override
-	public void handleOutputData(final JsonObject outputData) {
-		System.out.println("Enactment finished");
-		System.out.println("Enactment result: " + outputData.toString());
-	}
+  @Override
+  public void handleOutputData(final JsonObject outputData) {
+    System.out.println("Enactment finished");
+    System.out.println("Enactment result: " + outputData.toString());
+  }
 }

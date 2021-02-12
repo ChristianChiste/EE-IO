@@ -29,9 +29,9 @@ import net.sf.opendse.model.Task;
 import net.sf.opendse.model.properties.TaskPropertyService;
 
 /**
- * The {@link SpecificationProviderFile} creates the specification by taking the enactment and the
- * resource graph and connecting them using the mappings it creates based on the resource
- * description file.
+ * The {@link SpecificationProviderFile} creates the specification by taking the
+ * enactment and the resource graph and connecting them using the mappings it
+ * creates based on the resource description file.
  * 
  * @author Fedor Smirnov
  *
@@ -48,7 +48,8 @@ public class SpecificationProviderFile implements SpecificationProvider {
    * 
    * @param enactmentGraphProvider class providing the {@link EnactmentGraph}
    * @param resourceGraphProvider class providing the {@link ResourceGraph}
-   * @param filePath path to the file describing the functionType-to-resource relations
+   * @param filePath path to the file describing the functionType-to-resource
+   *        relations
    */
   @Inject
   public SpecificationProviderFile(EnactmentGraphProvider enactmentGraphProvider,
@@ -77,7 +78,8 @@ public class SpecificationProviderFile implements SpecificationProvider {
   }
 
   /**
-   * Reads the json file with the file information and uses it to create the mappings.
+   * Reads the json file with the file information and uses it to create the
+   * mappings.
    * 
    * @param eGraph the enactment graph
    * @param rGraph the resource graph
@@ -96,12 +98,14 @@ public class SpecificationProviderFile implements SpecificationProvider {
   }
 
   /**
-   * Creates the mappings for the provided task based on the given resource information.
+   * Creates the mappings for the provided task based on the given resource
+   * information.
    * 
    * @param task the provided task
    * @param resInfo the given resource information.
    * @param rGraph the resource graph
-   * @return the mappings for the provided task based on the given resource information
+   * @return the mappings for the provided task based on the given resource
+   *         information
    */
   protected Set<Mapping<Task, Resource>> getMappingsForTask(Task task,
       ResourceInformationJsonFile resInfo, ResourceGraph rGraph) {

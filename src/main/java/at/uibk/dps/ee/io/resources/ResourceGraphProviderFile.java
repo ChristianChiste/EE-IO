@@ -15,8 +15,8 @@ import at.uibk.dps.ee.model.properties.PropertyServiceResourceServerless;
 import net.sf.opendse.model.Resource;
 
 /**
- * The {@link ResourceGraphProviderFile} provides access to the resource graph which it builds from
- * a .json file
+ * The {@link ResourceGraphProviderFile} provides access to the resource graph
+ * which it builds from a .json file
  * 
  * @author Fedor Smirnov
  *
@@ -56,8 +56,8 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
   }
 
   /**
-   * Method to process a resource entry by adding a resource node to the graph and connecting it to
-   * the EE node.
+   * Method to process a resource entry by adding a resource node to the graph and
+   * connecting it to the EE node.
    * 
    * @param resourceGraph the resource graph
    * @param ee the resource modeling the EE

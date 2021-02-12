@@ -10,10 +10,10 @@ import at.uibk.dps.ee.io.output.OutputDataPrinter;
  * @author Fedor Smirnov
  *
  */
-public class OutputPrinterModule extends OutputModule{
+public class OutputPrinterModule extends OutputModule {
 
-	@Override
-	protected void config() {
-		bind(OutputDataHandler.class).to(OutputDataPrinter.class);
-	}
+  @Override
+  protected void config() {
+    bind(OutputDataHandler.class).to(OutputDataPrinter.class);
+  }
 }

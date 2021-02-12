@@ -10,27 +10,27 @@ import java.util.List;
  */
 public class FunctionTypeEntry {
 
-	protected String functionType;
-	protected List<ResourceEntry> resources;
+  protected String functionType;
+  protected List<ResourceEntry> resources;
 
-	public FunctionTypeEntry(String functionType, List<ResourceEntry> resources) {
-		this.functionType = functionType;
-		this.resources = resources;
-	}
+  public FunctionTypeEntry(String functionType, List<ResourceEntry> resources) {
+    this.functionType = functionType;
+    this.resources = resources;
+  }
 
-	public String getFunctionType() {
-		return functionType;
-	}
+  public String getFunctionType() {
+    return functionType;
+  }
 
-	public void setFunctionType(String functionType) {
-		this.functionType = functionType;
-	}
+  public void setFunctionType(String functionType) {
+    this.functionType = functionType;
+  }
 
-	public List<ResourceEntry> getResources() {
-		return resources;
-	}
+  public List<ResourceEntry> getResources() {
+    return resources;
+  }
 
-	public void setResources(List<ResourceEntry> resources) {
-		this.resources = resources;
-	}
+  public void setResources(List<ResourceEntry> resources) {
+    this.resources = resources;
+  }
 }

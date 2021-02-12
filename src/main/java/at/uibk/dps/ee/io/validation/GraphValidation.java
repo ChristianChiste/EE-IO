@@ -11,32 +11,31 @@ import net.sf.opendse.model.properties.TaskPropertyService;
  */
 public final class GraphValidation {
 
-	/**
-	 * No constructor.
-	 */
-	private GraphValidation() {
-	}
+  /**
+   * No constructor.
+   */
+  private GraphValidation() {}
 
-	/**
-	 * Validates the given graph. Throws an exception if graph is invalid.
-	 * 
-	 * @param graph the given graph
-	 */
-	public static void validateGraph(final EnactmentGraph graph) {
-		checkForDisconnectedDataNodes(graph);
-	}
+  /**
+   * Validates the given graph. Throws an exception if graph is invalid.
+   * 
+   * @param graph the given graph
+   */
+  public static void validateGraph(final EnactmentGraph graph) {
+    checkForDisconnectedDataNodes(graph);
+  }
 
-	/**
-	 * Throws an exception if any disconnected nodes are found.
-	 * 
-	 * @param graph the graph to check
-	 */
-	protected static void checkForDisconnectedDataNodes(final EnactmentGraph graph) {
-		for (final Task task : graph) {
-			if (TaskPropertyService.isCommunication(task) && graph.getIncidentEdges(task).isEmpty()) {
-				throw new IllegalStateException(
-						"The generated graph contains a disconnected data node: " + task.getId());
-			}
-		}
-	}
+  /**
+   * Throws an exception if any disconnected nodes are found.
+   * 
+   * @param graph the graph to check
+   */
+  protected static void checkForDisconnectedDataNodes(final EnactmentGraph graph) {
+    for (final Task task : graph) {
+      if (TaskPropertyService.isCommunication(task) && graph.getIncidentEdges(task).isEmpty()) {
+        throw new IllegalStateException(
+            "The generated graph contains a disconnected data node: " + task.getId());
+      }
+    }
+  }
 }

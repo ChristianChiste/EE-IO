@@ -10,7 +10,8 @@ import at.uibk.dps.ee.io.afcl.AfclReader;
 import at.uibk.dps.ee.model.graph.EnactmentGraphProvider;
 
 /**
- * The {@link AfclReaderFileModule} is used to read in the WF from a file in afcl format.
+ * The {@link AfclReaderFileModule} is used to read in the WF from a file in
+ * afcl format.
  * 
  * @author Fedor Smirnov
  *

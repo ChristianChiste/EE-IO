@@ -22,62 +22,64 @@ import at.uibk.dps.socketutils.UtilsSocket;
 @Singleton
 public class AfclReader implements EnactmentGraphProvider {
 
-	protected final EnactmentGraph enactmentGraph;
+  protected final EnactmentGraph enactmentGraph;
 
-	/**
-	 * Built via injection in cases the file is read from a file on the local
-	 * storage.
-	 * 
-	 * @param filePath the path to the .afcl/.cfcl file
-	 */
-	@Inject
-	public AfclReader(@Constant(value = "filePath", namespace = AfclReader.class) final String filePath) {
-		try {
-			final byte[] wfData = UtilsSocket.readFileToBytes(filePath);
-			this.enactmentGraph = generateEnactmentGraph(wfData);
-		} catch (IOException ioExc) {
-			throw new IllegalStateException("IOException when reading the WF from the path: " + filePath, ioExc);
-		}
-	}
+  /**
+   * Built via injection in cases the file is read from a file on the local
+   * storage.
+   * 
+   * @param filePath the path to the .afcl/.cfcl file
+   */
+  @Inject
+  public AfclReader(
+      @Constant(value = "filePath", namespace = AfclReader.class) final String filePath) {
+    try {
+      final byte[] wfData = UtilsSocket.readFileToBytes(filePath);
+      this.enactmentGraph = generateEnactmentGraph(wfData);
+    } catch (IOException ioExc) {
+      throw new IllegalStateException("IOException when reading the WF from the path: " + filePath,
+          ioExc);
+    }
+  }
 
-	/**
-	 * Constructor which is provided with the byte representation of the workflow
-	 * file.
-	 * 
-	 * @param workflowData
-	 */
-	public AfclReader(final byte[] workflowData) {
-		this.enactmentGraph = generateEnactmentGraph(workflowData);
-	}
+  /**
+   * Constructor which is provided with the byte representation of the workflow
+   * file.
+   * 
+   * @param workflowData
+   */
+  public AfclReader(final byte[] workflowData) {
+    this.enactmentGraph = generateEnactmentGraph(workflowData);
+  }
 
-	@Override
-	public EnactmentGraph getEnactmentGraph() {
-		return this.enactmentGraph;
-	}
+  @Override
+  public EnactmentGraph getEnactmentGraph() {
+    return this.enactmentGraph;
+  }
 
-	/**
-	 * Generates the enactment graph based on the .afcl/.cfcl file (provided as byte
-	 * array).
-	 * 
-	 * @param wfData the wfdata
-	 * @return The enactment graph modeling the enactment process.
-	 */
-	protected final EnactmentGraph generateEnactmentGraph(final byte[] wfData) {
-		return GraphGenerationAfcl.generateEnactmentGraph(bytes2Workflow(wfData));
-	}
+  /**
+   * Generates the enactment graph based on the .afcl/.cfcl file (provided as byte
+   * array).
+   * 
+   * @param wfData the wfdata
+   * @return The enactment graph modeling the enactment process.
+   */
+  protected final EnactmentGraph generateEnactmentGraph(final byte[] wfData) {
+    return GraphGenerationAfcl.generateEnactmentGraph(bytes2Workflow(wfData));
+  }
 
-	/**
-	 * Converts the workflow data into a processable {@link Workflow} object.
-	 * 
-	 * @param workflowAsBytes byte array with the workflow information
-	 * @return the {@link Workflow} corresponding to the input data.
-	 */
-	protected static Workflow bytes2Workflow(final byte[] workflowAsBytes) {
-		try {
-			return Utils.readYAMLNoValidation(workflowAsBytes);
-		} catch (IOException ioExc) {
-			throw new IllegalArgumentException(
-					"IOException when converting the wf input into the AFCL workflow object.", ioExc);
-		}
-	}
+  /**
+   * Converts the workflow data into a processable {@link Workflow} object.
+   * 
+   * @param workflowAsBytes byte array with the workflow information
+   * @return the {@link Workflow} corresponding to the input data.
+   */
+  protected static Workflow bytes2Workflow(final byte[] workflowAsBytes) {
+    try {
+      return Utils.readYAMLNoValidation(workflowAsBytes);
+    } catch (IOException ioExc) {
+      throw new IllegalArgumentException(
+          "IOException when converting the wf input into the AFCL workflow object.", ioExc);
+    }
+  }
 }

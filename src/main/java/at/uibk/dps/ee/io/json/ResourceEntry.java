@@ -11,27 +11,27 @@ import com.google.gson.JsonElement;
  */
 public class ResourceEntry {
 
-	protected String type;
-	protected Map<String, JsonElement> properties;
+  protected String type;
+  protected Map<String, JsonElement> properties;
 
-	public ResourceEntry(String type, Map<String, JsonElement> properties) {
-		this.type = type;
-		this.properties = properties;
-	}
+  public ResourceEntry(String type, Map<String, JsonElement> properties) {
+    this.type = type;
+    this.properties = properties;
+  }
 
-	public String getType() {
-		return type;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public Map<String, JsonElement> getProperties() {
-		return properties;
-	}
+  public Map<String, JsonElement> getProperties() {
+    return properties;
+  }
 
-	public void setProperties(Map<String, JsonElement> properties) {
-		this.properties = properties;
-	}
+  public void setProperties(Map<String, JsonElement> properties) {
+    this.properties = properties;
+  }
 }

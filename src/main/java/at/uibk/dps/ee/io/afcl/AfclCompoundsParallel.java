@@ -15,29 +15,30 @@ import at.uibk.dps.ee.model.graph.EnactmentGraph;
  */
 public final class AfclCompoundsParallel {
 
-	/**
-	 * No constructor.
-	 */
-	private AfclCompoundsParallel() {
-	}
-	
-	/**
-	 * Adds the nodes modeling the content of the given parallel compound to the
-	 * provided enactment graph.
-	 * 
-	 * @param graph    the enactment graph
-	 * @param parallel the parallel compound
-	 * @param workflow the afcl workflow object
-	 */
-	protected static void addParallel(final EnactmentGraph graph, final Parallel parallel, final Workflow workflow) {
-		for (final Section section : parallel.getParallelBody()) {
-			for (final Function function : section.getSection()) {
-				if (function instanceof AtomicFunction) {
-					AfclCompoundsAtomic.addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);
-				} else {
-					AfclCompounds.addFunctionCompound(graph, function, workflow);
-				}
-			}
-		}
-	}
+  /**
+   * No constructor.
+   */
+  private AfclCompoundsParallel() {}
+
+  /**
+   * Adds the nodes modeling the content of the given parallel compound to the
+   * provided enactment graph.
+   * 
+   * @param graph the enactment graph
+   * @param parallel the parallel compound
+   * @param workflow the afcl workflow object
+   */
+  protected static void addParallel(final EnactmentGraph graph, final Parallel parallel,
+      final Workflow workflow) {
+    for (final Section section : parallel.getParallelBody()) {
+      for (final Function function : section.getSection()) {
+        if (function instanceof AtomicFunction) {
+          AfclCompoundsAtomic.addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function,
+              workflow);
+        } else {
+          AfclCompounds.addFunctionCompound(graph, function, workflow);
+        }
+      }
+    }
+  }
 }
