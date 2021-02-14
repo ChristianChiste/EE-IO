@@ -20,15 +20,11 @@ import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependencyControlIf;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.NodeType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunction.UsageType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.DataFlowType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtility.UtilityType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import net.sf.opendse.model.Communication;
@@ -182,17 +178,15 @@ public final class AfclCompoundsIf {
   protected static Task addConditionFunction(final EnactmentGraph graph,
       final IfThenElse ifCompound, final Workflow workflow) {
     final String nodeId = AfclApiWrapper.getName(ifCompound);
-    final Task funcNode = new Task(nodeId);
-    PropertyServiceFunction.setUsageType(UsageType.Utility, funcNode);
-    PropertyServiceFunctionUtility.setUtilityType(funcNode, UtilityType.Condition);
     final Set<Condition> conditions = new HashSet<>();
+    final Summary summary =
+        UtilsAfcl.getSummaryForString(ifCompound.getCondition().getCombinedWith());
+    final Task funcNode = PropertyServiceFunctionUtilityCondition.createConditionEvaluation(nodeId, conditions, summary);
     for (final ACondition afclCondition : ifCompound.getCondition().getConditions()) {
       conditions.add(addConditionNode(graph, afclCondition, funcNode, workflow));
     }
     PropertyServiceFunctionUtilityCondition.setConditions(funcNode, conditions);
-    final Summary summary =
-        UtilsAfcl.getSummaryForString(ifCompound.getCondition().getCombinedWith());
-    PropertyServiceFunctionUtilityCondition.setSummary(funcNode, summary);
+   
     final String decVarId =
         AfclApiWrapper.getName(ifCompound) + ConstantsEEModel.DecisionVariableSuffix;
     // create the decision variable
