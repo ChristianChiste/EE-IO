@@ -3,6 +3,7 @@ package at.uibk.dps.ee.io.resources;
 import java.util.Optional;
 import org.opt4j.core.start.Constant;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import at.uibk.dps.ee.io.json.ResourceEntry;
 import at.uibk.dps.ee.io.json.ResourceInformationJsonFile;
 import at.uibk.dps.ee.model.constants.ConstantsEEModel;
@@ -21,6 +22,7 @@ import net.sf.opendse.model.Resource;
  * @author Fedor Smirnov
  *
  */
+@Singleton
 public class ResourceGraphProviderFile implements ResourceGraphProvider {
 
   protected final ResourceGraph resourceGraph;
