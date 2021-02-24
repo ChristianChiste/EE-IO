@@ -1,5 +1,6 @@
 package at.uibk.dps.ee.io.afcl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +24,7 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollection
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlowCollections.OperationType;
 import net.sf.opendse.model.Communication;
 import net.sf.opendse.model.Task;
+import net.sf.opendse.model.properties.TaskPropertyService;
 
 /**
  * Static method container for the methods used when creating the enactment
@@ -86,8 +88,14 @@ public final class AfclCompoundsParallelFor {
       for (final String iterator : iterators) {
         processIterator(iterator, graph, dataIns, distributionNode, parallelFor.getName());
       }
-      // process the loop body
+      // process the loop body and remember the new functions
+      final Set<Task> functionsBeforeAdding = AfclCompounds.getFunctionNodes(graph);
       processTheLoopBody(parallelFor, graph, workflow);
+      final Set<Task> functionsAfterAdding = AfclCompounds.getFunctionNodes(graph);
+      functionsAfterAdding.removeAll(functionsBeforeAdding);
+      // connect the "roots" of the body subgraph to the dist node
+      getSubGraphRoots(graph, functionsAfterAdding, distributionNode).forEach(
+          subGraphRoot -> connectSubGraphRootToDistNode(graph, distributionNode, subGraphRoot));
     }
 
     // process the data outs and add the aggregate function
@@ -97,6 +105,75 @@ public final class AfclCompoundsParallelFor {
         attachAggregatedDataOut(dataOut, graph, parallelFor.getName());
       }
     }
+  }
+
+  /**
+   * Connects a subgraph root to its distribution node by means of a sequence node
+   * 
+   * @param graph the enactment graph
+   * @param distributionNode the distribution node
+   * @param subRoot the sub graph root
+   */
+  protected static void connectSubGraphRootToDistNode(EnactmentGraph graph, Task distributionNode,
+      Task subRoot) {
+    String seqId = distributionNode.getId() + ConstantsEEModel.KeywordSeparator1 + subRoot.getId();
+    Task seqNode = PropertyServiceData.createSequentialityNode(seqId);
+    PropertyServiceDependency.addDataDependency(distributionNode, seqNode,
+        ConstantsEEModel.JsonKeySequentiality, graph);
+    PropertyServiceDependency.addDataDependency(seqNode, subRoot,
+        ConstantsEEModel.JsonKeySequentiality, graph);
+  }
+
+  /**
+   * Returns the set of tasks which were produced when processing the loop body,
+   * but do not have a connection to the distribution node (or other tasks from
+   * the subgraph).
+   * 
+   * @param graph the enactment graph
+   * @param subGraphTasks the newly created tasks
+   * @param distributionNode the distribution node
+   * @return the set of tasks which were produced when processing the loop body,
+   *         but do not have a connection to the distribution node (or other tasks
+   *         from the subgraph)
+   */
+  protected static Set<Task> getSubGraphRoots(EnactmentGraph graph, Set<Task> subGraphTasks,
+      Task distributionNode) {
+    Set<Task> result = new HashSet<>(subGraphTasks);
+    result.removeIf(task -> !isSubGraphRoot(task, subGraphTasks, graph, distributionNode));
+    return result;
+  }
+
+  /**
+   * Returns true if the given task is a "root" of the subgraph, i.e., it has no
+   * connections to either the distribution node or any other task within the
+   * subgraph.
+   * 
+   * @param task the given task
+   * @param subGraphTasks the tasks in the subgraph
+   * @param graph the graph
+   * @param distributionNode the distribution node
+   * @return true if the given task is a "root" of the subgraph, i.e., it has no
+   *         connections to either the distribution node or any other task within
+   *         the subgraph
+   */
+  protected static boolean isSubGraphRoot(Task task, Set<Task> subGraphTasks, EnactmentGraph graph,
+      Task distributionNode) {
+    for (Task predecessor : graph.getPredecessors(task)) {
+      // iterate the comm predecessors
+      if (!TaskPropertyService.isCommunication(predecessor)
+          || graph.getPredecessorCount(predecessor) > 1) {
+        throw new IllegalStateException(
+            "Task " + predecessor.getId() + " should not precede task " + task.getId());
+      }
+      if (!graph.getPredecessors(predecessor).isEmpty()) {
+        // check the task predecessor
+        Task precedingTask = graph.getPredecessors(predecessor).iterator().next();
+        if (precedingTask.equals(distributionNode) || subGraphTasks.contains(precedingTask)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   /**

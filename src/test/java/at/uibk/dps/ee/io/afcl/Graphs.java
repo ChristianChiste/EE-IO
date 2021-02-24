@@ -46,6 +46,10 @@ public class Graphs {
 	public static Workflow getParallelForIntIteratorWf() {
 		return getWf(ConstantsTestCoreEEiO.cfclFileParallelForIntIterator);
 	}
+	
+	public static Workflow getParallelForNoInput() {
+	  return getWf(ConstantsTestCoreEEiO.cfclFileParallelForNoInput);
+	}
 
 	protected static Workflow getWf(String fileName) {
 		try {

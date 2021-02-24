@@ -23,6 +23,7 @@ public class ConstantsTestCoreEEiO {
 	public static final String cfclFileParallelFor = "src/test/resources/wfInputFiles/parFor.yaml";
 	public static final String cfclFileParallelForConstIterator = "src/test/resources/wfInputFiles/parForConstIterator.yaml";
 	public static final String cfclFileParallelForIntIterator = "src/test/resources/wfInputFiles/parForIntIterator.yaml";
+	public static final String cfclFileParallelForNoInput = "src/test/resources/wfInputFiles/parForNoInput.yaml";
 
 	// single atomic names
 	public static final String wfNameAtomic = "single Atomic";

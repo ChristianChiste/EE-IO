@@ -1,0 +1,53 @@
+---
+name: "single Atomic"
+dataIns:
+  - name: "wf_coll"
+    type: "collection"
+    source: "inputSource"
+  - name: "wf_coll2"
+    type: "collection"
+    source: "inputSource2"    
+workflowBody:
+  - parallelFor:
+      name: "parallelFor"
+      dataIns:
+        - name: "parallel_coll"
+          type: "number"
+          source: "single Atomic/wf_coll"
+          constraints:
+            - name: "block"
+              value: 2,0      
+      iterators: ["parallel_coll"]
+      loopBody:
+        - function:
+            name: "atomicFunctionFirst"
+            type: "serverless"
+            dataIns:
+            - name: "myInput1"
+              type: "collection"
+              source: "single Atomic/wf_coll2"
+            - name: "myInput2"
+              type: "collection"
+              source: "single Atomic/wf_coll2"            
+            dataOuts: 
+            - name: "myOutput1"
+              type: "number"
+        - function:
+            name: "atomicFunctionSecond"
+            type: "serverless"
+            dataIns:
+            - name: "myInput2"
+              type: "number"
+              source: "atomicFunctionFirst/myOutput1"          
+            dataOuts: 
+            - name: "myOutput2"
+              type: "string"      
+      dataOuts:
+        - name: "result_collection"
+          type: "collection"
+          source: "atomicFunctionSecond/myOutput2" 
+dataOuts:
+  - name: "overallOutput"
+    type: "collection"
+    source: "parallelFor/result_collection"
+
