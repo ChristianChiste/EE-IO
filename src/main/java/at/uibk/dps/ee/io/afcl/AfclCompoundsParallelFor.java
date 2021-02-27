@@ -114,10 +114,11 @@ public final class AfclCompoundsParallelFor {
    * @param distributionNode the distribution node
    * @param subRoot the sub graph root
    */
-  protected static void connectSubGraphRootToDistNode(EnactmentGraph graph, Task distributionNode,
-      Task subRoot) {
-    String seqId = distributionNode.getId() + ConstantsEEModel.KeywordSeparator1 + subRoot.getId();
-    Task seqNode = PropertyServiceData.createSequentialityNode(seqId);
+  protected static void connectSubGraphRootToDistNode(final EnactmentGraph graph,
+      final Task distributionNode, final Task subRoot) {
+    final String seqId =
+        distributionNode.getId() + ConstantsEEModel.KeywordSeparator1 + subRoot.getId();
+    final Task seqNode = PropertyServiceData.createSequentialityNode(seqId);
     PropertyServiceDependency.addDataDependency(distributionNode, seqNode,
         ConstantsEEModel.JsonKeySequentiality, graph);
     PropertyServiceDependency.addDataDependency(seqNode, subRoot,
@@ -136,9 +137,9 @@ public final class AfclCompoundsParallelFor {
    *         but do not have a connection to the distribution node (or other tasks
    *         from the subgraph)
    */
-  protected static Set<Task> getSubGraphRoots(EnactmentGraph graph, Set<Task> subGraphTasks,
-      Task distributionNode) {
-    Set<Task> result = new HashSet<>(subGraphTasks);
+  protected static Set<Task> getSubGraphRoots(final EnactmentGraph graph,
+      final Set<Task> subGraphTasks, final Task distributionNode) {
+    final Set<Task> result = new HashSet<>(subGraphTasks);
     result.removeIf(task -> !isSubGraphRoot(task, subGraphTasks, graph, distributionNode));
     return result;
   }
@@ -156,8 +157,8 @@ public final class AfclCompoundsParallelFor {
    *         connections to either the distribution node or any other task within
    *         the subgraph
    */
-  protected static boolean isSubGraphRoot(Task task, Set<Task> subGraphTasks, EnactmentGraph graph,
-      Task distributionNode) {
+  protected static boolean isSubGraphRoot(final Task task, final Set<Task> subGraphTasks,
+      final EnactmentGraph graph, final Task distributionNode) {
     for (Task predecessor : graph.getPredecessors(task)) {
       // iterate the comm predecessors
       if (!TaskPropertyService.isCommunication(predecessor)
@@ -167,7 +168,7 @@ public final class AfclCompoundsParallelFor {
       }
       if (!graph.getPredecessors(predecessor).isEmpty()) {
         // check the task predecessor
-        Task precedingTask = graph.getPredecessors(predecessor).iterator().next();
+        final Task precedingTask = graph.getPredecessors(predecessor).iterator().next();
         if (precedingTask.equals(distributionNode) || subGraphTasks.contains(precedingTask)) {
           return false;
         }
