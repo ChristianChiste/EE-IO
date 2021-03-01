@@ -79,7 +79,7 @@ public final class AfclCompoundsIf {
     // remember all function nodes in the graph now
     final Set<Task> tasksBeforeAdding = AfclCompounds.getFunctionNodes(graph);
     // add the contents of the branch
-    final List<Function> functionsToAdd = isThen ? ifCompound.getThen() : ifCompound.getElse();
+    final List<Function> functionsToAdd = isThen ? ifCompound.getThenBranch() : ifCompound.getElseBranch();
     for (final Function function : functionsToAdd) {
       if (function instanceof AtomicFunction) {
         AfclCompoundsAtomic.addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);

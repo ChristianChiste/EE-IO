@@ -23,10 +23,6 @@ public class Graphs {
 		return getWf(ConstantsTestCoreEEiO.cfclFileSingleAtomic);
 	}
 
-	public static Workflow getSeqParWf() {
-		return getWf(ConstantsTestCoreEEiO.cfclFileSeqPar);
-	}
-
 	public static Workflow getIfWf() {
 		return getWf(ConstantsTestCoreEEiO.cfclFileIf);
 	}

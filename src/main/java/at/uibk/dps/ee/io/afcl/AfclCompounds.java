@@ -10,9 +10,7 @@ import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
-import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.ParallelFor;
-import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
@@ -48,14 +46,6 @@ public final class AfclCompounds {
     switch (UtilsAfcl.getCompoundType(function)) {
       case Atomic: {
         AfclCompoundsAtomic.addAtomicFunctionWfLevel(graph, (AtomicFunction) function);
-        return;
-      }
-      case Sequence: {
-        AfclCompoundsSequence.addSequence(graph, (Sequence) function, workflow);
-        return;
-      }
-      case Parallel: {
-        AfclCompoundsParallel.addParallel(graph, (Parallel) function, workflow);
         return;
       }
       case If: {

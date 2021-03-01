@@ -3,9 +3,7 @@ package at.uibk.dps.ee.io.afcl;
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
-import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.ParallelFor;
-import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
@@ -32,7 +30,7 @@ public final class UtilsAfcl {
    *
    */
   public enum CompoundType {
-    Atomic, Sequence, Parallel, If, ParallelFor
+    Atomic, If, ParallelFor
   }
 
   /**
@@ -82,10 +80,6 @@ public final class UtilsAfcl {
   public static CompoundType getCompoundType(final Function function) {
     if (function instanceof AtomicFunction) {
       return CompoundType.Atomic;
-    } else if (function instanceof Sequence) {
-      return CompoundType.Sequence;
-    } else if (function instanceof Parallel) {
-      return CompoundType.Parallel;
     } else if (function instanceof IfThenElse) {
       return CompoundType.If;
     } else if (function instanceof ParallelFor) {

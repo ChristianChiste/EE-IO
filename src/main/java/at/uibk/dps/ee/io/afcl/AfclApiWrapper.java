@@ -8,14 +8,11 @@ import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
-import at.uibk.dps.afcl.functions.Parallel;
 import at.uibk.dps.afcl.functions.ParallelFor;
-import at.uibk.dps.afcl.functions.Sequence;
 import at.uibk.dps.afcl.functions.objects.ACondition;
 import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.afcl.functions.objects.DataOuts;
 import at.uibk.dps.afcl.functions.objects.DataOutsAtomic;
-import at.uibk.dps.afcl.functions.objects.Section;
 
 /**
  * Class offering static methods to apply additional checks when accessing data
@@ -113,29 +110,6 @@ public final class AfclApiWrapper {
     }
     if (function instanceof AtomicFunction) {
       return null;
-    } else if (function instanceof Sequence) {
-      Sequence seq = (Sequence) function;
-      for (Function f : seq.getSequenceBody()) {
-        if (f.getName().equals(name)) {
-          return f;
-        }
-        Function inside = searchInsideFunction(f, name);
-        if (inside != null) {
-          return inside;
-        }
-      }
-      return null;
-    } else if (function instanceof Parallel) {
-      Parallel par = (Parallel) function;
-      for (Section sec : par.getParallelBody()) {
-        for (Function f : sec.getSection()) {
-          Function inside = searchInsideFunction(f, name);
-          if (inside != null) {
-            return inside;
-          }
-        }
-      }
-      return null;
     } else if (function instanceof ParallelFor) {
       ParallelFor parFor = (ParallelFor) function;
       for (Function loopBodyFunction : parFor.getLoopBody()) {
@@ -232,10 +206,6 @@ public final class AfclApiWrapper {
   public static List<DataIns> getDataIns(Function func) {
     if (func instanceof AtomicFunction) {
       return getDataIns((AtomicFunction) func);
-    } else if (func instanceof Parallel) {
-      return getDataIns((Parallel) func);
-    } else if (func instanceof Sequence) {
-      return getDataIns((Sequence) func);
     } else if (func instanceof IfThenElse) {
       return getDataIns((IfThenElse) func);
     } else if (func instanceof ParallelFor) {
@@ -246,11 +216,7 @@ public final class AfclApiWrapper {
   }
 
   public static List<DataOuts> getDataOuts(Function func) {
-    if (func instanceof Parallel) {
-      return getDataOuts((Parallel) func);
-    } else if (func instanceof Sequence) {
-      return getDataOuts((Sequence) func);
-    } else if (func instanceof IfThenElse) {
+    if (func instanceof IfThenElse) {
       return getDataOuts((IfThenElse) func);
     } else if (func instanceof ParallelFor) {
       return getDataOuts((ParallelFor) func);
@@ -278,24 +244,8 @@ public final class AfclApiWrapper {
     }
   }
 
-  public static List<DataIns> getDataIns(Parallel parallel) {
-    if (parallel.getDataIns() == null) {
-      return new ArrayList<>();
-    } else {
-      return parallel.getDataIns();
-    }
-  }
-
   public static List<DataIns> getDataIns(ParallelFor parallelFor) {
     return Optional.ofNullable(parallelFor.getDataIns()).orElse(new ArrayList<>());
-  }
-
-  public static List<DataIns> getDataIns(Sequence seq) {
-    if (seq.getDataIns() == null) {
-      return new ArrayList<>();
-    } else {
-      return seq.getDataIns();
-    }
   }
 
   public static List<DataOutsAtomic> getDataOuts(AtomicFunction atomFunc) {
@@ -303,22 +253,6 @@ public final class AfclApiWrapper {
       return new ArrayList<>();
     } else {
       return atomFunc.getDataOuts();
-    }
-  }
-
-  public static List<DataOuts> getDataOuts(Parallel par) {
-    if (par.getDataOuts() == null) {
-      return new ArrayList<>();
-    } else {
-      return par.getDataOuts();
-    }
-  }
-
-  public static List<DataOuts> getDataOuts(Sequence seq) {
-    if (seq.getDataOuts() == null) {
-      return new ArrayList<>();
-    } else {
-      return seq.getDataOuts();
     }
   }
 
