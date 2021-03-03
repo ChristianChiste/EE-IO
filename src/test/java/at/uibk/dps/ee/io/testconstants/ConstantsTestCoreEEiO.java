@@ -18,6 +18,8 @@ public class ConstantsTestCoreEEiO {
 	// constants for the afcl test input
 	public static final String cfclFileSingleAtomic = "src/test/resources/wfInputFiles/singleAtomic.yaml";
 	public static final String cfclFileIf = "src/test/resources/wfInputFiles/simpleIf.yaml";
+	public static final String cfclFileIfMulti = "src/test/resources/wfInputFiles/simpleIfMultiFunc.yaml";
+	public static final String cfclFileIfNoElse = "src/test/resources/wfInputFiles/simpleIfNoElse.yaml";
 	public static final String cfclFileElementIndex = "src/test/resources/wfInputFiles/atomicElementIndex.yaml";
 	public static final String cfclFileParallelFor = "src/test/resources/wfInputFiles/parFor.yaml";
 	public static final String cfclFileParallelForConstIterator = "src/test/resources/wfInputFiles/parForConstIterator.yaml";

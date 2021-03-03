@@ -26,6 +26,14 @@ public class Graphs {
 	public static Workflow getIfWf() {
 		return getWf(ConstantsTestCoreEEiO.cfclFileIf);
 	}
+	
+	public static Workflow getIfWfMulti() {
+      return getWf(ConstantsTestCoreEEiO.cfclFileIfMulti);
+  }
+	
+	public static Workflow getIfNoElseWf() {
+      return getWf(ConstantsTestCoreEEiO.cfclFileIfNoElse);
+  }
 
 	public static Workflow getElementIndexWf() {
 		return getWf(ConstantsTestCoreEEiO.cfclFileElementIndex);

@@ -56,24 +56,10 @@ workflowBody:
             dataOuts:
               - name: "output"
                 type: "number"
-      else:
-        - function:
-            name: "func2"
-            type: "local"
-            dataIns:
-              - name: "firstIn"
-                type: "number"
-                source: "ifCompound/num1"
-              - name: "secondIn"
-                type: "number"
-                source: "ifCompound/num2"                
-            dataOuts:
-              - name: "out"
-                type: "number"
       dataOuts:
         - name: "res"
           type: "number"
-          source: "func1/output,func2/out"
+          source: "func1/output,ifCompound/num2"
 dataOuts:
   - name: "wf_result"
     type: "number"

@@ -5,10 +5,10 @@ import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.ParallelFor;
 import at.uibk.dps.afcl.functions.objects.PropertyConstraint;
+import at.uibk.dps.ee.model.objects.Condition.CombinedWith;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCollections.CollectionOperation;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
 
 /**
  * Convenience methods for working with the AFCL classes and syntax.
@@ -125,33 +125,27 @@ public final class UtilsAfcl {
       case ConstantsAfcl.operatorStringGreaterEqual: {
         return Operator.GREATER_EQUAL;
       }
-      case ConstantsAfcl.operatorStringAnd: {
-        return Operator.AND;
-      }
-      case ConstantsAfcl.operatorStringOr: {
-        return Operator.OR;
-      }
       default:
         throw new IllegalArgumentException("Unknown operator string: " + afclOperatorString);
     }
   }
 
   /**
-   * Returns the summary object for the given afcl string.
+   * Returns the combinedWith enum associated with the given string from the AFCL
+   * file.
    * 
-   * @param summaryString the afcl string
-   * @return the summary object for the given afcl string
+   * @param combinedWithString the string from the AFCL file
+   * @return the combinedWith enum associated with the given string from the AFCL
+   *         file
    */
-  public static Summary getSummaryForString(final String summaryString) {
-    switch (summaryString) {
-      case ConstantsAfcl.summaryStringAnd:
-        return Summary.AND;
-
-      case ConstantsAfcl.summaryStringOr:
-        return Summary.OR;
-
+  public static CombinedWith getCombinedWithForString(final String combinedWithString) {
+    switch (combinedWithString) {
+      case ConstantsAfcl.combinedWithStringAnd:
+        return CombinedWith.And;
+      case ConstantsAfcl.combinedWithStringOr:
+        return CombinedWith.Or;
       default:
-        throw new IllegalArgumentException("Unknown summary string: " + summaryString);
+        throw new IllegalArgumentException("Unknown combinedWith string: " + combinedWithString);
     }
   }
 
@@ -179,6 +173,9 @@ public final class UtilsAfcl {
       }
       case ConstantsAfcl.typeStringString: {
         return DataType.String;
+      }
+      case ConstantsAfcl.typeStringArray: {
+        return DataType.Array;
       }
       default:
         throw new IllegalArgumentException("Unknown data type string: " + afclString);

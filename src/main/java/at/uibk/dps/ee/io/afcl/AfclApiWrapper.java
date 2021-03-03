@@ -3,13 +3,11 @@ package at.uibk.dps.ee.io.afcl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
 import at.uibk.dps.afcl.functions.ParallelFor;
-import at.uibk.dps.afcl.functions.objects.ACondition;
 import at.uibk.dps.afcl.functions.objects.DataIns;
 import at.uibk.dps.afcl.functions.objects.DataOuts;
 import at.uibk.dps.afcl.functions.objects.DataOutsAtomic;
@@ -119,8 +117,25 @@ public final class AfclApiWrapper {
         }
       }
       return null;
-    } else {
-      throw new IllegalStateException("Unknown compound");
+    } else if (function instanceof IfThenElse) {
+      IfThenElse ifElse = (IfThenElse) function;
+      for (Function thenFunction : ifElse.getThenBranch()) {
+        Function inside = searchInsideFunction(thenFunction, name);
+        if (inside != null) {
+          return inside;
+        }
+      }
+      for (Function elseFunction : ifElse.getElseBranch()) {
+        Function inside = searchInsideFunction(elseFunction, name);
+        if (inside != null) {
+          return inside;
+        }
+      }
+      return null;
+    }
+    
+    else {
+      throw new IllegalStateException("Unknown compound:" + function.getName());
     }
   }
 
@@ -186,20 +201,6 @@ public final class AfclApiWrapper {
       return new ArrayList<>();
     } else {
       return wf.getDataOuts();
-    }
-  }
-
-  public static boolean getNegation(ACondition condition) {
-    if (condition.getNegation() == null) {
-      return false;
-    }
-    String negString = condition.getNegation();
-    if (negString.equals(ConstantsAfcl.afclTrue)) {
-      return true;
-    } else if (negString.equals(ConstantsAfcl.afclFalse)) {
-      return false;
-    } else {
-      throw new IllegalArgumentException("Unknown negation string " + negString);
     }
   }
 

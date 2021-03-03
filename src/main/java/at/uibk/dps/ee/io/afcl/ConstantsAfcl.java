@@ -22,7 +22,8 @@ public final class ConstantsAfcl {
   public static final String typeStringString = "string";
   public static final String typeStringCollection = "collection";
   public static final String typeStringObject = "object";
-  public static final String typeStringBoolean = "bool";
+  public static final String typeStringBoolean = "boolean";
+  public static final String typeStringArray = "array";
 
   // Strings defining the conditional operators
   public static final String operatorStringEqual = "==";
@@ -34,12 +35,10 @@ public final class ConstantsAfcl {
   public static final String operatorStringContains = "contains";
   public static final String operatorStringStartsWith = "startsWith";
   public static final String operatorStringEndsWith = "endsWith";
-  public static final String operatorStringAnd = "AND";
-  public static final String operatorStringOr = "OR";
 
   // String defining the conidition summary
-  public static final String summaryStringAnd = "and";
-  public static final String summaryStringOr = "or";
+  public static final String combinedWithStringAnd = "and";
+  public static final String combinedWithStringOr = "or";
 
   // String defining different function types
   public static final String functionTypeStringServerless = "serverless";

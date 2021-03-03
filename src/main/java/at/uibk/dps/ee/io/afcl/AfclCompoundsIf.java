@@ -1,9 +1,9 @@
 package at.uibk.dps.ee.io.afcl;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
+import com.google.common.base.Optional;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -11,11 +11,11 @@ import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.Workflow;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
-import at.uibk.dps.afcl.functions.objects.ACondition;
 import at.uibk.dps.afcl.functions.objects.DataOuts;
 import at.uibk.dps.ee.model.constants.ConstantsEEModel;
 import at.uibk.dps.ee.model.graph.EnactmentGraph;
 import at.uibk.dps.ee.model.objects.Condition;
+import at.uibk.dps.ee.model.objects.Condition.CombinedWith;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData;
 import at.uibk.dps.ee.model.properties.PropertyServiceDependency;
@@ -25,10 +25,7 @@ import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.NodeType;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionDataFlow.DataFlowType;
-import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUtilityCondition.Summary;
-import edu.uci.ics.jung.graph.util.EdgeType;
 import net.sf.opendse.model.Communication;
-import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Task;
 
 /**
@@ -61,7 +58,7 @@ public final class AfclCompoundsIf {
     addIfBranch(graph, ifCompound, workflow, conditionVariable, false);
     // create and add a choice function for each data out
     for (final DataOuts dataOut : AfclApiWrapper.getDataOuts(ifCompound)) {
-      addChoiceFunction(graph, dataOut, ifCompound, workflow);
+      addChoiceFunction(graph, dataOut, ifCompound, workflow, conditionVariable);
     }
   }
 
@@ -79,7 +76,9 @@ public final class AfclCompoundsIf {
     // remember all function nodes in the graph now
     final Set<Task> tasksBeforeAdding = AfclCompounds.getFunctionNodes(graph);
     // add the contents of the branch
-    final List<Function> functionsToAdd = isThen ? ifCompound.getThenBranch() : ifCompound.getElseBranch();
+    final List<Function> functionsToAdd =
+        Optional.fromNullable(isThen ? ifCompound.getThenBranch() : ifCompound.getElseBranch())
+            .or(new ArrayList<Function>());
     for (final Function function : functionsToAdd) {
       if (function instanceof AtomicFunction) {
         AfclCompoundsAtomic.addAtomicFunctionSubWfLevel(graph, (AtomicFunction) function, workflow);
@@ -91,11 +90,8 @@ public final class AfclCompoundsIf {
     final Set<Task> tasksAfterAdding = AfclCompounds.getFunctionNodes(graph);
     tasksAfterAdding.removeAll(tasksBeforeAdding);
     // connect them to the condition variable
-    for (final Task newTask : tasksAfterAdding) {
-      final Dependency dependency = PropertyServiceDependencyControlIf
-          .createControlIfDependency(decisionVariable, newTask, decisionVariable.getId(), isThen);
-      graph.addEdge(dependency, decisionVariable, newTask, EdgeType.DIRECTED);
-    }
+    tasksAfterAdding.forEach(newTask -> PropertyServiceDependencyControlIf
+        .addIfDependency(decisionVariable, newTask, decisionVariable.getId(), isThen, graph));
   }
 
   /**
@@ -106,32 +102,37 @@ public final class AfclCompoundsIf {
    * @param dataOut the given data out
    * @param ifCompound the given if compound
    * @param workflow the afcl workflow
+   * @param conditionVariable the data node containing the decision variable
    */
   protected static void addChoiceFunction(final EnactmentGraph graph, final DataOuts dataOut,
-      final IfThenElse ifCompound, final Workflow workflow) {
-    checkDataOutIfSrc(dataOut, graph);
+      final IfThenElse ifCompound, final Workflow workflow, Task conditionVariable) {
+    checkDataOutIfSrc(dataOut, graph, workflow);
     final String srcString = AfclApiWrapper.getSource(dataOut);
     final String firstSrc = UtilsAfcl.getFirstSubStringIfOut(srcString);
     final String secondSrc = UtilsAfcl.getSecondSubStringIfOut(srcString);
     final Task firstSrcNode = graph.getVertex(firstSrc);
-    final Task secondSrcNode = graph.getVertex(secondSrc);
+    final Task secondSrcNode = Optional.fromNullable(graph.getVertex(secondSrc))
+        .or(graph.getVertex(HierarchyLevellingAfcl.getSrcDataId(secondSrc, workflow)));
     // create the choice function node
     final String funcNodeId = firstSrc + ConstantsEEModel.EarliestArrivalFuncAffix + secondSrc;
     final Task choiceFunction = PropertyServiceFunctionDataFlow.createDataFlowFunction(funcNodeId,
-        DataFlowType.EarliestInput);
+        DataFlowType.Multiplexer); // change this to a muxer
     // add the inputs (kind-of the same as data ins for an atomic)
-    PropertyServiceDependency.addDataDependency(firstSrcNode, choiceFunction,
-        ConstantsEEModel.EarliestArrivalJsonKey, graph);
-    PropertyServiceDependency.addDataDependency(secondSrcNode, choiceFunction,
-        ConstantsEEModel.EarliestArrivalJsonKey, graph);
+    PropertyServiceDependencyControlIf.addIfDependency(firstSrcNode, choiceFunction,
+        ConstantsEEModel.JsonKeyThen, true, graph);
+    PropertyServiceDependencyControlIf.addIfDependency(secondSrcNode, choiceFunction,
+        ConstantsEEModel.JsonKeyElse, false, graph);
     // add the output
-    final String jsonKey = ConstantsEEModel.EarliestArrivalJsonKey;
     final String dataNodeId = srcString;
     final DataType dataType = UtilsAfcl.getDataTypeForString(dataOut.getType());
     // retrieve or create the data node
     final Task dataNodeOut = AfclCompounds.assureDataNodePresence(dataNodeId, dataType, graph);
     // create, annotate, and add the dependency to the graph
-    PropertyServiceDependency.addDataDependency(choiceFunction, dataNodeOut, jsonKey, graph);
+    PropertyServiceDependency.addDataDependency(choiceFunction, dataNodeOut,
+        ConstantsEEModel.JsonKeyIfResult, graph);
+    // connect the choice function to the decision variable (normal dependency)
+    PropertyServiceDependency.addDataDependency(conditionVariable, choiceFunction,
+        ConstantsEEModel.JsonKeyIfDecision, graph);
   }
 
   /**
@@ -141,7 +142,8 @@ public final class AfclCompoundsIf {
    * @param dataOut the data out to check
    * @param graph the hitherto created enactment graph
    */
-  protected static void checkDataOutIfSrc(final DataOuts dataOut, final EnactmentGraph graph) {
+  protected static void checkDataOutIfSrc(final DataOuts dataOut, final EnactmentGraph graph,
+      Workflow workflow) {
     final String srcString = AfclApiWrapper.getSource(dataOut);
     if (!UtilsAfcl.isIfOutSrc(srcString)) {
       throw new IllegalArgumentException("The src of data out " + AfclApiWrapper.getName(dataOut)
@@ -161,7 +163,8 @@ public final class AfclCompoundsIf {
     if (graph.getVertex(firstSrc) == null) {
       throw new IllegalStateException("Src of if data out " + firstSrc + " not in the graph");
     }
-    if (graph.getVertex(secondSrc) == null) {
+    if (graph.getVertex(secondSrc) == null
+        && graph.getVertex(HierarchyLevellingAfcl.getSrcDataId(secondSrc, workflow)) == null) {
       throw new IllegalStateException("Src of if data out " + secondSrc + " not in the graph");
     }
   }
@@ -178,21 +181,22 @@ public final class AfclCompoundsIf {
   protected static Task addConditionFunction(final EnactmentGraph graph,
       final IfThenElse ifCompound, final Workflow workflow) {
     final String nodeId = AfclApiWrapper.getName(ifCompound);
-    final Set<Condition> conditions = new HashSet<>();
-    final Summary summary =
-        UtilsAfcl.getSummaryForString(ifCompound.getCondition().getCombinedWith());
-    final Task funcNode = PropertyServiceFunctionUtilityCondition.createConditionEvaluation(nodeId, conditions, summary);
-    for (final ACondition afclCondition : ifCompound.getCondition().getConditions()) {
+    final List<Condition> conditions = new ArrayList<>();
+    final Task funcNode =
+        PropertyServiceFunctionUtilityCondition.createConditionEvaluation(nodeId, conditions);
+    for (final at.uibk.dps.afcl.functions.objects.Condition afclCondition : ifCompound
+        .getCondition()) {
       conditions.add(addConditionNode(graph, afclCondition, funcNode, workflow));
     }
     PropertyServiceFunctionUtilityCondition.setConditions(funcNode, conditions);
-   
+
     final String decVarId =
         AfclApiWrapper.getName(ifCompound) + ConstantsEEModel.DecisionVariableSuffix;
     // create the decision variable
     final Task decisionVariableNode = new Communication(decVarId);
     PropertyServiceData.setNodeType(decisionVariableNode, NodeType.Decision);
-    PropertyServiceDependency.addDataDependency(funcNode, decisionVariableNode, decVarId, graph);
+    PropertyServiceDependency.addDataDependency(funcNode, decisionVariableNode,
+        ConstantsEEModel.JsonKeyIfDecision, graph);
     return decisionVariableNode;
   }
 
@@ -205,17 +209,21 @@ public final class AfclCompoundsIf {
    * @param conditionFunction the task modeling the condition function
    */
   protected static Condition addConditionNode(final EnactmentGraph graph,
-      final ACondition condition, final Task conditionFunction, final Workflow workflow) {
+      final at.uibk.dps.afcl.functions.objects.Condition condition, final Task conditionFunction,
+      final Workflow workflow) {
     final String firstInput =
         getConditionDataSrc(condition.getData1(), conditionFunction.getId(), workflow);
     final String secondInput =
         getConditionDataSrc(condition.getData2(), conditionFunction.getId(), workflow);
     final Operator operator = UtilsAfcl.getOperatorForString(condition.getOperator());
-    final DataType dataType = operator.getDataType();
+    final DataType dataType = UtilsAfcl.getDataTypeForString(condition.getType());
     final Task conditionInFirst = addConditionIn(graph, conditionFunction, firstInput, dataType);
     final Task conditionInSecond = addConditionIn(graph, conditionFunction, secondInput, dataType);
-    final boolean negation = AfclApiWrapper.getNegation(condition);
-    return new Condition(conditionInFirst.getId(), conditionInSecond.getId(), operator, negation);
+    final CombinedWith combinedWith =
+        UtilsAfcl.getCombinedWithForString(condition.getCombinedWith());
+    final boolean negation = condition.getNegation();
+    return new Condition(conditionInFirst.getId(), conditionInSecond.getId(), operator, negation,
+        dataType, combinedWith);
   }
 
   /**

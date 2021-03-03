@@ -56,6 +56,19 @@ workflowBody:
             dataOuts:
               - name: "output"
                 type: "number"
+        - function:
+            name: "func3"
+            type: "local"
+            dataIns:
+              - name: "firstIn"
+                type: "number"
+                source: "func1/output"
+              - name: "secondIn"
+                type: "number"
+                source: "5"                
+            dataOuts:
+              - name: "output"
+                type: "number"                
       else:
         - function:
             name: "func2"
@@ -73,7 +86,7 @@ workflowBody:
       dataOuts:
         - name: "res"
           type: "number"
-          source: "func1/output,func2/out"
+          source: "func3/output,func2/out"
 dataOuts:
   - name: "wf_result"
     type: "number"
