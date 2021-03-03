@@ -134,7 +134,7 @@ public class IfAfclMultiFuncTest {
 
     // check the json key of the in edge
     Dependency inEdge = result.getInEdges(decisionVariable).iterator().next();
-    String expectedDecVarJsonKey = decisionVariable.getId();
+    String expectedDecVarJsonKey = ConstantsEEModel.JsonKeyIfDecision;
     assertEquals(expectedDecVarJsonKey, PropertyServiceDependency.getJsonKey(inEdge));
 
     // the decision variable and its successors

@@ -137,7 +137,7 @@ public class IfAfclTest {
 
     // check the json key of the in edge
     Dependency inEdge = result.getInEdges(decisionVariable).iterator().next();
-    String expectedDecVarJsonKey = decisionVariable.getId();
+    String expectedDecVarJsonKey = ConstantsEEModel.JsonKeyIfDecision;
     assertEquals(expectedDecVarJsonKey, PropertyServiceDependency.getJsonKey(inEdge));
 
     // the decision variable and its successors
@@ -150,13 +150,13 @@ public class IfAfclTest {
         // check that func1 is the then
         assertEquals(PropertyServiceDependency.getType(outEdge), TypeDependency.ControlIf);
         assertTrue(PropertyServiceDependencyControlIf.getActivation(outEdge));
-        assertEquals(expectedDecVarJsonKey, PropertyServiceDependency.getJsonKey(outEdge));
+        assertEquals(decisionVariable.getId(), PropertyServiceDependency.getJsonKey(outEdge));
       }
       if (result.getDest(outEdge).equals(func2Node)) {
         // check that func2 is the else
         assertEquals(PropertyServiceDependency.getType(outEdge), TypeDependency.ControlIf);
         assertFalse(PropertyServiceDependencyControlIf.getActivation(outEdge));
-        assertEquals(expectedDecVarJsonKey, PropertyServiceDependency.getJsonKey(outEdge));
+        assertEquals(decisionVariable.getId(), PropertyServiceDependency.getJsonKey(outEdge));
       }
     }
 
