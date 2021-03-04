@@ -1,5 +1,6 @@
 package at.uibk.dps.ee.io.afcl;
 
+import java.util.Optional;
 import at.uibk.dps.afcl.Function;
 import at.uibk.dps.afcl.functions.AtomicFunction;
 import at.uibk.dps.afcl.functions.IfThenElse;
@@ -97,37 +98,9 @@ public final class UtilsAfcl {
    * @return the {@link Operator} object
    */
   public static Operator getOperatorForString(final String afclOperatorString) {
-    switch (afclOperatorString) {
-      case ConstantsAfcl.operatorStringContains: {
-        return Operator.CONTAINS;
-      }
-      case ConstantsAfcl.operatorStringEndsWith: {
-        return Operator.ENDS_WITH;
-      }
-      case ConstantsAfcl.operatorStringStartsWith: {
-        return Operator.STARTS_WITH;
-      }
-      case ConstantsAfcl.operatorStringEqual: {
-        return Operator.EQUAL;
-      }
-      case ConstantsAfcl.operatorStringUnequal: {
-        return Operator.UNEQUAL;
-      }
-      case ConstantsAfcl.operatorStringLess: {
-        return Operator.LESS;
-      }
-      case ConstantsAfcl.operatorStringLessEqual: {
-        return Operator.LESS_EQUAL;
-      }
-      case ConstantsAfcl.operatorStringGreater: {
-        return Operator.GREATER;
-      }
-      case ConstantsAfcl.operatorStringGreaterEqual: {
-        return Operator.GREATER_EQUAL;
-      }
-      default:
-        throw new IllegalArgumentException("Unknown operator string: " + afclOperatorString);
-    }
+    return Optional.ofNullable(ConstantsAfcl.stringsToCondOperators.get(afclOperatorString))
+        .orElseThrow(() -> new IllegalArgumentException(
+            "Unknown condition operator type " + afclOperatorString));
   }
 
   /**
@@ -158,28 +131,8 @@ public final class UtilsAfcl {
    *         afcl file
    */
   public static DataType getDataTypeForString(final String afclString) {
-    switch (afclString) {
-      case ConstantsAfcl.typeStringBoolean: {
-        return DataType.Boolean;
-      }
-      case ConstantsAfcl.typeStringNumber: {
-        return DataType.Number;
-      }
-      case ConstantsAfcl.typeStringObject: {
-        return DataType.Object;
-      }
-      case ConstantsAfcl.typeStringCollection: {
-        return DataType.Collection;
-      }
-      case ConstantsAfcl.typeStringString: {
-        return DataType.String;
-      }
-      case ConstantsAfcl.typeStringArray: {
-        return DataType.Array;
-      }
-      default:
-        throw new IllegalArgumentException("Unknown data type string: " + afclString);
-    }
+    return Optional.ofNullable(ConstantsAfcl.stringToDataTypes.get(afclString))
+        .orElseThrow(() -> new IllegalArgumentException("Unknown data type " + afclString));
   }
 
   /**

@@ -159,7 +159,7 @@ public final class AfclCompoundsParallelFor {
    */
   protected static boolean isSubGraphRoot(final Task task, final Set<Task> subGraphTasks,
       final EnactmentGraph graph, final Task distributionNode) {
-    for (Task predecessor : graph.getPredecessors(task)) {
+    for (final Task predecessor : graph.getPredecessors(task)) {
       // iterate the comm predecessors
       if (!TaskPropertyService.isCommunication(predecessor)
           || graph.getPredecessorCount(predecessor) > 1) {

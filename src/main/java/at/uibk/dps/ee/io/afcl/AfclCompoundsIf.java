@@ -105,7 +105,7 @@ public final class AfclCompoundsIf {
    * @param conditionVariable the data node containing the decision variable
    */
   protected static void addChoiceFunction(final EnactmentGraph graph, final DataOuts dataOut,
-      final IfThenElse ifCompound, final Workflow workflow, Task conditionVariable) {
+      final IfThenElse ifCompound, final Workflow workflow, final Task conditionVariable) {
     checkDataOutIfSrc(dataOut, graph, workflow);
     final String srcString = AfclApiWrapper.getSource(dataOut);
     final String firstSrc = UtilsAfcl.getFirstSubStringIfOut(srcString);
@@ -143,7 +143,7 @@ public final class AfclCompoundsIf {
    * @param graph the hitherto created enactment graph
    */
   protected static void checkDataOutIfSrc(final DataOuts dataOut, final EnactmentGraph graph,
-      Workflow workflow) {
+      final Workflow workflow) {
     final String srcString = AfclApiWrapper.getSource(dataOut);
     if (!UtilsAfcl.isIfOutSrc(srcString)) {
       throw new IllegalArgumentException("The src of data out " + AfclApiWrapper.getName(dataOut)
@@ -168,7 +168,7 @@ public final class AfclCompoundsIf {
       throw new IllegalStateException("Src of if data out " + secondSrc + " not in the graph");
     }
   }
-
+  
   /**
    * Adds the node modeling the evaluation of the condition function of the if
    * compound. Returns the data node modeling the condition variable.

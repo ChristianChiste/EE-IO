@@ -1,5 +1,11 @@
 package at.uibk.dps.ee.io.afcl;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import at.uibk.dps.ee.model.objects.Condition.Operator;
+import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
+
 /**
  * Constants from the AFCL syntax.
  * 
@@ -24,6 +30,17 @@ public final class ConstantsAfcl {
   public static final String typeStringObject = "object";
   public static final String typeStringBoolean = "boolean";
   public static final String typeStringArray = "array";
+  public static final Map<String, DataType> stringToDataTypes;
+  static {
+    Map<String, DataType> aMap = new HashMap<>();
+    aMap.put(typeStringNumber, DataType.Number);
+    aMap.put(typeStringString, DataType.String);
+    aMap.put(typeStringCollection, DataType.Collection);
+    aMap.put(typeStringObject, DataType.Object);
+    aMap.put(typeStringBoolean, DataType.Boolean);
+    aMap.put(typeStringArray, DataType.Array);
+    stringToDataTypes = Collections.unmodifiableMap(aMap);
+  }
 
   // Strings defining the conditional operators
   public static final String operatorStringEqual = "==";
@@ -35,6 +52,20 @@ public final class ConstantsAfcl {
   public static final String operatorStringContains = "contains";
   public static final String operatorStringStartsWith = "startsWith";
   public static final String operatorStringEndsWith = "endsWith";
+  public static final Map<String, Operator> stringsToCondOperators;
+  static {
+    Map<String, Operator> aMap = new HashMap<>();
+    aMap.put(operatorStringContains, Operator.CONTAINS);
+    aMap.put(operatorStringEndsWith, Operator.ENDS_WITH);
+    aMap.put(operatorStringEqual, Operator.EQUAL);
+    aMap.put(operatorStringLess, Operator.LESS);
+    aMap.put(operatorStringLessEqual, Operator.LESS_EQUAL);
+    aMap.put(operatorStringGreater, Operator.GREATER);
+    aMap.put(operatorStringGreaterEqual, Operator.GREATER_EQUAL);
+    aMap.put(operatorStringUnequal, Operator.UNEQUAL);
+    aMap.put(operatorStringStartsWith, Operator.STARTS_WITH);
+    stringsToCondOperators = Collections.unmodifiableMap(aMap);
+  }
 
   // String defining the conidition summary
   public static final String combinedWithStringAnd = "and";
