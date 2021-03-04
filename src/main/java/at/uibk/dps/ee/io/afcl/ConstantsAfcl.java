@@ -1,8 +1,8 @@
 package at.uibk.dps.ee.io.afcl;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import at.uibk.dps.ee.model.objects.Condition.Operator;
 import at.uibk.dps.ee.model.properties.PropertyServiceData.DataType;
 
@@ -32,7 +32,7 @@ public final class ConstantsAfcl {
   public static final String typeStringArray = "array";
   public static final Map<String, DataType> stringToDataTypes;
   static {
-    Map<String, DataType> aMap = new HashMap<>();
+    final Map<String, DataType> aMap = new ConcurrentHashMap<>();
     aMap.put(typeStringNumber, DataType.Number);
     aMap.put(typeStringString, DataType.String);
     aMap.put(typeStringCollection, DataType.Collection);
@@ -54,7 +54,7 @@ public final class ConstantsAfcl {
   public static final String operatorStringEndsWith = "endsWith";
   public static final Map<String, Operator> stringsToCondOperators;
   static {
-    Map<String, Operator> aMap = new HashMap<>();
+    final Map<String, Operator> aMap = new ConcurrentHashMap<>();
     aMap.put(operatorStringContains, Operator.CONTAINS);
     aMap.put(operatorStringEndsWith, Operator.ENDS_WITH);
     aMap.put(operatorStringEqual, Operator.EQUAL);
