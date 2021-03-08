@@ -90,8 +90,11 @@ public final class AfclCompoundsIf {
     final Set<Task> tasksAfterAdding = AfclCompounds.getFunctionNodes(graph);
     tasksAfterAdding.removeAll(tasksBeforeAdding);
     // connect them to the condition variable
-    tasksAfterAdding.forEach(newTask -> PropertyServiceDependencyControlIf
-        .addIfDependency(decisionVariable, newTask, decisionVariable.getId(), isThen, graph));
+    tasksAfterAdding.forEach(newTask -> {
+      PropertyServiceDependencyControlIf.addIfDependency(decisionVariable, newTask,
+          decisionVariable.getId(), isThen, graph);
+      return;
+    });
   }
 
   /**
@@ -168,7 +171,7 @@ public final class AfclCompoundsIf {
       throw new IllegalStateException("Src of if data out " + secondSrc + " not in the graph");
     }
   }
-  
+
   /**
    * Adds the node modeling the evaluation of the condition function of the if
    * compound. Returns the data node modeling the condition variable.
