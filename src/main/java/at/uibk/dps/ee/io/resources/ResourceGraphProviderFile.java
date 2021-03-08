@@ -77,11 +77,15 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
       final ResourceEntry resEntry) {
     final ResourceType resourceType = ResourceType.valueOf(resEntry.getType());
     Optional<Resource> newResourceOpt;
+    final String rank = resEntry.getProperties().get("Rank").getAsString();
+    setRank(eeRes,rank);
     if (resourceType.equals(ResourceType.Local)) {
       // nothing to do, EE already in the graph
+      /*
       if (!resEntry.getProperties().isEmpty()) {
         throw new IllegalArgumentException("Entry of the EE resource should not have properties.");
       }
+      */
       return;
     } else if (resourceType.equals(ResourceType.Serverless)) {
       final String uri =
@@ -99,5 +103,9 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
         .forEach(entry -> newRes.setAttribute(entry.getKey(), entry.getValue()));
     // connect resource to ee node
     PropertyServiceLink.connectResources(resourceGraph, eeRes, newRes);
+  }
+
+  private void setRank(Resource eeRes, String rank) {
+	eeRes.setAttribute("Rank", rank);	
   }
 }
