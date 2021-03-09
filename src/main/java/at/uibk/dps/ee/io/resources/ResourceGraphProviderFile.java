@@ -77,7 +77,7 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
       final ResourceEntry resEntry) {
     final ResourceType resourceType = ResourceType.valueOf(resEntry.getType());
     Optional<Resource> newResourceOpt;
-    final String rank = resEntry.getProperties().get("Rank").getAsString();
+    final String rank = resEntry.getProperties().get(PropertyServiceResource.propNameRank).getAsString();
     setRank(eeRes,rank);
     if (resourceType.equals(ResourceType.Local)) {
       // nothing to do, EE already in the graph
@@ -106,6 +106,6 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
   }
 
   private void setRank(Resource eeRes, String rank) {
-	eeRes.setAttribute("Rank", rank);	
+	eeRes.setAttribute(PropertyServiceResource.propNameRank, rank);	
   }
 }
