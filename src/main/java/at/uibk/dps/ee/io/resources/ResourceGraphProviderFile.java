@@ -77,8 +77,8 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
       final ResourceEntry resEntry) {
     final ResourceType resourceType = ResourceType.valueOf(resEntry.getType());
     Optional<Resource> newResourceOpt;
-    //final String rank = resEntry.getProperties().get(PropertyServiceResource.propNameRank).getAsString();
-    //setRank(eeRes,rank);
+    final String rank = resEntry.getProperties().get(PropertyServiceResource.propNameRank).getAsString();
+    setRank(eeRes,rank);
     if (resourceType.equals(ResourceType.Local)) {
       // nothing to do, EE already in the graph
       /*
@@ -86,8 +86,7 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
         throw new IllegalArgumentException("Entry of the EE resource should not have properties.");
       }
       */
-      newResourceOpt = Optional.of(eeRes);
-      //return;
+      return;
     } else if (resourceType.equals(ResourceType.Serverless)) {
       final String uri =
           resEntry.getProperties().get(PropertyServiceResourceServerless.propNameUri).getAsString();
@@ -105,7 +104,13 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
     // connect resource to ee node
     PropertyServiceLink.connectResources(resourceGraph, eeRes, newRes);
   }
-
+  
+  /**
+   * Sets the resource rank for the provided resource.
+   * 
+   * @param res the provided resource
+   * @param rank to set
+   */
   private void setRank(Resource eeRes, String rank) {
 	eeRes.setAttribute(PropertyServiceResource.propNameRank, rank);	
   }
