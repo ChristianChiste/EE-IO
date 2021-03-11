@@ -105,7 +105,7 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
    * @param res the provided resource
    * @param rank to set
    */
-  private void setRank(Resource eeRes, int rank) {
+  private void setRank(Resource eeRes, int rank) { // if stuff is working as I intended it to (which may not be the case), this actually should not be necessary
 	eeRes.setAttribute(PropertyServiceResource.propNameRank, rank);	
   }
 }
