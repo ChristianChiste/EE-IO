@@ -19,6 +19,7 @@ import at.uibk.dps.ee.model.graph.SpecificationProvider;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunctionUser;
 import at.uibk.dps.ee.model.properties.PropertyServiceMapping;
+import at.uibk.dps.ee.model.properties.PropertyServiceResource;
 import at.uibk.dps.ee.model.properties.PropertyServiceResource.ResourceType;
 import at.uibk.dps.ee.model.properties.PropertyServiceResourceServerless;
 import at.uibk.dps.ee.model.properties.PropertyServiceFunction.UsageType;
@@ -141,6 +142,7 @@ public class SpecificationProviderFile implements SpecificationProvider {
     } else {
       throw new IllegalArgumentException("Unknown resource type: " + resEntry.getType());
     }
+    result.get().setAttribute(PropertyServiceResource.propNameRank, resEntry.getProperties().get(PropertyServiceResource.propNameRank).getAsInt());
     return result.orElseThrow();
   }
 

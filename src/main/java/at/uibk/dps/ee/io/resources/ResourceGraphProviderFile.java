@@ -77,8 +77,8 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
       final ResourceEntry resEntry) {
     final ResourceType resourceType = ResourceType.valueOf(resEntry.getType());
     Optional<Resource> newResourceOpt;
-    final int rank = resEntry.getProperties().get(PropertyServiceResource.propNameRank).getAsInt();
-    setRank(eeRes,rank);
+    //final int rank = resEntry.getProperties().get(PropertyServiceResource.propNameRank).getAsInt();
+    //setRank(eeRes,rank);
     if (resourceType.equals(ResourceType.Local)) {
       return;
     } else if (resourceType.equals(ResourceType.Serverless)) {
