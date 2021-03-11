@@ -80,12 +80,6 @@ public class ResourceGraphProviderFile implements ResourceGraphProvider {
     final int rank = resEntry.getProperties().get(PropertyServiceResource.propNameRank).getAsInt();
     setRank(eeRes,rank);
     if (resourceType.equals(ResourceType.Local)) {
-      // nothing to do, EE already in the graph
-      /*
-      if (!resEntry.getProperties().isEmpty()) {
-        throw new IllegalArgumentException("Entry of the EE resource should not have properties.");
-      }
-      */
       return;
     } else if (resourceType.equals(ResourceType.Serverless)) {
       final String uri =
