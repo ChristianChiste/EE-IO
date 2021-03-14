@@ -142,7 +142,6 @@ public class SpecificationProviderFile implements SpecificationProvider {
     } else {
       throw new IllegalArgumentException("Unknown resource type: " + resEntry.getType());
     }
-    result.get().setAttribute(PropertyServiceResource.propNameRank, resEntry.getProperties().get(PropertyServiceResource.propNameRank).getAsInt());
     return result.orElseThrow();
   }
 
