@@ -38,114 +38,131 @@ import net.sf.opendse.model.properties.TaskPropertyService;
  */
 public class SpecificationProviderFile implements SpecificationProvider {
 
-  protected final EnactmentGraphProvider enactmentGraphProvider;
-  protected final ResourceGraphProvider resourceGraphProvider;
-  protected final Mappings<Task, Resource> mappings;
-  protected final EnactmentSpecification specification;
+	protected final EnactmentGraphProvider enactmentGraphProvider;
+	protected final ResourceGraphProvider resourceGraphProvider;
+	protected final Mappings<Task, Resource> mappings;
+	protected final EnactmentSpecification specification;
 
-  /**
-   * Injection constructor.
-   * 
-   * @param enactmentGraphProvider class providing the {@link EnactmentGraph}
-   * @param resourceGraphProvider class providing the {@link ResourceGraph}
-   * @param filePath path to the file describing the functionType-to-resource
-   *        relations
-   */
-  @Inject
-  public SpecificationProviderFile(final EnactmentGraphProvider enactmentGraphProvider,
-      final ResourceGraphProvider resourceGraphProvider, @Constant(value = "filePath",
-          namespace = ResourceGraphProviderFile.class) final String filePath) {
-    this.enactmentGraphProvider = enactmentGraphProvider;
-    this.resourceGraphProvider = resourceGraphProvider;
-    this.mappings = createMappings(getEnactmentGraph(), getResourceGraph(), filePath);
-    this.specification =
-        new EnactmentSpecification(getEnactmentGraph(), getResourceGraph(), getMappings());
-  }
+	/**
+	 * Injection constructor.
+	 * 
+	 * @param enactmentGraphProvider class providing the {@link EnactmentGraph}
+	 * @param resourceGraphProvider  class providing the {@link ResourceGraph}
+	 * @param filePath               path to the file describing the
+	 *                               functionType-to-resource relations
+	 */
+	@Inject
+	public SpecificationProviderFile(final EnactmentGraphProvider enactmentGraphProvider,
+			final ResourceGraphProvider resourceGraphProvider,
+			@Constant(value = "filePath", namespace = ResourceGraphProviderFile.class) final String filePath) {
+		this.enactmentGraphProvider = enactmentGraphProvider;
+		this.resourceGraphProvider = resourceGraphProvider;
+		this.mappings = createMappings(getEnactmentGraph(), getResourceGraph(), filePath);
+		this.specification = new EnactmentSpecification(getEnactmentGraph(), getResourceGraph(), getMappings());
+	}
 
-  @Override
-  public final ResourceGraph getResourceGraph() {
-    return resourceGraphProvider.getResourceGraph();
-  }
+	@Override
+	public final ResourceGraph getResourceGraph() {
+		return resourceGraphProvider.getResourceGraph();
+	}
 
-  @Override
-  public final EnactmentGraph getEnactmentGraph() {
-    return enactmentGraphProvider.getEnactmentGraph();
-  }
+	@Override
+	public final EnactmentGraph getEnactmentGraph() {
+		return enactmentGraphProvider.getEnactmentGraph();
+	}
 
-  @Override
-  public final Mappings<Task, Resource> getMappings() {
-    return mappings;
-  }
+	@Override
+	public final Mappings<Task, Resource> getMappings() {
+		return mappings;
+	}
 
-  /**
-   * Reads the json file with the file information and uses it to create the
-   * mappings.
-   * 
-   * @param eGraph the enactment graph
-   * @param rGraph the resource graph
-   * @param filePath the file path to the resource information
-   * @return the mappings connected the eGraph and the rGraph
-   */
-  protected final Mappings<Task, Resource> createMappings(final EnactmentGraph eGraph,
-      final ResourceGraph rGraph, final String filePath) {
-    final Mappings<Task, Resource> result = new Mappings<>();
-    final ResourceInformationJsonFile resInfo = ResourceInformationJsonFile.readFromFile(filePath);
-    eGraph.getVertices().stream().filter(task -> TaskPropertyService.isProcess(task))
-        .filter(task -> PropertyServiceFunction.getUsageType(task).equals(UsageType.User))
-        .flatMap(task -> getMappingsForTask(task, resInfo, rGraph).stream())
-        .forEach(mapping -> result.add(mapping));
-    return result;
-  }
+	/**
+	 * Reads the json file with the file information and uses it to create the
+	 * mappings.
+	 * 
+	 * @param eGraph   the enactment graph
+	 * @param rGraph   the resource graph
+	 * @param filePath the file path to the resource information
+	 * @return the mappings connected the eGraph and the rGraph
+	 */
+	protected final Mappings<Task, Resource> createMappings(final EnactmentGraph eGraph, final ResourceGraph rGraph,
+			final String filePath) {
+		final Mappings<Task, Resource> result = new Mappings<>();
+		final ResourceInformationJsonFile resInfo = ResourceInformationJsonFile.readFromFile(filePath);
+//  eGraph.getVertices().stream().filter(task -> TaskPropertyService.isProcess(task))
+//  .filter(task -> PropertyServiceFunction.getUsageType(task).equals(UsageType.User))
+//  .flatMap(task -> getMappingsForTask(task, resInfo, rGraph).stream())
+//  .forEach(mapping -> result.add(mapping));
 
-  /**
-   * Creates the mappings for the provided task based on the given resource
-   * information.
-   * 
-   * @param task the provided task
-   * @param resInfo the given resource information.
-   * @param rGraph the resource graph
-   * @return the mappings for the provided task based on the given resource
-   *         information
-   */
-  protected Set<Mapping<Task, Resource>> getMappingsForTask(final Task task,
-      final ResourceInformationJsonFile resInfo, final ResourceGraph rGraph) {
-    final String funcTypeString = PropertyServiceFunctionUser.getFunctionTypeString(task);
-    return resInfo.stream()
-        .filter(functionEntry -> funcTypeString.equals(functionEntry.getFunctionType()))
-        .flatMap(functionEntry -> functionEntry.getResources().stream())
-        .map(resEntry -> getResourceForResourceEntry(rGraph, resEntry))
-        .map(res -> PropertyServiceMapping.createMapping(task, res)).collect(Collectors.toSet());
-  }
+// equivalent code without streams:
+		for (Task task : eGraph) {
+			// iterating the enactment graph
+			if (TaskPropertyService.isProcess(task)) {
+				// looking only at tasks (not at comms)
+				if (PropertyServiceFunction.getUsageType(task).equals(UsageType.User)) {
+					// Looking only at user tasks (since utility and data flow tasks are not
+					// explicitly mapped)
 
-  /**
-   * Gets the resource node matching the provided resource entry
-   * 
-   * @param rGraph the resource graph
-   * @param resEntry the resource entry
-   * @return the resource node matching the provided resource entry
-   */
-  protected Resource getResourceForResourceEntry(final ResourceGraph rGraph,
-      final ResourceEntry resEntry) {
-    Optional<Resource> result;
-    if (resEntry.getType().equals(ResourceType.Local.name())) {
-      // Resource is local EE
-      result = Optional.ofNullable(rGraph.getVertex(ConstantsEEModel.idLocalResource));
-    } else if (resEntry.getType().equals(ResourceType.Serverless.name())) {
-      // Serverless resource => look for the Uri
-      if (!resEntry.getProperties().containsKey(PropertyServiceResourceServerless.propNameUri)) {
-        throw new IllegalArgumentException("No Uri annotated for serverless resource");
-      }
-      final String uri =
-          resEntry.getProperties().get(PropertyServiceResourceServerless.propNameUri).getAsString();
-      result = Optional.ofNullable(rGraph.getVertex(uri));
-    } else {
-      throw new IllegalArgumentException("Unknown resource type: " + resEntry.getType());
-    }
-    return result.orElseThrow();
-  }
+					// Read the resource info to find all resources that the task can be mapped on
+					Set<Mapping<Task, Resource>> mappingsForUserTask = getMappingsForTask(task, resInfo, rGraph);
+					// add each of the mappings to the result
+					for (Mapping<Task, Resource> m : mappingsForUserTask) {
+						result.add(m);
+					}
+				}
+			}
 
-  @Override
-  public EnactmentSpecification getSpecification() {
-    return specification;
-  }
+		}
+		return result;
+	}
+
+	/**
+	 * Creates the mappings for the provided task based on the given resource
+	 * information.
+	 * 
+	 * @param task    the provided task
+	 * @param resInfo the given resource information.
+	 * @param rGraph  the resource graph
+	 * @return the mappings for the provided task based on the given resource
+	 *         information
+	 */
+	protected Set<Mapping<Task, Resource>> getMappingsForTask(final Task task,
+			final ResourceInformationJsonFile resInfo, final ResourceGraph rGraph) {
+		final String funcTypeString = PropertyServiceFunctionUser.getFunctionTypeString(task);
+		return resInfo.stream().filter(functionEntry -> funcTypeString.equals(functionEntry.getFunctionType()))
+				.flatMap(functionEntry -> functionEntry.getResources().stream())
+				.map(resEntry -> getResourceForResourceEntry(rGraph, resEntry))
+				.map(res -> PropertyServiceMapping.createMapping(task, res)).collect(Collectors.toSet());
+	}
+
+	/**
+	 * Gets the resource node matching the provided resource entry
+	 * 
+	 * @param rGraph   the resource graph
+	 * @param resEntry the resource entry
+	 * @return the resource node matching the provided resource entry
+	 */
+	protected Resource getResourceForResourceEntry(final ResourceGraph rGraph, final ResourceEntry resEntry) {
+		Optional<Resource> result;
+		if (resEntry.getType().equals(ResourceType.Local.name())) {
+			// Resource is local EE
+			result = Optional.ofNullable(rGraph.getVertex(ConstantsEEModel.idLocalResource));
+		} else if (resEntry.getType().equals(ResourceType.Serverless.name())) {
+			// Serverless resource => look for the Uri
+			if (!resEntry.getProperties().containsKey(PropertyServiceResourceServerless.propNameUri)) {
+				throw new IllegalArgumentException("No Uri annotated for serverless resource");
+			}
+			final String uri = resEntry.getProperties().get(PropertyServiceResourceServerless.propNameUri)
+					.getAsString();
+			result = Optional.ofNullable(rGraph.getVertex(uri));
+		} else {
+			throw new IllegalArgumentException("Unknown resource type: " + resEntry.getType());
+		}
+		return result.orElseThrow();
+	}
+
+	@Override
+	public EnactmentSpecification getSpecification() {
+		return specification;
+	}
 }
