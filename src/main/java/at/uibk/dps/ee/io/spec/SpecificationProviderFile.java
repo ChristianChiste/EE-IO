@@ -102,7 +102,6 @@ public class SpecificationProviderFile implements SpecificationProvider {
 				if (PropertyServiceFunction.getUsageType(task).equals(UsageType.User)) {
 					// Looking only at user tasks (since utility and data flow tasks are not
 					// explicitly mapped)
-
 					// Read the resource info to find all resources that the task can be mapped on
 					Set<Mapping<Task, Resource>> mappingsForUserTask = getMappingsForTask(task, resInfo, rGraph);
 					// add each of the mappings to the result
@@ -111,7 +110,6 @@ public class SpecificationProviderFile implements SpecificationProvider {
 					}
 				}
 			}
-
 		}
 		return result;
 	}
