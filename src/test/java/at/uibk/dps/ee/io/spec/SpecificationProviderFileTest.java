@@ -22,7 +22,7 @@ public class SpecificationProviderFileTest {
 
 	@Test
 	public void testMappingCreation() {
-		/*EnactmentGraph eGraph = new EnactmentGraph();
+		EnactmentGraph eGraph = new EnactmentGraph();
 		Task t1 = PropertyServiceFunctionUser.createUserTask("t1", "addition");
 		Task t2 = PropertyServiceFunctionUser.createUserTask("t2", "subtraction");
 		eGraph.addVertex(t1);
@@ -38,6 +38,6 @@ public class SpecificationProviderFileTest {
 		
 		assertEquals(4, result.size());
 		assertEquals(2, result.get(t1).size());
-		assertEquals(2, result.get(t2).size());*/
+		assertEquals(2, result.get(t2).size());
 	}
 }

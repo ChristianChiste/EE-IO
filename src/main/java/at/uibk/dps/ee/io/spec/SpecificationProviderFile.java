@@ -129,14 +129,22 @@ public class SpecificationProviderFile implements SpecificationProvider {
   protected Set<Mapping<Task, Resource>> getMappingsForTask(final Task task,
       final ResourceInformationJsonFile resInfo, final ResourceGraph rGraph) {
     final String funcTypeString = PropertyServiceFunctionUser.getFunctionTypeString(task); 
+    /*return resInfo.stream()
+        .filter(functionEntry -> funcTypeString.equals(functionEntry.getFunctionType()))
+        .flatMap(functionEntry -> functionEntry.getResources().stream())
+        .map(resEntry -> getResourceForResourceEntry(rGraph, resEntry))
+        .map(res -> PropertyServiceMapping.createMapping(task, res)).collect(Collectors.toSet());*/
+
     final Set<Mapping<Task, Resource>> mappings = new HashSet<Mapping<Task, Resource>>();
     for(FunctionTypeEntry functionEntry : resInfo) {
       if(funcTypeString.equals(functionEntry.getFunctionType())) {
         for(ResourceEntry resEntry : functionEntry.getResources()) {
           final Resource res = getResourceForResourceEntry(rGraph, resEntry);
           final Mapping<Task, Resource> mapping = PropertyServiceMapping.createMapping(task, res);
-          final int rank = resEntry.getProperties().get(PropertyServiceMapping.propNameRank).getAsInt();
-          PropertyServiceMapping.setRank(mapping, rank);
+          if(resEntry.getProperties().containsKey(PropertyServiceMapping.propNameRank)) {
+            final int rank = resEntry.getProperties().get(PropertyServiceMapping.propNameRank).getAsInt();
+            PropertyServiceMapping.setRank(mapping, rank);
+          }
           mappings.add(mapping);
         }
       }
