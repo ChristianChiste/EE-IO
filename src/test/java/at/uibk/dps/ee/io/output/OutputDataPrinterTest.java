@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import com.google.gson.JsonObject;
 
+import at.uibk.dps.ee.core.ExecutionData;
+
 public class OutputDataPrinterTest {
 
 	@Test
@@ -21,8 +23,9 @@ public class OutputDataPrinterTest {
 		testInput.addProperty("Prop2", 3);
 
 		OutputDataPrinter tested = new OutputDataPrinter();
-		tested.handleOutputData(testInput);
-		String expected = "Enactment finished\nEnactment result: " + testInput.toString();
+		ExecutionData.data.add(1);
+		tested.handleOutputData(testInput, ExecutionData.data);
+		String expected = "Enactment finished\nEnactment result: " + testInput.toString() + "\n1";
 		assertEquals(expected, outputStreamCaptor.toString().trim());
 	}
 }
