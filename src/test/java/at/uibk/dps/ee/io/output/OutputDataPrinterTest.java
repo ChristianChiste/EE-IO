@@ -8,14 +8,13 @@ import java.io.PrintStream;
 import org.junit.Test;
 
 import com.google.gson.JsonObject;
-
 import at.uibk.dps.ee.core.ExecutionData;
 
 public class OutputDataPrinterTest {
 
 	@Test
 	public void test() {
-		/*
+		
 		final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 		System.setOut(new PrintStream(outputStreamCaptor));
 
@@ -24,10 +23,9 @@ public class OutputDataPrinterTest {
 		testInput.addProperty("Prop2", 3);
 
 		OutputDataPrinter tested = new OutputDataPrinter();
-		ExecutionData.data.add(1);
-		tested.handleOutputData(testInput, ExecutionData.data);
-		String expected = "Enactment finished\nEnactment result: " + testInput.toString() + "\n1";
-		assertEquals(expected, outputStreamCaptor.toString().trim());
-		*/
+		tested.handleOutputData(testInput, ExecutionData.startTimes , ExecutionData.endTimes);
+		String expected = "Enactment finished\nEnactment result: " + testInput.toString();
+		assertEquals(expected, outputStreamCaptor.toString().trim().substring(0,61));
+		
 	}
 }
