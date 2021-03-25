@@ -23,6 +23,8 @@ public class OutputDataPrinterTest {
 		testInput.addProperty("Prop2", 3);
 
 		OutputDataPrinter tested = new OutputDataPrinter();
+		ExecutionData.startTimes.put("task1", 1000L);
+		ExecutionData.endTimes.put("task1", 2000L);
 		tested.handleOutputData(testInput, ExecutionData.startTimes , ExecutionData.endTimes);
 		String expected = "Enactment finished\nEnactment result: " + testInput.toString();
 		assertEquals(expected, outputStreamCaptor.toString().trim().substring(0,61));
