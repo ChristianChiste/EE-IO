@@ -22,8 +22,6 @@ import at.uibk.dps.ee.model.properties.PropertyServiceResourceServerless;
  */
 @Singleton
 public class OutputDataPrinter implements OutputDataHandler {
-  
-  private ExcelPrinter excelPrinter;
 
   @Override
   public void handleOutputData(final JsonObject outputData, Map<String,Long> startTimes, Map<String,Long> endTimes) {

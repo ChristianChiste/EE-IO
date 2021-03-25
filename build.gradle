@@ -29,7 +29,7 @@ repositories {
 dependencies {
 	
 	// dependencies to other parts of the Apollo Core EE
-	implementation 'com.github.ChristianChiste:EE-Core:master-SNAPSHOT'
+	implementation 'com.github.ChristianChiste:EE-Core:8f8be7c771ba91e4bc87e3b466d53a5c85db00a1'
 	implementation 'com.github.ChristianChiste:EE-Guice:main-SNAPSHOT'
 	implementation 'com.github.ChristianChiste:EE-Model:main-SNAPSHOT'
 	
@@ -49,6 +49,9 @@ dependencies {
 	// test dependencies	
 	testCompile group: 'junit', 		name: 'junit', 					version: '4.+'
 	testCompile group: 'org.mockito',     name: 'mockito-core',     version: '3.4.4'
+	
+	// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.0.0'
 }
 
 jacocoTestReport {
