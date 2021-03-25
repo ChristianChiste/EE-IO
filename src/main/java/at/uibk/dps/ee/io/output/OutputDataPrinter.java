@@ -1,6 +1,7 @@
 package at.uibk.dps.ee.io.output;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.JsonObject;
 import com.google.inject.Singleton;
@@ -18,9 +19,12 @@ import at.uibk.dps.ee.core.OutputDataHandler;
 public class OutputDataPrinter implements OutputDataHandler {
 
   @Override
-  public void handleOutputData(final JsonObject outputData, List<Integer> data) {
+  public void handleOutputData(final JsonObject outputData, Map<String,Long> startTimes, Map<String,Long> endTimes) {
     System.out.println("Enactment finished");
     System.out.println("Enactment result: " + outputData.toString());
-    System.out.println(data.get(0));
+    for(String taskId: startTimes.keySet()) {
+      System.out.println(taskId + ": " + (endTimes.get(taskId) - startTimes.get(taskId)) * Math.exp(-9));
+    }
+
   }
 }
