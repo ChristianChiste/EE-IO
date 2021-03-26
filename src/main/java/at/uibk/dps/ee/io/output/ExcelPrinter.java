@@ -20,7 +20,7 @@ public class ExcelPrinter {
 
   private final static String[] columns = {"taskId", "start", "end", "resource"};
 
-  public void createExcelFile() {
+  public static void createExcelFile() {
     Workbook workbook = new XSSFWorkbook();
     Sheet sheet = workbook.createSheet("Executions");
     Font headerFont = workbook.createFont();
@@ -35,7 +35,7 @@ public class ExcelPrinter {
     }
 
     int rowNum = 1;
-    for(String taskId : ExecutionData.startTimes.keys()) {
+    for(String taskId : ExecutionData.startTimes.keys().uniqueSet()) {
       Iterator<Long> startTimes = ExecutionData.startTimes.get(taskId).iterator();
       Iterator<Long> endTimes = ExecutionData.endTimes.get(taskId).iterator();
       Iterator<ResourceType> resourceType = ExecutionData.resourceType.get(taskId).iterator();
