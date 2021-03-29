@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import at.uibk.dps.ee.core.ExecutionData;
 import at.uibk.dps.ee.core.ExecutionData.ResourceType;
-import at.uibk.dps.ee.core.ExecutionData.SchedulingType;
 
 public class ExcelPrinterTest {
 
@@ -15,7 +14,7 @@ public class ExcelPrinterTest {
     ExecutionData.endTimes.put("task1", 5L);
     ExecutionData.resourceType.put("task1", ResourceType.IBM);
     ExecutionData.failRate = 0.5;
-    ExecutionData.schedulingType = SchedulingType.Dynamic;
+    ExecutionData.schedulingType = "Dynamic";
     ExcelPrinter.createExcelFile();
   }
 }
