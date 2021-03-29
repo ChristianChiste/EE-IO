@@ -46,12 +46,12 @@ public class ExcelPrinter {
         row.createCell(2).setCellValue(endTimes.next());
         row.createCell(3).setCellValue(resourceType.next().toString());
         row.createCell(4).setCellValue(ExecutionData.failRate);
-        row.createCell(5).setCellValue(ExecutionData.schedulingType);
+        row.createCell(5).setCellValue(ExecutionData.schedulingType.toString());
       }
     }
     FileOutputStream fileOut;
     try {
-      fileOut = new FileOutputStream(ExecutionData.schedulingType + ExecutionData.failRate + ".xlsx");
+      fileOut = new FileOutputStream(ExecutionData.schedulingType.toString() + ExecutionData.failRate + ".xlsx");
       workbook.write(fileOut);
       fileOut.close();
       workbook.close();
