@@ -18,7 +18,7 @@ import at.uibk.dps.ee.core.ExecutionData.ResourceType;
 
 public class ExcelPrinter {
 
-  private final static String[] columns = {"taskId", "start", "end", "resource"};
+  private final static String[] columns = {"taskId", "start", "end", "resource", "failRate", "schedulingType"};
 
   public static void createExcelFile() {
     Workbook workbook = new XSSFWorkbook();
