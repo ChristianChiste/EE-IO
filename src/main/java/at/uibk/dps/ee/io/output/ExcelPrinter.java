@@ -16,6 +16,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import at.uibk.dps.ee.core.ExecutionData;
 import at.uibk.dps.ee.core.ExecutionData.ResourceType;
 
+/**
+ * The {@link ExcelPrinter} creates an Excel(.xlsx) file using the data in {@link ExecutionData}.
+ * 
+ * @author Christian Chisté
+ *
+ */
 public class ExcelPrinter {
 
   private final static String[] columns = {"taskId", "start", "end", "resource", "failRate", "schedulingType"};
@@ -51,7 +57,7 @@ public class ExcelPrinter {
     }
     FileOutputStream fileOut;
     try {
-      fileOut = new FileOutputStream(ExecutionData.schedulingType + "-" + ExecutionData.failRate + ".xlsx");
+      fileOut = new FileOutputStream("executions/" + ExecutionData.schedulingType + "-" + ExecutionData.failRate + ".xlsx");
       workbook.write(fileOut);
       fileOut.close();
       workbook.close();
