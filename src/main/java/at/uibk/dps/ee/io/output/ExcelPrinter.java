@@ -3,6 +3,7 @@ package at.uibk.dps.ee.io.output;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,7 +25,8 @@ import at.uibk.dps.ee.core.ExecutionData.ResourceType;
  */
 public class ExcelPrinter {
 
-  private final static String[] columns = {"taskId", "start", "end", "resource", "failRate", "schedulingType"};
+  private final static String[] columns = {"taskId", "start", "end", 
+      "resource", "failRate", "schedulingType", "timestamp"};
 
   public static void createExcelFile() {
     Workbook workbook = new XSSFWorkbook();
@@ -39,7 +41,7 @@ public class ExcelPrinter {
       cell.setCellValue(columns[i]);
       cell.setCellStyle(headerCellStyle);
     }
-
+    String timestamp = new Timestamp(System.currentTimeMillis()).toString();
     int rowNum = 1;
     for(String taskId : ExecutionData.startTimes.keys().uniqueSet()) {
       Iterator<Long> startTimes = ExecutionData.startTimes.get(taskId).iterator();
@@ -53,11 +55,13 @@ public class ExcelPrinter {
         row.createCell(3).setCellValue(resourceType.next().toString());
         row.createCell(4).setCellValue(ExecutionData.failRate);
         row.createCell(5).setCellValue(ExecutionData.schedulingType);
+        row.createCell(6).setCellValue(timestamp);
       }
     }
     FileOutputStream fileOut;
     try {
-      fileOut = new FileOutputStream("executions/" + ExecutionData.schedulingType + "-" + ExecutionData.failRate + ".xlsx");
+      fileOut = new FileOutputStream("executions/" + ExecutionData.schedulingType + "-" + ExecutionData.failRate + "-" + 
+    timestamp + ".xlsx");
       workbook.write(fileOut);
       fileOut.close();
       workbook.close();
