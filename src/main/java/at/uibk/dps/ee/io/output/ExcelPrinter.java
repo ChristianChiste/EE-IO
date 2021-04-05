@@ -51,7 +51,10 @@ public class ExcelPrinter {
         Row row = sheet.createRow(rowNum++);
         row.createCell(0).setCellValue(taskId);
         row.createCell(1).setCellValue(startTimes.next());
-        row.createCell(2).setCellValue(endTimes.next());
+        if(endTimes.hasNext())
+          row.createCell(2).setCellValue(endTimes.next());
+        else
+          row.createCell(2).setCellValue(-1L);
         row.createCell(3).setCellValue(resourceType.next().toString());
         row.createCell(4).setCellValue(ExecutionData.failRate);
         row.createCell(5).setCellValue(ExecutionData.schedulingType);
