@@ -26,7 +26,7 @@ import at.uibk.dps.ee.core.ExecutionData.ResourceType;
 public class ExcelPrinter {
 
   private final static String[] columns = {"taskId", "start", "end", 
-      "resource", "failRate", "schedulingType", "timestamp"};
+      "resource", "failRate", "schedulingType", "workflowName", "timestamp"};
 
   public static void createExcelFile() {
     Workbook workbook = new XSSFWorkbook();
@@ -58,12 +58,14 @@ public class ExcelPrinter {
         row.createCell(3).setCellValue(resourceType.next().toString());
         row.createCell(4).setCellValue(ExecutionData.failRate);
         row.createCell(5).setCellValue(ExecutionData.schedulingType);
-        row.createCell(6).setCellValue(timestamp);
+        row.createCell(6).setCellValue(ExecutionData.workflowName);
+        row.createCell(7).setCellValue(timestamp);
       }
     }
     FileOutputStream fileOut;
     try {
-      fileOut = new FileOutputStream("executions/" + ExecutionData.schedulingType + "-" + ExecutionData.failRate + "-" + 
+      fileOut = new FileOutputStream("executions/" + ExecutionData.workflowName + "-" + 
+    ExecutionData.schedulingType + "-" + ExecutionData.failRate + "-" + 
     timestamp + ".xlsx");
       workbook.write(fileOut);
       fileOut.close();
