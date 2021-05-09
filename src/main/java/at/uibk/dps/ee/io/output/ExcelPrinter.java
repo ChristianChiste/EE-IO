@@ -26,7 +26,7 @@ import at.uibk.dps.ee.core.ExecutionData.ResourceType;
 public class ExcelPrinter {
 
   private final static String[] columns = {"taskId", "start", "end", 
-      "resource", "failRate", "schedulingType", "workflowName", "timestamp"};
+      "resource","region", "failRate", "schedulingType", "workflowName", "timestamp"};
 
   public static void createExcelFile() {
     Workbook workbook = new XSSFWorkbook();
@@ -57,7 +57,7 @@ public class ExcelPrinter {
         else
           row.createCell(2).setCellValue(-1L);
         row.createCell(3).setCellValue(resourceType.next().toString());
-        row.createCell(4).setCellValue(resourceRegion.next().toString());
+        row.createCell(4).setCellValue(resourceRegion.next());
         row.createCell(5).setCellValue(ExecutionData.failRate);
         row.createCell(6).setCellValue(ExecutionData.schedulingType);
         row.createCell(7).setCellValue(ExecutionData.workflowName);
