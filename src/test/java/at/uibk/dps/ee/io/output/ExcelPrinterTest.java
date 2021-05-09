@@ -13,6 +13,7 @@ public class ExcelPrinterTest {
     ExecutionData.startTimes.put("task1", 5L);
     ExecutionData.endTimes.put("task1", 5L);
     ExecutionData.resourceType.put("task1", ResourceType.IBM);
+    ExecutionData.resourceRegion.put("task1", "eu-gb");
     ExecutionData.failRate = 0.5;
     ExecutionData.schedulingType = "Dynamic";
     ExcelPrinter.createExcelFile();

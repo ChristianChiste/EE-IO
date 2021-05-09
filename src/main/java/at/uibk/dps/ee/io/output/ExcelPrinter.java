@@ -47,6 +47,7 @@ public class ExcelPrinter {
       Iterator<Long> startTimes = ExecutionData.startTimes.get(taskId).iterator();
       Iterator<Long> endTimes = ExecutionData.endTimes.get(taskId).iterator();
       Iterator<ResourceType> resourceType = ExecutionData.resourceType.get(taskId).iterator();
+      Iterator<String> resourceRegion = ExecutionData.resourceRegion.get(taskId).iterator();
       while(startTimes.hasNext()) {
         Row row = sheet.createRow(rowNum++);
         row.createCell(0).setCellValue(taskId);
@@ -56,10 +57,11 @@ public class ExcelPrinter {
         else
           row.createCell(2).setCellValue(-1L);
         row.createCell(3).setCellValue(resourceType.next().toString());
-        row.createCell(4).setCellValue(ExecutionData.failRate);
-        row.createCell(5).setCellValue(ExecutionData.schedulingType);
-        row.createCell(6).setCellValue(ExecutionData.workflowName);
-        row.createCell(7).setCellValue(timestamp);
+        row.createCell(4).setCellValue(resourceRegion.next().toString());
+        row.createCell(5).setCellValue(ExecutionData.failRate);
+        row.createCell(6).setCellValue(ExecutionData.schedulingType);
+        row.createCell(7).setCellValue(ExecutionData.workflowName);
+        row.createCell(8).setCellValue(timestamp);
       }
     }
     FileOutputStream fileOut;
@@ -77,5 +79,3 @@ public class ExcelPrinter {
     }
   }
 }
-
-
