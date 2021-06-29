@@ -1,5 +1,6 @@
 package at.uibk.dps.ee.io.output;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -66,6 +67,10 @@ public class ExcelPrinter {
     }
     FileOutputStream fileOut;
     try {
+      File directory = new File("executions");
+      if (!directory.exists()) {
+        directory.mkdir();
+      }
       fileOut = new FileOutputStream("executions/" + ExecutionData.workflowName + "-" + 
     ExecutionData.schedulingType + "-" + ExecutionData.failRate + "-" + 
     timestamp + ".xlsx");
